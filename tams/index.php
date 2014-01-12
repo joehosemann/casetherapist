@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <title id='Description'>Case Therapist -- Team View</title>
+    <title id='Description'>Case Therapist -- TAM View</title>
     <!-- Begin Library Includes -->
     <link rel="stylesheet" href="../inc/v3/jqwidgets/styles/jqx.base.css" type="text/css" />
 	<link rel="stylesheet" href="../inc/v3/jqwidgets/styles/jqx.metro-lime.css" type="text/css" />
@@ -36,11 +36,12 @@
 	<script type="text/javascript" src="../inc/v3/custom/tracker.js"></script>
 	<!-- End Library Includes -->
 
-	<script type="text/javascript" src="v3team/hosemann.js"></script>
-	<script type="text/javascript" src="v3team/workable.js"></script>	
-	<script type="text/javascript" src="v3team/nonworkable.js"></script>
-	<script type="text/javascript" src="v3team/resolved.js"></script>
-	<script type="text/javascript" src="v3team/issuewis.js"></script>
+	<script type="text/javascript" src="v3/hosemann.js"></script>
+	<script type="text/javascript" src="v3/workable.js"></script>	
+	<script type="text/javascript" src="v3/nonworkable.js"></script>
+	<script type="text/javascript" src="v3/resolved.js"></script>
+	<script type="text/javascript" src="v3/closed.js"></script>
+	<!--<script type="text/javascript" src="v3/issuewis.js"></script>-->
 	<style>
 		html, body {
             height: 100%;
@@ -81,7 +82,10 @@
 	                case 2:
 	                    initNonWorkable();
 	                    break;
-	                case 3:
+	                case 3: 
+						initClosed();
+						break;
+					case 4:
 	                	initIssueWI();
 	                	break;
 	            }
@@ -112,8 +116,7 @@
             <li>Workable</li>
             <li>Resolved</li>
             <li>Non-Workable</li>
-            <li>WI Issues</li>
-            <li>Analyst Summary</li>
+			<li>Closed</li>
         </ul>
         <div style="overflow: hidden;">
             <div id="jqxgridWorkable"></div>            
@@ -124,24 +127,8 @@
         <div style="overflow: hidden;">
             <div id='jqxgridNonWorkable'></div>
         </div>
-        <div style="overflow: hidden;">
-            <div id='jqxgridIssueWI'></div>
-        </div>
-        <div style="overflow: hidden;">
-        	<div id="containerSummary"></div>
-        	<script type="text/javascript">
-				$('#containerSummary').ready(function() {
-					$.ajax({
-					type: "GET",
-					url: 'http://bbecweb:8012/hapi/CasesSummary/?param='+_param,
-					contentType: "application/json; charset=utf-8",
-					dataType: "json",
-					success: function(res) {
-					$('#containerSummary').append(CreateTableView(res)).fadeIn();
-					}
-					});
-				});
-				</script>
+		<div style="overflow: hidden;">
+            <div id='jqxgridClosed'></div>
         </div>
     </div>
 

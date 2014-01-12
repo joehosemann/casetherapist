@@ -1,0 +1,156 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<header>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Legend</title>
+    <style>
+        .container {
+            font-family: "Trebuchet MS", Helvetica, sans-serif;
+            font-size: .7em;
+            width: 300px;
+            padding: 2px;
+        }
+
+        .row {
+            margin-bottom: 1px;
+        }
+
+        .legend {
+            display: inline-block;
+            width: 20%;
+            min-width: 20%;
+        }
+
+        .name {
+            display: inline-block;
+            margin-left: 3px;
+        }
+
+        .legend#critcontact {
+            background-color: #FFA59C;
+        }
+
+        .legend#act1 {
+            background-color: #FBFFCC;
+        }
+
+        .legend#act2 {
+            background-color: #F8FF99;
+        }
+
+        .legend#act3 {
+            background-color: #F4FF66;
+        }
+
+        .legend#act4 {
+            background-color: #FFE57F;
+        }
+
+        .legend#act5 {
+            background-color: #FFD53F;
+        }
+
+        .legend#ooc {
+            background-color: red;
+        }
+
+        .legend#ctd {
+        }
+
+        .legend#img {
+            display: inline-block;
+            width: 20%;
+            min-width: 20%;
+            vertical-align: middle;
+        }
+
+        .legend#contactctd {
+            background-color: #FFDB9B;
+        }
+
+        .legend#contactooc {
+            background-color: #FFA59C;
+        }
+
+        .visuals {
+            text-decoration: underline;
+        }
+    </style>
+</header>
+<body>
+    <div class="container">
+        <span class="visuals"><strong>Column Header Icons:</strong></span>
+        <div class="row">
+            <div class="legend" id="img">
+                <center><img src="inc/v3/images/activity.png" /></center>
+            </div>
+            <div class="name">Days since case was Updated</div>
+        </div>
+        <div class="row">
+            <div class="legend" id="img">
+                <center><img src="inc/v3/images/contacted.png" /></center>
+            </div>
+            <div class="name">Days since case was Contacted</div>
+        </div>
+        <div class="row">
+            <div class="legend" id="img">
+                <center><img src="inc/v3/images/createdon.png" /></center>
+            </div>
+            <div class="name">Days since case was Created</div>
+        </div>
+
+        <div class="row">
+            &nbsp;<br />
+            <span class="visuals"><strong>Visuals by row:</strong></span>
+        </div>
+
+        <div class="row">
+            <div class="legend" id="critcontact">&nbsp;</div>
+            <div class="name">Critical with no activity in 24 hours</div>
+        </div>
+        <div class="row">
+            <div class="legend" id="act1">&nbsp;</div>
+            <div class="name">Problem with no activity in 2 days</div>
+        </div>
+        <div class="row">
+            <div class="legend" id="act2">&nbsp;</div>
+            <div class="name">Problem with no activity in 3 days</div>
+        </div>
+        <div class="row">
+            <div class="legend" id="act3">&nbsp;</div>
+            <div class="name">Problem with no activity in 4 days</div>
+        </div>
+        <div class="row">
+            <div class="legend" id="act4">&nbsp;</div>
+            <div class="name">Problem with no activity in 5 days</div>
+        </div>
+        <div class="row">
+            <div class="legend" id="act5">&nbsp;</div>
+            <div class="name">Problem with no activity in 6-13 days</div>
+        </div>
+        <div class="row">
+            <div class="legend" id="ooc">&nbsp;</div>
+            <div class="name">Problem with no activity 14+ days</div>
+        </div>
+
+        <div class="row">&nbsp;</div>
+
+        <div class="row">
+            <div class="legend" id="img">
+                <center><img src="inc/images/icon_important.png" /></center>
+            </div>
+            <div class="name">Problem with no contact in 2 days.</div>
+        </div>
+        <br />
+        <div class="visuals"><strong>Visuals for Contacted field:</strong></div>
+        <div class="row">
+            <div class="legend" id="contactctd">&nbsp;</div>
+            <div class="name">Contact today to meet CTD</div>
+        </div>
+        <div class="row">
+            <div class="legend" id="contactooc">&nbsp;</div>
+            <div class="name">No contact in 3+ days (out of contact)</div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -145,11 +145,11 @@ var initIssueWI = function() {
 			{ text: 'Analyst', datafield: 'ANALYST', classname: 'colheaderAnalyst', filtertype: 'checkedlist' }
         ],
 		rendered: function() {
-			console.log("rendered");		
+			//console.log("rendered");		
 			$('.various').fancybox({Width: 800,Height: 600,fitToView: true,autoSize: false,closeClick: false,openEffect: 'none',closeEffect: 'none'});
 		},
 		ready: function() {
-			console.log("ready");
+			//console.log("ready");
 			$('div[id^=dropdownlistContent]').text("Filter");
 			
 			$('#pagerjqxgridIssueWI>div').append('<input style="float: left; margin-left: 5px; padding: 1px 5px; font-size: .9em;" type="button" value="Export to CSV" id="csvExportIssueWI" />')

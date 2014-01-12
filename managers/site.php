@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <title id='Description'>Case Therapist -- Team View</title>
@@ -36,11 +36,11 @@
 	<script type="text/javascript" src="../inc/v3/custom/tracker.js"></script>
 	<!-- End Library Includes -->
 
-	<script type="text/javascript" src="v3team/hosemann.js"></script>
-	<script type="text/javascript" src="v3team/workable.js"></script>	
-	<script type="text/javascript" src="v3team/nonworkable.js"></script>
-	<script type="text/javascript" src="v3team/resolved.js"></script>
-	<script type="text/javascript" src="v3team/issuewis.js"></script>
+	<script type="text/javascript" src="v3site/hosemann.js"></script>
+	<script type="text/javascript" src="v3site/workable.js"></script>	
+	<script type="text/javascript" src="v3site/nonworkable.js"></script>
+	<script type="text/javascript" src="v3site/resolved.js"></script>
+	<script type="text/javascript" src="v3site/issuewis.js"></script>
 	<style>
 		html, body {
             height: 100%;
