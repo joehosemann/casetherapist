@@ -213,13 +213,6 @@
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="admin\QueueAdmin.aspx.cs">
-      <DependentUpon>QueueAdmin.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="admin\QueueAdmin.aspx.designer.cs">
-      <DependentUpon>QueueAdmin.aspx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
@@ -726,7 +719,6 @@
     <Content Include="Scripts\tracker.js" />
     <Content Include="Scripts\useroptions.js" />
     <Content Include="useroptions.html" />
-    <Content Include="admin\QueueAdmin.aspx" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
