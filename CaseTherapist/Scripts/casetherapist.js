@@ -93,13 +93,13 @@ hosemann = {
                 }
 
                 for (var i = 0; i < subscriptions.length; ++i) {
-                    queueBroadcastProxy.server.joinRoom(subscriptions[i].CallTypeID);
+                    queueBroadcastProxy.server.joinRoom(subscriptions[i].ProductID);
                 }
             };
         }
 
         // Receive broadcast functions
-        queueBroadcastProxy.client.updateProductQueue = function (product, callType, quantity, waitTime) {
+        queueBroadcastProxy.client.updateProductQueue = function (product, productID, callType, quantity, waitTime) {
             var waitTimeArray = waitTime.split(':');
             var waitTimeSeconds = parseInt(waitTimeArray[0] * 60 * 60) + parseInt(waitTimeArray[1] * 60) + parseInt(waitTimeArray[2]);
             var background = hosemann.vars.inactiveCallTypeBG;
@@ -1093,7 +1093,7 @@ hosemann = {
 
             $('#subscriptions').html('');
             for (i = 0; i < subscriptions.length; ++i) {
-                tempSubscriptions[subscriptions[i].ProductID] = subscriptions[i].CallTypeID;
+                tempSubscriptions[subscriptions[i].ProductID] = "subscribed";
             }
 
             for (i = 0; i < products.length; ++i) {
@@ -1262,34 +1262,7 @@ hosemann = {
             hosemann.vars.previousColor = randomColor;
         }
     },
-    admin: function () {
-        var adminBroadcastProxy = $.connection.adminBroadcastHub();
-
-        buildHtml();
-
-        function buildHtml() {
-            $('#adminPanel').html('<div class="admin"><div class="content"><div class="title">user<div style="font-weight: normal; display: inline; color: #1F6D9B;">options</div></div><div id="wizard"><h2>Initial Setup</h2><section><div id="row"><div id="labels" style="width:50%; float:left; text-align:right;"><label>Business Unit:</label></div><div id="inputs" style="float:left;"><div><input type="radio" name="BusinessUnits" value="ECBU" style="float: left;" />ECBU</div><div><input type="radio" name="BusinessUnits" value="GMBU" style="float: left;" />GMBU</div></div></div><div id="row"><div id="labels" style="width:50%; float:left; text-align:right;"><label>Cisco Extension (6xxx):</label></div><div id="inputs" style="float:left;"><input type="text" name="CiscoExtension" value="" /></div></div><div id="row"><div id="labels" style="width:50%; float:left; text-align:right;"><label>BluePumpkin Username:</label></div><div id="inputs" style="float:left;"><input type="text" name="BluePumpkinUsername" value="" /></div></div></section><h2>Subscriptions</h2><section><form action=""><ul id="subscriptions"></ul></form></section><h2>Visuals</h2><section><div class="bbqPreviewParentContainer"><div class="bbqPreviewContainer"><div class="bbqPreviewContainerTitle">Inactive Queue Preview</div><div class="bbq"><div class="bbqContainer" id="Inactive"><div class="bbqProduct" id="BBIS"><strong>BBIS</strong><div class="bbqQueue" id="CL"><strong>CL</strong>0|<strong>0:00:00</strong></div><div class="bbqQueue" id="PH"><strong>PH</strong>0|<strong>0:00:00</strong></div></div></div></div><br /><div><input type="text" id="applicationBG" /><p style="display:inline; margin-left:5px;">Application Background</p></div><div><input type="text" id="queueBG" /><p style="display:inline; margin-left:5px;">Queue Background</p></div><div><input type="text" id="queueFG" /><p style="display:inline; margin-left:5px;">Queue Foreground</p></div><div><input type="text" id="inactiveCallTypeBG" /><p style="display:inline; margin-left:5px;">Call Type Background</p></div><div><input type="text" id="inactiveCallTypeFG" /><p style="display:inline; margin-left:5px;">Call Type Foreground</p></div></div></div><br /><br /><div class="bbqPreviewParentContainer"><div class="bbqPreviewContainer"><div class="bbqPreviewContainerTitle">Active Queue Preview</div><div class="bbq"><div class="bbqContainer" id="Active"><div class="bbqProduct" id="BBIS"><strong>BBIS</strong><div class="bbqQueue" id="CL"><strong>CL</strong>0|<strong>0:00:00</strong></div><div class="bbqQueue" id="PH"><strong>PH</strong>0|<strong>0:00:00</strong></div></div></div></div><br /><div><input type="text" id="activeCallTypeBG" /><p style="display:inline; margin-left:5px;">Call Type Background</p></div><div><input type="text" id="activeCallTypeFG" /><p style="display:inline; margin-left:5px;">Call Type Foreground</p></div></div></div><br /><br /><div class="bbqPreviewParentContainer"><div class="bbqPreviewContainer"><div class="bbqPreviewContainerTitle">Extended Queue Preview</div><div class="bbq"><div class="bbqContainer" id="Extended"><div class="bbqProduct" id="BBIS"><strong>BBIS</strong><div class="bbqQueue" id="CL"><strong>CL</strong>0|<strong>0:00:00</strong></div><div class="bbqQueue" id="PH"><strong>PH</strong>0|<strong>0:00:00</strong></div></div></div></div><br /><div><input type="text" id="extendedCallTypeBG" /><p style="display:inline; margin-left:5px;">Call Type Background</p></div><div><input type="text" id="extendedCallTypeFG" /><p style="display:inline; margin-left:5px;">Call Type Foreground</p></div></div></div><br /><br /></section></div></div><div id="footer" style="height: 32px"><input type="button" id="userOptionsSubmitButton" value="Submit" style="float:right;margin-right:2.5%" /><div id="status"></div></div></div>');
-
-            $('input[name=CiscoExtension]').mask('6999');
-
-            $("#wizard").steps({
-                headerTag: "h2",
-                enableFinishButton: false,
-                enablePagination: false,
-                enableAllSteps: true,
-                bodyTag: "section",
-                transitionEffect: "slideLeft",
-                stepsOrientation: "vertical",
-                titleTemplate: "#title#"
-            });
-        }
-        adminBroadcastProxy.clients.buildProducts = function () {
-
-
-
-        }
-
-    },
+   
     utilities: {
         urlVars: {},
         createTableView: function (objArray, theme, enableHeader) {

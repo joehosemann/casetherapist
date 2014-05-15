@@ -19,13 +19,12 @@ namespace hapiservice.Hubs
 
         static QueueBroadcastHub()
         {
-            var nquery = "select cts.CallTypeID, prods.Name as Product, cts.Name as CallType from casetherapist_Products prods inner join casetherapist_CallTypes cts on prods.ID = cts.ProductID";
+            var nquery = "select cts.CallTypeID, prods.ID as ProductID, prods.Name as Product, cts.Name as CallType from casetherapist_Products prods inner join casetherapist_CallTypes cts on prods.ID = cts.ProductID";
             using (var connection = SqlHelper.GetOpenConnectionBBApps())
             {
                 CallTypeDetails = connection.Query<CallTypeDetailModel>(nquery);
-                DistinctProductsCallTypes = (from a in CallTypeDetails select new DistinctProductsCallTypesModel { Product = a.Product, CallType = a.CallType }).Distinct();
+                DistinctProductsCallTypes = (from a in CallTypeDetails select new DistinctProductsCallTypesModel { Product = a.Product, ProductID = a.ProductID, CallType = a.CallType }).Distinct();
             }
-
 
             _Timer.Interval = 1000;
             _Timer.Elapsed += TimerElapsed;
@@ -63,7 +62,7 @@ namespace hapiservice.Hubs
        
             var results = from a in queueData
                           join b in CallTypeDetails on a.CallTypeID equals b.CallTypeID
-                          select new CallTypeDetailModel { CallTypeID = a.CallTypeID, CallType = b.CallType, Product = b.Product, Quantity = a.Quantity, WaitTime = a.WaitTime };
+                          select new CallTypeDetailModel { CallTypeID = a.CallTypeID, CallType = b.CallType, ProductID = b.ProductID, Product = b.Product, Quantity = a.Quantity, WaitTime = a.WaitTime };
 
             var resultList = new List<CallTypeDetailModel>();
 
@@ -80,6 +79,7 @@ namespace hapiservice.Hubs
                         var tempCallTypeDetailModel = new CallTypeDetailModel();
 
                         tempCallTypeDetailModel.Product = item.Product;
+                        tempCallTypeDetailModel.ProductID = item.ProductID;
                         tempCallTypeDetailModel.CallType = item.CallType;
 
                         TimeSpan thisWaitTime;
@@ -105,7 +105,7 @@ namespace hapiservice.Hubs
 
             foreach (var item in resultList)
             {
-                hub.Clients.Group(item.CallTypeID).updateProductQueue(item.Product, item.CallType, item.Quantity, item.WaitTime);
+                hub.Clients.Group(item.ProductID).updateProductQueue(item.Product, item.ProductID, item.CallType, item.Quantity, item.WaitTime);
             }
 
         }

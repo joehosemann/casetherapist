@@ -4,6 +4,7 @@ namespace hapiservice.Models
     public class CallTypeDetailModel
     {       
         public string CallTypeID { get; set; }
+        public string ProductID { get; set; }
         public string Product { get; set; }
         public string CallType { get; set; }
         public string Quantity { get; set; }

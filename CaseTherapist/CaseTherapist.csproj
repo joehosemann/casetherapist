@@ -636,7 +636,6 @@
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
     <Content Include="Content\useroptions.css" />
-    <Content Include="Content\useroptions.html" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Images\activity.png" />
@@ -717,7 +716,6 @@
     <Content Include="Scripts\spectrum.js" />
     <Content Include="Scripts\tracker.js" />
     <Content Include="Scripts\useroptions.js" />
-    <Content Include="useroptions.html" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -742,7 +740,6 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="packages.config" />
-    <None Include="Project_Readme.html" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
