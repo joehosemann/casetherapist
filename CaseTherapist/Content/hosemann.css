@@ -1,0 +1,206 @@
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0px auto;
+    overflow: hidden;
+}
+
+.header {
+    width: 95%;
+    margin: 0 auto;
+    border-left: 1px #e5e5e5 solid;
+    border-right: 1px #e5e5e5 solid;
+    line-height: 24px;
+    font-family: 'Open Sans', 'Segoe UI', sans-serif;
+    background: #EDEDED;
+}
+
+#userOptionsButton {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    float: left;
+    height: 24px;
+    width: 24px;
+    margin-left: 5px;
+    background: url(../Images/gears20.png) no-repeat center transparent;
+}
+
+    #userOptionsButton:hover {
+        background: url('../Images/bluegears20.png') no-repeat center transparent !important;
+    }
+
+
+.casetherapist {
+    font-size: 1em;
+    float: right;
+    padding-right: .3em;
+    margin-right: -1px;
+    padding-left: 1em;
+    background-color: white;
+    margin-bottom: -2px;
+}
+
+#bbq {
+    height: auto;
+    margin: 0 auto;
+    font-size: .75em;
+}
+
+.bbqContainer {
+    margin: 0 auto;
+    display: table;
+}
+
+.bbqProduct {
+    font-weight: bold;
+    background-color: #CCCCCC;
+    padding-left: 3px;
+    margin: 0 auto;
+    display: inline-block;
+}
+
+.bbqQueue {
+    /*font-family: 'Open Sans Condensed', sans-serif;*/
+    border-right: 1px solid darkgray;
+    border-left: 0px;
+    display: inline-block;
+    background-color: white;
+    font-weight: normal;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-right: -3px;
+}
+
+#jqxTabs {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.contactRed {
+    background-color: #FFA59C;
+}
+
+.contactOrange {
+    background-color: #FFDB9B;
+}
+
+.contact2 {
+    background-color: #FBFFCC;
+}
+
+.contact3 {
+    background-color: #F8FF99;
+}
+
+.contact4 {
+    background-color: #F4FF66;
+}
+
+.contact5 {
+    background-color: #FFE57F;
+}
+
+.contact6 {
+    background-color: #FFD53F;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+
+.headernotification {
+    width: 95%;
+    margin: 0 auto;
+    background-color: lightslategray;
+    border: 1px solid #e5e5e5;
+    font-family: 'Segoe UI';
+    font-size: 13px;
+    color: whitesmoke;
+    padding-bottom: 3px;
+}
+
+    .headernotification #message {
+        padding-left: 20px;
+    }
+
+    .headernotification a {
+        color: whitesmoke;
+    }
+
+/* Begin Queue Activity */
+
+ul, li {
+    list-style: none outside none;
+    margin: 0;
+    padding: 0;
+    display: table-row;
+}
+
+.menu_class {
+    border: 1px solid #1C1C1C;
+}
+
+.file_menu {
+    background-color: #302F2F;
+    border: 1px solid #1C1C1C;
+    display: none;
+    position: fixed;
+    right: 3%;
+    top: 30px;
+    width: auto;
+    z-index: 10000;
+}
+
+    .file_menu li {
+        background-color: #302F2F;
+    }
+
+.jqx-tabs-headerWrapper {
+    z-index: 1000;
+}
+
+.circle {
+    border-radius: 50%;
+    display: inline-block;
+    height: 10px;
+    margin-right: 5px;
+    width: 10px;
+}
+
+.red {
+    background: none repeat scroll 0 0 #FF4040;
+}
+
+.green {
+    background: none repeat scroll 0 0 #70ED3B;
+}
+
+.yellow {
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0);
+}
+
+.orange {
+    background: none repeat scroll 0 0 #FFB040;
+}
+
+.qaname {
+    display: inline-block;
+    margin-left: 5px;
+    float: left;
+}
+
+.qatimeinstatus {
+    display: inline-block;
+    float: right;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+/* End Queue Activity */

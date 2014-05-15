@@ -1,0 +1,221 @@
+﻿
+#userOptionsPanel ul, li {
+    display: block;
+}
+
+#userOptionsPanel .bbq {
+    height: auto;
+    /*width: 95%;*/
+    margin: 0 auto;
+    background: #EDEDED;
+    font-size: 12px;
+    font-family: 'Segoe UI';
+    line-height: 18px;
+}
+
+#userOptionsPanel .bbqContainer {
+    margin: 0 auto;
+    display: table;
+    border-top: 2px #e5e5e5 solid;
+    border-bottom: 2px #e5e5e5 solid;
+}
+
+#userOptionsPanel .bbqProduct {
+    font-weight: bold;
+    background-color: #CCCCCC;
+    padding-left: 3px;
+    margin: 0 auto;
+    display: inline-block;
+}
+
+    #userOptionsPanel .bbqProduct strong {
+        margin: 0 4px 0 1px;
+    }
+
+#userOptionsPanel .bbqQueue {
+    border-right: 2px #e5e5e5 solid;
+    border-left: 0px;
+    display: inline-block;
+    background-color: white;
+    font-weight: normal;
+}
+
+#userOptionsPanel #CL {
+    padding-left: 3px;
+}
+
+#userOptionsPanel #PH {
+    padding-left: 3px;
+}
+
+#userOptionsPanel .bbqPreviewContainer {
+    width: auto;
+}
+
+#userOptionsPanel .bbqPreviewParentContainer {
+    margin: 0 auto;
+    width: 80%;
+    font-size: 12px;
+}
+
+#userOptionsPanel .bbqPreviewContainerTitle {
+    margin: 0 auto;
+    text-align: center;
+    font-size: 1.1em;
+    background: #c0c0c0;
+    border: 1px solid #606060;
+}
+
+#userOptionsPanel .sp-dd {
+    line-height: normal;
+}
+
+#userOptionsPanel input[type=button]#submit {
+    border: solid 1px #1f6e98;
+    border-radius: 4px;
+    moz-border-radius: 4px;
+    font-size: 16px;
+    color: #ffffff;
+    padding: 0.3em 0.6em;
+    background-color: #1f6e9b;
+}
+
+
+#userOptionsPanel ul#subscriptions {
+    overflow-y: auto;
+    overflow-x: hidden;
+    list-style: none;
+    padding: 0;
+    height: 100%;
+}
+
+#userOptionsPanel #subscriptions li label {
+    display: block;
+    border-bottom: 1px solid #DDD;
+    padding: 4px 4px 4px 26px;
+    color: #000;
+    outline: none;
+    position: relative;
+}
+
+    #userOptionsPanel #subscriptions li label:hover {
+        color: #000;
+        background-color: #EEE;
+    }
+
+    #userOptionsPanel #subscriptions li label.selected {
+        color: #FFF;
+        background-color: #CCC;
+    }
+
+    #userOptionsPanel #subscriptions li label .checkbox {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+    }
+
+#userOptionsPanel form {
+    display: inline;
+}
+
+
+#userOptionsPanel {
+    /*font-family: 'Segoe UI';*/
+    font-family: 'Segoe UI','Open Sans', sans-serif;
+}
+
+#userOptionsPanel .content {
+    margin-left: 10px; /* evens the left and right gutters*/
+}
+
+#userOptionsPanel .randomcolor {
+    color: #1F6D9B; /* default blue */
+}
+
+
+#userOptionsPanel .title {
+    display: block;
+    font-size: 2em;
+    padding-left: 0em;
+    padding-bottom: 0.5em;
+    -webkit-margin-after: 0em;
+    -webkit-margin-start: 0em;
+    -webkit-margin-end: 0em;
+    -webkit-margin-before: 0em;
+    font-weight: bold;
+}
+
+#userOptionsPanel .wizard > .content > .body label {
+    /*margin-bottom: 0px;*/
+    display: block;
+}
+
+#userOptionsPanel .wizard > .steps .done a,
+#userOptionsPanel .wizard > .steps .done a:hover,
+#userOptionsPanel .wizard > .steps .done a:active {
+    background: white;
+    color: black;
+}
+
+#userOptionsPanel .wizard > .steps a {
+    /*color: black;*/
+}
+
+#userOptionsPanel .useroptions {
+    padding: 10px;
+    /*border-left: 1px solid #808080;
+            border-right: 1px solid #808080;
+            border-bottom: 1px solid #808080;*/
+    height: 100%;
+}
+
+#userOptionsPanel .steps > ul {
+    border: 1px solid #ccc;
+    padding-top: 0.3em;
+    -webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    -webkit-padding-start: 0px;
+    /*bottom left*/
+    -moz-border-radius-bottomleft: 5px !important;
+    -webkit-border-bottom-left-radius: 5px !important;
+    -khtml-border-bottom-left-radius: 5px !important;
+    border-bottom-left-radius: 5px !important;
+    /*bottom right*/
+    -moz-border-radius-bottomright: 5px !important;
+    -webkit-border-bottom-right-radius: 5px !important;
+    -khtml-border-bottom-right-radius: 5px !important;
+    border-bottom-right-radius: 5px !important;
+    /*top left*/
+    -moz-border-radius-topleft: 5px !important;
+    -webkit-border-top-left-radius: 5px !important;
+    -khtml-border-top-left-radius: 5px !important;
+    border-top-left-radius: 5px !important;
+    /*top right*/
+    -moz-border-radius-topright: 5px !important;
+    -webkit-border-top-right-radius: 5px !important;
+    -khtml-border-top-right-radius: 5px !important;
+    border-top-right-radius: 5px !important;
+    border-bottom: 1px solid #d9d9d9 !important;
+}
+
+#userOptionsPanel .wizard > .steps a,
+#userOptionsPanel .wizard > .steps a:hover,
+#userOptionsPanel .wizard > .steps a:active {
+    margin: 0 0.3em 0.3em;
+    padding: 0.3em;
+}
+
+#userOptionsPanel .wizard > .steps .current a,
+#userOptionsPanel .wizard > .steps .current a:hover,
+#userOptionsPanel .wizard > .steps .current a:active {
+    background: #1F6D9B;
+}
+
+#userOptionsPanel #inputs > input {
+    margin-bottom: 0.5em;
+    /*padding: 0px 3px;*/
+    margin-left: 5px;
+    font-size: 1em;
+}

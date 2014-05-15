@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Please work...</title>
+    <link rel="stylesheet" media="screen" type="text/css" href="jquery.steps.css">
+    <link rel="stylesheet" media="screen" type="text/css" href="spectrum.css" />
+    <link rel="stylesheet" media="screen" type="text/css" href='http://fonts.googleapis.com/css?family=Open+Sans:400,700'>
+    <link rel="stylesheet" media="screen" type="text/css" href="useroptions.css" />
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../scripts/jquery-ui-1.10.4.min.js"></script>
+    <script type="text/javascript" src="../scripts/jquery.steps.js"></script>
+    <script type="text/javascript" src="../scripts/spectrum.js"></script>
+    <script type="text/javascript" src="../scripts/useroptions.js"></script>
+    <script type="text/javascript" src="../Scripts/jquery.signalR-2.0.3.js"></script>
+    <script src="/signalr/hubs"></script>
+</head>
+<body style="width: 700px; height:100%; margin: 0px auto;">
+    <div class="header"><div style="font-size:18px;float: right;margin-right: 25px;">case<strong>therapist</strong></div></div>
+    <div class="useroptions">
+        <div class="content">
+            <div class="title">user<div style="font-weight: normal; display: inline; color: #1F6D9B;">options</div></div>
+          
+            <div id="wizard">
+                <h2>Initial Setup</h2>
+                <section>
+                    <p>
+                        <div id="labels" style="width:50%; float:left; text-align:right;">
+                            <label>Business Unit:</label>
+                            <label>Cisco Extension:</label>
+                            <label>BluePumpkin Username:</label>
+                        </div>
+                        <div id="inputs" style="float:left">
+                            <input type="text" name="BusinessUnit" value="" />
+                            <input type="text" name="CiscoExtension" value="" />
+                            <input type="text" name="BluePumpkinUsername" value="" />
+                        </div>
+                    </p>
+                </section>
+                <h2>Subscriptions</h2>
+                <section>
+                    <form action="">
+                        <ul id="subscriptions"></ul>
+                    </form>
+                </section>
+
+                <h2>Visuals</h2>
+                <section>
+                    <div class="bbqPreviewParentContainer">
+                        <div class="bbqPreviewContainer">
+                            <div class="bbqPreviewContainerTitle">Inactive Queue Preview</div>
+                            <div class="bbq">
+                                <div class="bbqContainer" id="Inactive"><div class="bbqProduct" id="BBIS"><strong>BBIS</strong><div class="bbqQueue" id="CL"><strong>CL</strong>0|<strong>0:00:00</strong></div><div class="bbqQueue" id="PH"><strong>PH</strong>0|<strong>0:00:00</strong></div></div></div>
+                            </div>
+                            <br />
+                            <div><input type='text' id="applicationBG" /><p style="display:inline; margin-left:5px;">Application Background</p></div>
+                            <div><input type='text' id="queueBG" /><p style="display:inline; margin-left:5px;">Queue Background</p></div>
+                            <div><input type='text' id="queueFG" /><p style="display:inline; margin-left:5px;">Queue Foreground</p></div>
+                            <div><input type='text' id="inactiveCallTypeBG" /><p style="display:inline; margin-left:5px;">Call Type Background</p></div>
+                            <div><input type='text' id="inactiveCallTypeFG" /><p style="display:inline; margin-left:5px;">Call Type Foreground</p></div>
+                        </div>
+                    </div>
+                    <br /><br />
+                    <div class="bbqPreviewParentContainer">
+                        <div class="bbqPreviewContainer">
+                            <div class="bbqPreviewContainerTitle">Active Queue Preview</div>
+                            <div class="bbq">
+                                <div class="bbqContainer" id="Active"><div class="bbqProduct" id="BBIS"><strong>BBIS</strong><div class="bbqQueue" id="CL"><strong>CL</strong>0|<strong>0:00:00</strong></div><div class="bbqQueue" id="PH"><strong>PH</strong>0|<strong>0:00:00</strong></div></div></div>
+                            </div>
+                            <br />
+                            <div><input type='text' id="activeCallTypeBG" /><p style="display:inline; margin-left:5px;">Call Type Background</p></div>
+                            <div><input type='text' id="activeCallTypeFG" /><p style="display:inline; margin-left:5px;">Call Type Foreground</p></div>
+                        </div>
+                    </div>
+                    <br /><br />
+                    <div class="bbqPreviewParentContainer">
+                        <div class="bbqPreviewContainer">
+                            <div class="bbqPreviewContainerTitle">Extended Queue Preview</div>
+                            <div class="bbq">
+                                <div class="bbqContainer" id="Extended"><div class="bbqProduct" id="BBIS"><strong>BBIS</strong><div class="bbqQueue" id="CL"><strong>CL</strong>0|<strong>0:00:00</strong></div><div class="bbqQueue" id="PH"><strong>PH</strong>0|<strong>0:00:00</strong></div></div></div>
+                            </div>
+                            <br />
+                            <div><input type='text' id="extendedCallTypeBG" /><p style="display:inline; margin-left:5px;">Call Type Background</p></div>
+                            <div><input type='text' id="extendedCallTypeFG" /><p style="display:inline; margin-left:5px;">Call Type Foreground</p></div>
+                        </div>
+                    </div>
+                    <br /><br />
+                </section>
+            </div>
+        </div>
+        <div id="footer" style="height: 32px"><input type="button" id="Submit" value="Submit" style="float:right;margin-right:2.5%" /><div id="status"></div></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="hapiservice.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="caseStatusNonWorkableGMBU" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">'','Pending - Install','Pending - PD','Pending - PS','Pending - Upgrade','File CR','Await SW Rel/Dev','Pending ClientAction','Awaiting Hosting Services','File DBA'</Value>
+    </Setting>
+    <Setting Name="caseStatusNonWorkableECBU" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">'','Pending - Install','Pending - PD','Pending - PS','Pending - Upgrade','Solved Pending Confirmation','Suggested Resolution','Awaiting Hosting Services','File CR','Await SW Rel/Dev','Pending ClientAction'</Value>
+    </Setting>
+    <Setting Name="ClarifyAuth" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="caseProactiveContact" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">'Outgoing call','Chat','Incoming Call'</Value>
+    </Setting>
+    <Setting Name="caseAllContact" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">'Incoming Call','Outgoing call','Chat','ACD - Live'</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
