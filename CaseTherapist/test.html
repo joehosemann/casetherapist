@@ -1,0 +1,239 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/selectivizr/1.0.2/selectivizr-min.js"></script>
+     <script type="text/javascript" src="../scripts/json2.js"></script>
+    <script type="text/javascript" src="../scripts/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="../scripts/jquery.signalR-2.0.3.js"></script>
+    <script src="/signalr/hubs"></script>
+
+    <style>
+        body {
+            font-family: 'Open Sans', 'Segoe UI', sans-serif;
+        }
+
+        table {
+            border-spacing: 0px;
+        }
+
+        .queueParent {
+            background-color: #152D40;
+            overflow: hidden;
+            border-bottom: solid white 1px !important;
+        }
+
+            .queueParent td {
+                padding-left: 5px;
+                padding-right: 5px;
+                color: white;
+                text-align: center;
+            }
+
+        .productName {
+            text-align: left !important;
+            border-right: solid white 1px;
+        }
+
+        .quantity {
+            border-right: solid white 1px;
+        }
+
+        .waitTime {
+            border-right: solid white 1px;
+        }
+
+        .offered {
+            border-right: solid white 1px;
+        }
+
+        .handled {
+            border-right: solid white 1px;
+        }
+
+        .sla {
+            border-right: solid white 1px;
+        }
+
+        .percentLive {
+            border-right: solid white 1px;
+        }
+
+        .serviceLevel {
+            border-right: solid white 1px;
+        }
+
+        .averageAnswer {
+            border-right: solid white 1px;
+        }
+
+        .talk {
+            border-right: solid white 1px;
+        }
+    </style>
+
+    <style>
+        .queueParent:not(.columnHeader) {
+            background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #b8e356), color-stop(1, #a5cc52) );
+            background: -moz-linear-gradient( center top, #b8e356 5%, #a5cc52 100% );
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#b8e356', endColorstr='#a5cc52');
+            background-color: #b8e356;
+            -webkit-border-top-left-radius: 0px;
+            -moz-border-radius-topleft: 0px;
+            border-top-left-radius: 0px;
+            -webkit-border-top-right-radius: 0px;
+            -moz-border-radius-topright: 0px;
+            border-top-right-radius: 0px;
+            -webkit-border-bottom-right-radius: 0px;
+            -moz-border-radius-bottomright: 0px;
+            border-bottom-right-radius: 0px;
+            -webkit-border-bottom-left-radius: 0px;
+            -moz-border-radius-bottomleft: 0px;
+            border-bottom-left-radius: 0px;
+            text-indent: 0;
+            border: 1px solid #83c41a;
+            color: #ffffff;
+            font-family: Arial;
+            font-size: 15px;
+            font-weight: bold;
+            font-style: normal;
+            height: 26px;
+            line-height: 26px;
+            width: 100px;
+            text-decoration: none;
+            text-align: center;
+            text-shadow: 1px 1px 0px #86ae47;
+        }
+
+        .queueParent:hover:not(.columnHeader) {
+            background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #a5cc52), color-stop(1, #b8e356) );
+            background: -moz-linear-gradient( center top, #a5cc52 5%, #b8e356 100% );
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#a5cc52', endColorstr='#b8e356');
+            background-color: #a5cc52;
+        }
+
+        .queueParent:active:not(.columnHeader) {
+            position: relative;
+            top: 1px;
+        }
+    </style>
+
+</head>
+<body>
+<!--    <table id="queueListContainer">
+        <tr class="queueParent columnHeader">
+            <td class="productName">ProductName</td>
+            <td class="quantity">Quantity</td>
+            <td class="waitTime">WaitTime</td>
+            <td class="offered">Offered</td>
+            <td class="handled">Handled</td>
+            <td class="sla">SLA</td>
+            <td class="percentLive">PercentLive</td>
+            <td class="serviceLevel">ServiceLevel</td>
+            <td class="averageAnswer">ASA</td>
+            <td class="talkTime">Talk</td>
+        </tr>
+        <tr class="queueParent">
+            <td class="productName">RE_ALL</td>
+            <td class="quantity">3</td>
+            <td class="waitTime">0:10:23</td>
+            <td class="offered">-</td>
+            <td class="handled">-</td>
+            <td class="sla">-</td>
+            <td class="percentLive">-</td>
+            <td class="serviceLevel">-</td>
+            <td class="averageAnswer">-</td>
+            <td class="talkTime">-</td>
+        </tr>
+
+
+    </table>-->
+
+    <script>
+        var queueBroadcastProxy = $.connection.queueBroadcastHub;
+        
+        var combinedQueueData = [];
+        var queueData = [];
+
+        queueBroadcastProxy.client.updateAllProductQueue = function (callTypeDetailModel) {
+            var i = 0, len = callTypeDetailModel.length;
+            for (i; i < len; i++) {
+                var callTypeID = callTypeDetailModel[i].CallTypeID;
+                var productID = callTypeDetailModel[i].ProductID;
+                var product = callTypeDetailModel[i].Product;
+                var callType = callTypeDetailModel[i].CallType;
+                var quantity = callTypeDetailModel[i].Quantity;
+                var waitTime = callTypeDetailModel[i].WaitTime;
+                var offered = callTypeDetailModel[i].Offered;
+                var handled = callTypeDetailModel[i].Handled;
+                var slabandoned = callTypeDetailModel[i].SLAbandoned;
+                var percentlive = callTypeDetailModel[i].PercentLive;
+                var averageAnswer = callTypeDetailModel[i].AverageAnswer;
+                var handleTime = callTypeDetailModel[i].HandleTime;
+                var talkTime = callTypeDetailModel[i].TalkTime;
+                var serviceLevel = callTypeDetailModel[i].ServiceLevel;
+                var callTypeID = callTypeDetailModel[i].CallTypeID;
+                var productID = callTypeDetailModel[i].ProductID;
+                var product = $.trim(callTypeDetailModel[i].Product);
+                var callType = callTypeDetailModel[i].CallType;
+                var quantity = callTypeDetailModel[i].Quantity;
+                var waitTime = callTypeDetailModel[i].WaitTime;
+
+                if (callTypeID.length > 5)
+                {
+                    combinedQueueData.push(callTypeDetailModel[i]);
+                }
+                else
+                {
+                    queueData.push(callTypeDetailModel[i]);
+                }
+
+                queueData.forEach(function (aelem, aindex) {
+                    combinedQueueData.forEach(function (belem, bindex) {                       
+                        if (belem.CallTypeID.match(aelem.CallTypeID)) {                           
+                            belem.children[belem.children.length].push(aelem);
+                        }
+
+                    });
+
+                });
+
+                console.log(combinedQueueData);
+
+
+                if ($('#' + product.length <= 0)) {
+                    $('#' + product + '>.AvgHoldTime').text(waitTime);
+                    $('#' + product + '>.NumCallsHolding').text(quantity);
+                }
+                i++;
+            }
+        };
+
+        $.connection.hub.start().done(function () {
+            queueBroadcastProxy.server.joinRoom('all');
+
+
+        });
+
+
+
+
+        // String.Format (aliaed to .f)
+        // usage: 'Added {0} by {1} to your collection'.f(title, artist)
+        // credit: http://stackoverflow.com/questions/1038746/equivalent-of-string-format-in-jquery
+        String.prototype.format = String.prototype.f = function () {
+            var s = this,
+                i = arguments.length;
+
+            while (i--) {
+                s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
+            }
+            return s;
+        };
+
+        $(document).ready(function () {
+            //hosemann.signalR();
+        })
+    </script>
+</body>
+</html>
