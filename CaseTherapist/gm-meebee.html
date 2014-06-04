@@ -1,0 +1,234 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script type="text/javascript" src="../scripts/json2.js"></script>
+    <script type="text/javascript" src="../scripts/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="../scripts/jquery.signalR-2.0.3.js"></script>
+    <script src="/signalr/hubs"></script>
+
+    <style>
+        /*
+        #bbgray {color:#50535a}
+        #bbgreen {color:#8cbe4f}
+        #bborange {color:#f57e20}
+        #bbteal {color:#35aba0}
+        */
+
+        body {
+            background-color: white;
+            color: #50535a;
+            font-family: 'Calibri', sans-serif;
+            text-align: center;
+            font-size: 13px;
+            width: 300px;
+            height: 400px;
+        }
+
+        .title {
+            color: #8CBE4F;
+            text-align: center;
+            border: none;
+            padding-bottom: 8px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        #ap_container {
+            width: 350px;
+        }
+
+        #core_container {
+            width: 350px;
+        }
+
+        .Product {
+            width: 32.6666666667%;
+        }
+
+        .AvgHoldTime {
+            width: 32.6666666667%;
+        }
+
+        .NumCallsHolding {
+            margin-left: 0;
+            width: 32.6666666667%;
+        }
+
+        .AvgHoldTime, .NumCallsHolding {
+            float: left;
+        }
+
+        .col {
+            border: 0px solid rgba(0,0,0,0);
+            float: left;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            -moz-background-clip: padding-box !important;
+            -webkit-background-clip: padding-box !important;
+            background-clip: padding-box !important;
+        }
+    </style>
+
+</head>
+<body>
+    <div style="width:375px">
+        <div id="core_container">
+            <div class="title">Advantage &amp; Advantage Professional</div>
+            <div>
+                <div id="container">
+                    <div style="font-weight:bold;">
+                        <div class="col Product">Product</div>
+                        <div class="col AvgHoldTime">Average Hold Time</div>
+                        <div class="col NumCallsHolding"># of callers holding</div>
+                    </div>
+                    <div id="RE_ALL">
+                        <div class="col Product">Raiser's Edge</div>
+                        <div class="col AvgHoldTime">0</div>
+                        <div class="col NumCallsHolding">0</div>
+                    </div>
+                    <div id="FE_ALL">
+                        <div class="col Product">Financial Edge</div>
+                        <div class="col AvgHoldTime">0</div>
+                        <div class="col NumCallsHolding">0</div>
+                    </div>
+                    <div id="BBNC_ALL">
+                        <div class="col Product">BBNC</div>
+                        <div class="col AvgHoldTime">0</div>
+                        <div class="col NumCallsHolding">0</div>
+                    </div>
+                    <div id="EE">
+                        <div class="col Product">Education Edge</div>
+                        <div class="col AvgHoldTime">0</div>
+                        <div class="col NumCallsHolding">0</div>
+                    </div>
+                    <div id="Sphere_ALL">
+                        <div class="col Product">Sphere</div>
+                        <div class="col AvgHoldTime">0</div>
+                        <div class="col NumCallsHolding">0</div>
+                    </div>
+                    <div id="Altru">
+                        <div class="col Product">Altru</div>
+                        <div class="col AvgHoldTime">0</div>
+                        <div class="col NumCallsHolding">0</div>
+                    </div>
+                    <div id="BBPS_ALL">
+                        <div class="col Product">Payment Services</div>
+                        <div class="col AvgHoldTime">0</div>
+                        <div class="col NumCallsHolding">0</div>
+                    </div>
+                    <div id="Analytics">
+                        <div class="col Product">Analytics</div>
+                        <div class="col AvgHoldTime">0</div>
+                        <div class="col NumCallsHolding">0</div>
+                    </div>
+                    <div id="FW">
+                        <div class="col Product">Fundware</div>
+                        <div class="col AvgHoldTime">0</div>
+                        <div class="col NumCallsHolding">0</div>
+                    </div>
+                    <div id="Install_ALL">
+                        <div class="col Product">Install</div>
+                        <div class="col AvgHoldTime">0</div>
+                        <div class="col NumCallsHolding">0</div>
+                    </div>
+                    <div id="SB">
+                        <div class="col Product">Stuent Billing</div>
+                        <div class="col AvgHoldTime">0</div>
+                        <div class="col NumCallsHolding">0</div>
+                    </div>
+                    <div id="eTap">
+                        <div class="col Product">eTap</div>
+                        <div class="col AvgHoldTime">0</div>
+                        <div class="col NumCallsHolding">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div id="ap_container">
+            <div class="title">Advantage Priority</div>
+            <div>
+                <div id="container">
+                    <div style="font-weight:bold;">
+                        <div class="col Product">Product</div>
+                        <div class="col AvgHoldTime">Average Hold Time</div>
+                        <div class="col NumCallsHolding"># of callers holding</div>
+                    </div>
+                    <div id="RE_AP_ALL">
+                        <div class="col Product">Raiser's Edge</div>
+                        <div class="col AvgHoldTime">0</div>
+                        <div class="col NumCallsHolding">0</div>
+                    </div>
+                    <div id="FE_AP_ALL">
+                        <div class="col Product">Financial Edge</div>
+                        <div class="col AvgHoldTime">0</div>
+                        <div class="col NumCallsHolding">0</div>
+                    </div>
+                    <div id="BBNC_AP_ALL">
+                        <div class="col Product">BBNC</div>
+                        <div class="col AvgHoldTime">0</div>
+                        <div class="col NumCallsHolding">0</div>
+                    </div>
+                    <div id="EE_AP">
+                        <div class="col Product">Education Edge</div>
+                        <div class="col AvgHoldTime">0</div>
+                        <div class="col NumCallsHolding">0</div>
+                    </div>
+                    <div id="Sphere_AP_ALL">
+                        <div class="col Product">Sphere</div>
+                        <div class="col AvgHoldTime">0</div>
+                        <div class="col NumCallsHolding">0</div>
+                    </div>
+                    <div id="Analytics_AP">
+                        <div class="col Product">Analytics</div>
+                        <div class="col AvgHoldTime">0</div>
+                        <div class="col NumCallsHolding">0</div>
+                    </div>
+                    <div id="eTap_AP">
+                        <div class="col Product">eTap</div>
+                        <div class="col AvgHoldTime">0</div>
+                        <div class="col NumCallsHolding">0</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        var queueBroadcastProxy = $.connection.queueBroadcastHub;
+        var temp = '';
+        queueBroadcastProxy.client.updateAllProductQueue = function (callTypeDetailModel) {
+            var i = 0, len = callTypeDetailModel.length;
+            for (i; i < len; i++) {
+                var callTypeID = callTypeDetailModel[i].CallTypeID;
+                var productID = callTypeDetailModel[i].ProductID;
+                var product = callTypeDetailModel[i].Product;
+                var callType = callTypeDetailModel[i].CallType;
+                var quantity = callTypeDetailModel[i].Quantity;
+                var waitTime = callTypeDetailModel[i].WaitTime;
+                var offered = callTypeDetailModel[i].Offered;
+                var handled = callTypeDetailModel[i].Handled;
+                var slabandoned = callTypeDetailModel[i].SLAbandoned;
+                var percentlive = callTypeDetailModel[i].PercentLive;
+                var averageAnswer = callTypeDetailModel[i].AverageAnswer;
+                var handleTime = callTypeDetailModel[i].HandleTime;
+                var talkTime = callTypeDetailModel[i].TalkTime;
+                var serviceLevel = callTypeDetailModel[i].ServiceLevel;           
+
+                if ($('#' + product.length <= 0)) {
+                    $('#' + product + '>.AvgHoldTime').text(waitTime);
+                    $('#' + product + '>.NumCallsHolding').text(quantity);
+                }
+                i++;
+            }
+        };
+
+        $.connection.hub.start().done(function () {
+            queueBroadcastProxy.server.joinRoom('all');
+        });
+    </script>
+</body>
+</html>
