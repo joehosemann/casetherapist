@@ -3,14 +3,18 @@
 <head>
     <title></title>
     <script src="//cdnjs.cloudflare.com/ajax/libs/selectivizr/1.0.2/selectivizr-min.js"></script>
-     <script type="text/javascript" src="../scripts/json2.js"></script>
+    <script type="text/javascript" src="../scripts/json2.js"></script>
     <script type="text/javascript" src="../scripts/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="../scripts/jquery.signalR-2.0.3.js"></script>
     <script src="/signalr/hubs"></script>
+    <script src="../Scripts/jquery.collapse.js"></script>
+    <script src="../Scripts/jquery.collapse_cookie_storage.js"></script>
+    <script src="../Scripts/jquery.collapse_storage.js"></script>
 
     <style>
         body {
             font-family: 'Open Sans', 'Segoe UI', sans-serif;
+            width: 400px;
         }
 
         table {
@@ -73,6 +77,50 @@
     </style>
 
     <style>
+        #combinedQueueStatusContainer h2, #singleQueueStatusContainer h2 {
+            background: #B0E5B8;
+            border: 1px solid #628066;
+            border-width: 0 1px 0px 0;
+            overflow: hidden;
+            margin: .2em;
+            line-height: 1.2;
+            font-size:1em;
+
+        }
+
+        h2 a {
+            background: url("../Images/sprite.png") 15px 13px no-repeat;
+            display: block;
+            padding: 9px;
+            padding-left: 32px;
+            margin: 0;
+            color: #628066;
+            text-decoration: none;
+            font-weight: normal;
+            border-bottom: 1px solid #628066;
+        }
+
+        h2.open a {
+            background-position: 14px -24px;
+        }
+
+        h2 + div,
+        h2 + ul,
+        h2 + p {
+            /*padding: 10px;*/
+            background: #fff;
+            margin: 0;
+            display: none;
+            -webkit-margin: 1em;
+-webkit-padding-start: 1em;
+        }
+
+        li {
+            margin: 10px 20px;
+            list-style-type: circle;
+            list-style: none;
+        }
+
         .queueParent:not(.columnHeader) {
             background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #b8e356), color-stop(1, #a5cc52) );
             background: -moz-linear-gradient( center top, #b8e356 5%, #a5cc52 100% );
@@ -120,93 +168,97 @@
 
 </head>
 <body>
-<!--    <table id="queueListContainer">
-        <tr class="queueParent columnHeader">
-            <td class="productName">ProductName</td>
-            <td class="quantity">Quantity</td>
-            <td class="waitTime">WaitTime</td>
-            <td class="offered">Offered</td>
-            <td class="handled">Handled</td>
-            <td class="sla">SLA</td>
-            <td class="percentLive">PercentLive</td>
-            <td class="serviceLevel">ServiceLevel</td>
-            <td class="averageAnswer">ASA</td>
-            <td class="talkTime">Talk</td>
-        </tr>
-        <tr class="queueParent">
-            <td class="productName">RE_ALL</td>
-            <td class="quantity">3</td>
-            <td class="waitTime">0:10:23</td>
-            <td class="offered">-</td>
-            <td class="handled">-</td>
-            <td class="sla">-</td>
-            <td class="percentLive">-</td>
-            <td class="serviceLevel">-</td>
-            <td class="averageAnswer">-</td>
-            <td class="talkTime">-</td>
-        </tr>
 
-
-    </table>-->
-
+    <div id="combinedQueueStatusContainer" data-collapse="accordion persist"></div>
+    <div id="singleQueueStatusContainer" data-collapse="accordion persist"></div>
     <script>
+        function distinct(array) {
+            var results = [];
+            array.forEach(function (element, index, array) {
+                var isDuplicate = false;
+                results.forEach(function (distinctElement, distinctIndex, distinctArray) {
+                    if (element.CallTypeID == distinctElement.CallTypeID)
+                        isDuplicate = true;
+                });
+                if (isDuplicate == false) {
+                    results.push(element);
+                }
+                else {
+                    results.forEach(function (resultsElement) {
+                        if (resultsElement.CallTypeID == element.CallTypeID) {
+                            if (resultsElement.CallTypeID.length > element.CallTypeID.length) {
+                                element = resultsElement;
+                            }
+                        }
+                    });
+                }
+            });
+            return results;
+        }
+
         var queueBroadcastProxy = $.connection.queueBroadcastHub;
-        
-        var combinedQueueData = [];
-        var queueData = [];
 
         queueBroadcastProxy.client.updateAllProductQueue = function (callTypeDetailModel) {
-            var i = 0, len = callTypeDetailModel.length;
-            for (i; i < len; i++) {
-                var callTypeID = callTypeDetailModel[i].CallTypeID;
-                var productID = callTypeDetailModel[i].ProductID;
-                var product = callTypeDetailModel[i].Product;
-                var callType = callTypeDetailModel[i].CallType;
-                var quantity = callTypeDetailModel[i].Quantity;
-                var waitTime = callTypeDetailModel[i].WaitTime;
-                var offered = callTypeDetailModel[i].Offered;
-                var handled = callTypeDetailModel[i].Handled;
-                var slabandoned = callTypeDetailModel[i].SLAbandoned;
-                var percentlive = callTypeDetailModel[i].PercentLive;
-                var averageAnswer = callTypeDetailModel[i].AverageAnswer;
-                var handleTime = callTypeDetailModel[i].HandleTime;
-                var talkTime = callTypeDetailModel[i].TalkTime;
-                var serviceLevel = callTypeDetailModel[i].ServiceLevel;
-                var callTypeID = callTypeDetailModel[i].CallTypeID;
-                var productID = callTypeDetailModel[i].ProductID;
-                var product = $.trim(callTypeDetailModel[i].Product);
-                var callType = callTypeDetailModel[i].CallType;
-                var quantity = callTypeDetailModel[i].Quantity;
-                var waitTime = callTypeDetailModel[i].WaitTime;
+            var combinedQueueData = [];
+            var queueData = [];
 
-                if (callTypeID.length > 5)
-                {
-                    combinedQueueData.push(callTypeDetailModel[i]);
+            var distinctQueueData = distinct(callTypeDetailModel);
+            distinctQueueData.forEach(function (element, index, array) {
+                if ($.trim(element.Product).match(/_ALL/g) != null) {
+                    if ($('h2[id={0}]'.f(element.CallTypeID)).length === 0) {
+                        // New Row
+                        $('#combinedQueueStatusContainer').append('<h2 id="{0}" class="z0">{1}</h2><ul id="{0}"></ul>'.f(element.CallTypeID, $.trim(element.Product)));
+                    }
+                    else {
+                        // Update Row
+                        $('h2[id={0}] a'.f(element.CallTypeID)).text('{0} - {1}'.f(element.Product, element.Quantity));
+                    }
                 }
-                else
-                {
-                    queueData.push(callTypeDetailModel[i]);
+                else {
+
+                    if ($('li[id={0}]'.f(element.CallTypeID)).length > 0) {
+                        // Update Combined Queue Row
+                        $('li[id={0}]'.f(element.CallTypeID)).text('{0} - {1}'.f(element.Product, element.Quantity));
+                    }
+                    else {
+                        // New Row
+                        $('ul[id*={0}]'.f(element.CallTypeID)).append('<li id="{0}">{0}</li>'.f(element.CallTypeID, $.trim(element.Product)));
+                    }
+                    if ($('h2[id={0}]'.f(element.CallTypeID)).length > 0) {
+                        // Update Row
+                        $('h2[id={0}]'.f(element.CallTypeID)).text('{0} - {1}'.f(element.Product, element.Quantity));
+                    }
+                    else {
+                        // New Row
+                        $('#singleQueueStatusContainer').append('<h2 id="{0}" class="z1">{1}</h2>'.f(element.CallTypeID, $.trim(element.Product)));
+                    }
                 }
+            });
 
-                queueData.forEach(function (aelem, aindex) {
-                    combinedQueueData.forEach(function (belem, bindex) {                       
-                        if (belem.CallTypeID.match(aelem.CallTypeID)) {                           
-                            belem.children[belem.children.length].push(aelem);
-                        }
+            //var callTypeID = callTypeDetailModel[i].CallTypeID;
+            //var productID = callTypeDetailModel[i].ProductID;
+            //var product = callTypeDetailModel[i].Product;
+            //var callType = callTypeDetailModel[i].CallType;
+            //var quantity = callTypeDetailModel[i].Quantity;
+            //var waitTime = callTypeDetailModel[i].WaitTime;
+            //var offered = callTypeDetailModel[i].Offered;
+            //var handled = callTypeDetailModel[i].Handled;
+            //var slabandoned = callTypeDetailModel[i].SLAbandoned;
+            //var percentlive = callTypeDetailModel[i].PercentLive;
+            //var averageAnswer = callTypeDetailModel[i].AverageAnswer;
+            //var handleTime = callTypeDetailModel[i].HandleTime;
+            //var talkTime = callTypeDetailModel[i].TalkTime;
+            //var serviceLevel = callTypeDetailModel[i].ServiceLevel;
+            //var callTypeID = callTypeDetailModel[i].CallTypeID;
+            //var productID = callTypeDetailModel[i].ProductID;
+            //var product = $.trim(callTypeDetailModel[i].Product);
+            //var callType = callTypeDetailModel[i].CallType;
+            //var quantity = callTypeDetailModel[i].Quantity;
+            //var waitTime = callTypeDetailModel[i].WaitTime;
 
-                    });
-
-                });
-
-                console.log(combinedQueueData);
 
 
-                if ($('#' + product.length <= 0)) {
-                    $('#' + product + '>.AvgHoldTime').text(waitTime);
-                    $('#' + product + '>.NumCallsHolding').text(quantity);
-                }
-                i++;
-            }
+
         };
 
         $.connection.hub.start().done(function () {
@@ -233,7 +285,16 @@
 
         $(document).ready(function () {
             //hosemann.signalR();
-        })
+
+
+        });
+        setTimeout(function () {
+            $('#combinedQueueStatusContainer').collapse({
+                query: "h2"
+            });
+
+        }, 2000);
     </script>
+
 </body>
 </html>
