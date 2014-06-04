@@ -8,6 +8,14 @@ namespace hapiservice.Models
         public string Product { get; set; }
         public string CallType { get; set; }
         public string Quantity { get; set; }
+        public string Offered { get; set; }
+        public string Handled { get; set; }
+        public string SLAbandoned { get; set; }
+        public string PercentLive { get; set; }
+        public string AverageAnswer { get; set; }
+        public string HandleTime { get; set; }
+        public string TalkTime { get; set; }
+        public string ServiceLevel { get; set; }
 
         private string _waitTime;
         public string WaitTime

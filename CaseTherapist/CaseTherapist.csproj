@@ -639,16 +639,18 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Images\activity.png" />
+    <Content Include="Images\blackfeedicon.png" />
+    <Content Include="Images\bluefeedicon.png" />
     <Content Include="Images\bluegears20.png" />
     <Content Include="Images\caseage.png" />
     <Content Include="Images\contact.png" />
     <Content Include="Images\contacted.png" />
     <Content Include="Images\createdon.png" />
     <Content Include="Images\createdon2.png" />
-    <Content Include="Images\gears16.png" />
     <Content Include="Images\gears20.png" />
     <Content Include="Images\icon_important.png" />
     <Content Include="Images\page_excel.png" />
+    <Content Include="Images\sprite.png" />
     <Content Include="Images\updated.png" />
     <Content Include="Images\whitegear20.png" />
     <Content Include="Scripts\bootstrap.js" />
@@ -694,6 +696,9 @@
     <Content Include="Scripts\jquery-ui-1.10.4.js" />
     <Content Include="Scripts\jquery-ui-1.10.4.min.js" />
     <Content Include="Scripts\jquery-ui.toggleSwitch.js" />
+    <Content Include="Scripts\jquery.collapse.js" />
+    <Content Include="Scripts\jquery.collapse_cookie_storage.js" />
+    <Content Include="Scripts\jquery.collapse_storage.js" />
     <Content Include="Scripts\jquery.fancybox-buttons.js" />
     <Content Include="Scripts\jquery.fancybox-media.js" />
     <Content Include="Scripts\jquery.fancybox-thumbs.js" />
@@ -709,13 +714,17 @@
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\json2.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\piwik.js" />
+    <Content Include="Scripts\queueMonitor.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\spectrum.js" />
     <Content Include="Scripts\tracker.js" />
     <Content Include="Scripts\useroptions.js" />
+    <Content Include="gm-meebee.html" />
+    <Content Include="test.html" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

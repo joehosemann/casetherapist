@@ -35,10 +35,12 @@ hosemann = {
         // use random color for fun (to be implemented later)
         previousColor: "#1F6D9B",
         fullpath: "",
-        origin: ""
-
+        origin: "",
+        debug: false
     },
     signalR: function () {
+        hosemann.vars.queueBroadcastProxy = $.connection.queueBroadcastHub;
+        hosemann.vars.userOptionsProxy = $.connection.userOptionsProxy;
         var queueBroadcastProxy = $.connection.queueBroadcastHub;
         var userOptionsProxy = $.connection.userOptionsHub;
         /*   CLIENT FUNCTIONS   */
@@ -98,7 +100,7 @@ hosemann = {
             };
         }
 
-        // Receive broadcast functions
+        // Receive broadcast to update subscribed product queue
         queueBroadcastProxy.client.updateProductQueue = function (product, productID, callType, quantity, waitTime) {
             var waitTimeArray = waitTime.split(':');
             var waitTimeSeconds = parseInt(waitTimeArray[0] * 60 * 60) + parseInt(waitTimeArray[1] * 60) + parseInt(waitTimeArray[2]);
@@ -130,8 +132,61 @@ hosemann = {
             $('.header #bbq .bbqContainer>#{0}>#{1}'.f(product, callType)).css('background', background).attr('color', color);
         };
 
-        /*   SERVER FUNCTIONS   */
+        // Receive broadcast to update all product queues
+        queueBroadcastProxy.client.updateAllProductQueue = function (callTypeDetailModel) {
 
+            var i = 0;
+            while (callTypeDetailModel[i]) {
+                var callTypeID = callTypeDetailModel[i].CallTypeID;
+                var productID = callTypeDetailModel[i].ProductID;
+                var product = callTypeDetailModel[i].Product;
+                var callType = callTypeDetailModel[i].CallType;
+                var quantity = callTypeDetailModel[i].Quantity;
+                var waitTime = callTypeDetailModel[i].WaitTime;
+                var offered = callTypeDetailModel[i].Offered;
+                var handled = callTypeDetailModel[i].Handled;
+                var slabandoned = callTypeDetailModel[i].SLAbandoned;
+                var percentlive = callTypeDetailModel[i].PercentLive;
+                var averageAnswer = callTypeDetailModel[i].AverageAnswer;
+                var handleTime = callTypeDetailModel[i].HandleTime;
+                var talkTime = callTypeDetailModel[i].TalkTime;
+                var serviceLevel = callTypeDetailModel[i].ServiceLevel;
+
+                var waitTimeArray = waitTime.split(':');
+                var waitTimeSeconds = parseInt(waitTimeArray[0] * 60 * 60) + parseInt(waitTimeArray[1] * 60) + parseInt(waitTimeArray[2]);
+                var background = hosemann.vars.inactiveCallTypeBG;
+                var color = hosemann.vars.inactiveCallTypeFG;
+
+                if (quantity > 0 && waitTimeSeconds < 120) {
+
+                    background = hosemann.vars.activeCallTypeBG;
+                    color = hosemann.vars.activeCallTypeFG;
+                }
+                else if (quantity > 0 && waitTimeSeconds >= 120) {
+                    background = hosemann.vars.extendedCallTypeBG;
+                    color = hosemann.vars.extendedCallTypeFG;
+                }
+
+
+
+                if ($('#bbqList>#{0}'.f(product)).length <= 0) {
+                    $('#bbqList').append('<li class="bbqProductList" id="{0}" style="background:{1};color:{2};"><strong>{0}</strong></div>'.f(product, hosemann.vars.queueBG, hosemann.vars.queueFG));
+                }
+                if ($('#bbqList>#{0}>#{1}'.f(product, callType)).length > 0) {
+                    $('#bbqList>#{0}>#{1}'.f(product, callType)).html('<strong>{0}</strong>{1}|<strong>{2}</strong>'.f(callType, quantity, waitTime));
+                }
+                else {
+                    $('#bbqList>#{0}'.f(product)).append('<div class="bbqQueue" id="{0}"><strong>{0}</strong>{1}|<strong>{2}</strong></div>'.f(callType, quantity, waitTime));
+                }
+
+                $('#bbqList>#{0}>#{1}'.f(product, callType)).css('background', background).attr('color', color);
+
+                i++;
+            }
+
+        };
+
+        /*   SERVER FUNCTIONS   */
         // Error handling
         $.connection.hub.error(function (error) {
             hosemann.utilities.trace('SignalR error: ' + error);
@@ -203,7 +258,6 @@ hosemann = {
             };
         });
     },
-
     casetherapist: {
         pageLoad: function () {
             $.support.cors = true;
@@ -261,9 +315,11 @@ hosemann = {
                 hosemann.casetherapist.views.startViews();
             }
 
+            hosemann.utilities.analytics();
+
         },
         preloadAssets: function () {
-            $('body').append('<div id="preload" style="display:none"><img src="{0}images/bluegears20.png"></div>'.f(hosemann.vars.origin));
+            $('body').append('<div id="preload" style="display:none"><img src="{0}images/bluegears20.png"><img src="{0}images/bluefeedicon.png"></div>'.f(hosemann.vars.origin));
         },
         getMissingParameter: function () {
             var label = "Clarify Username:";
@@ -437,7 +493,7 @@ hosemann = {
                             res = '<div class=\"{0}\" style=\"padding-left:5px;height:100%;padding-top:5px;\"><a class="various fancybox.iframe" href=\"http://bbecweb/casedetails.php?id={1}\">{2}</a></div>'.f(highlightClass, rowData.id_number, value);
                             return res;
                         case "colheaderTitle":
-                            res = '<div class=\"{0}\" style=\"padding-left:5px;height:100%;padding-top:5px;\"><a class="various fancybox.iframe" href=\"http://bbecweb/casedetails.php?id={1}\">{2}</a></div>'.f(highlightClass, rowData.id_number, value);
+                            res = '<div class=\"{0}\" style=\"padding-left:5px;height:100%;padding-top:5px;\"><a class="various fancybox.iframe" href=\"http://bbecweb/casedetails.php?id={1}\">{2}</a></div>'.f(highlightClass, rowData.CASEID, value);
                             return res;
                         case "colheaderCustomer":
                             defaulthtml = hosemann.utilities.modifyString(defaulthtml, 'padding-left: 5px; ', parseInt(defaulthtml.toString().indexOf("style=") + 7));
@@ -498,7 +554,7 @@ hosemann = {
                     case "casetitle":
                         return { text: "Case Title", datafield: "CaseTitle", classname: "colheaderCaseTitle", cellsrenderer: cellsrender };
                     case "issuewi-casetitle":
-                        return { text: "Case Title", width: "400px", datafield: "TITLE", classname: "colheaderTitle" };
+                        return { text: "Case Title", width: "400px", datafield: "TITLE", classname: "colheaderTitle", cellsrenderer: cellsrender };
                     case "casecentrallink":
                         return { text: "CaseCentralLink", datafield: "CaseCentralLink", width: "200px", classname: "colheaderCaseCentralLink", filterable: false, cellsrenderer: cellsrender, cellsformat: "n" };
                     case "issuewi-caseid":
@@ -741,7 +797,7 @@ hosemann = {
                 };
 
                 if (hosemann.vars.view != 'tam' && hosemann.vars.view != 'site')
-                    $('.default').append('<div class="header"><div class="casetherapist" style="">case<strong>therapist</strong></div><div><div id="userOptionsButton"></div></div><div id="bbq" style="{0}"><div class="bbqContainer">&nbsp;</div></div></div>'.f(hosemann.vars.applicationBG));
+                    $('.default').append('<div class="header"><div class="casetherapist" style="">case<strong>therapist</strong></div><div><div id="userOptionsButton"></div><div id="bbqButton"></div></div><div id="bbq" style="{0}"><div class="bbqContainer">&nbsp;</div></div></div>'.f(hosemann.vars.applicationBG));
 
 
                 $('.default').append('<div id="jqxTabs"><ul></ul></div>');
@@ -771,6 +827,16 @@ hosemann = {
 
                     $.fancybox({
                         href: '#userOptionsPanel',
+                        minWidth: 700,
+                        minHeight: 500
+                    });
+                });
+
+                $('#bbqButton').click(function () {
+                    hosemann.bbq.pageLoad();
+
+                    $.fancybox({
+                        href: '#bbqPanel',
                         minWidth: 700,
                         minHeight: 500
                     });
@@ -1053,8 +1119,8 @@ hosemann = {
                     }
                 });
             }
-        } // end views
-    }, // end casetherapist
+        }
+    },
     userOptions: {
         pageLoad: function () {
             hosemann.userOptions.buildHtml();
@@ -1262,9 +1328,38 @@ hosemann = {
             hosemann.vars.previousColor = randomColor;
         }
     },
-   
+    admin: {
+        buildHtml: function () {
+            //$('#adminPanel').html('<div class="admin"><div class="content"><div class="title">admin<div style="font-weight: normal; display: inline; color: #1F6D9B;">options</div></div><div id="wizard"> <h2>Products</h2><section><div style="text-align:center"><label>Password: </label><input type="Password" /><br /><br /></div><div id="labels" style="width:50%; float:left; text-align:center;">Product:<select name="sometext" style="width:100px;"><option>text1</option><option>text2</option><option>text3</option><option>text4</option><option>text5</option><option>text6</option></select><input type="button" class="btnDeleteProduct" value="-" /><input type="button" class="btnAddProduct" value="+" /></div><div id="inputs" style="float:left;">CallTypes:<br /><div><label>PH - 2343</label><input type="button" class="btnDeleteCallType" value="-" /></div><div><label>PH - 2348</label><input type="button" class="btnDeleteCallType" value="-" /></div><div><label>CL - 2342</label><input type="button" class="btnDeleteCallType" value="-" /></div><div><label>CL - 2352</label><input type="button" class="btnDeleteCallType" value="-" /></div><input type="button" class="btnAddCallType" value="Add" /></div></section></div></div></div>');
+
+            //$('.')
+
+        }
+    },
+    bbq: {
+        pageLoad: function () {
+            hosemann.bbq.buildHtml();
+            hosemann.vars.queueBroadcastProxy.server.joinRoom('all');
+        },
+        buildHtml: function () {
+            $('body').append('<div id="bbqPanel" class="panel"><div><div><div class="panelTitle">queue<div style="font-weight: normal; display: inline; color: #1F6D9B;">monitor</div></div><div class="bbqAllContainer"><ul id="bbqList"></ul></div></div></div></div>');
+        }
+    },
     utilities: {
         urlVars: {},
+        analytics: function () {
+            var _paq = _paq || [];
+            _paq.push(["trackPageView"]);
+            _paq.push(["enableLinkTracking"]);
+
+            (function () {
+                var u = (("https:" == document.location.protocol) ? "https" : "http") + "://bbecweb/analytics/";
+                _paq.push(["setTrackerUrl", u + "piwik.php"]);
+                _paq.push(["setSiteId", "1"]);
+                var d = document, g = d.createElement("script"), s = d.getElementsByTagName("script")[0]; g.type = "text/javascript";
+                g.defer = true; g.async = true; g.src = u + "piwik.js"; s.parentNode.insertBefore(g, s);
+            })();
+        },
         createTableView: function (objArray, theme, enableHeader) {
             // This function creates a standard table with column/rows
             // Parameter Information
@@ -1374,11 +1469,10 @@ hosemann = {
             hosemann.vars.origin = path + '/';
         }
 
-    } //end utilities
-}; // end hosemann
+    }
+};
 // Functions to run each time the page loads
 $(document).ready(function () {
-
     hosemann.casetherapist.pageLoad();
 });
 

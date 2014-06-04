@@ -15,7 +15,7 @@ namespace hapiservice.Hubs
         public static readonly System.Timers.Timer _Timer = new System.Timers.Timer();
         private static IEnumerable<CallTypeDetailModel> CallTypeDetails { get; set; }
         private static IEnumerable<DistinctProductsCallTypesModel> DistinctProductsCallTypes { get; set; }
-        private const string query = "SELECT RouterCallsQNow as Quantity, ISNULL(DATEDIFF(second, RouterLongestCallQ, GETDATE()),'') as WaitTime, CallTypeID FROM t_Call_Type_Real_Time with (NOLOCK)";
+        private const string query = "SELECT RouterCallsQNow as Quantity, ISNULL(DATEDIFF(second, RouterLongestCallQ, GETDATE()),'') as WaitTime, CallTypeID, CallsOfferedToday as Offered, CallsHandledToday as Handled, TotalCallsAbandToday as SLAbandoned, cast(isnull(cast(CallsHandledToday + CallsAtAgentNow as float)/nullif(cast(CallsOfferedToday as float),0)*100,100)as int) as PercentLive, convert(varchar,DATEADD(s,isnull(cast(AnswerWaitTimeToday/nullif(CallsAnsweredToday,0) as int),0),0),108) as AverageAnswer, convert(varchar,DATEADD(s,ISNULL(HandleTimeToday/nullif(CallsHandledToday,0),0),0),108) as HandleTime, convert(varchar,DATEADD(s,ISNULL(TalkTimeToday/nullif(CallsHandledToday,0),0),0),108) as TalkTime, str(ISNULL(ServiceLevelToday,1)*100,3,0) as ServiceLevel FROM t_Call_Type_Real_Time with (NOLOCK)";
 
         static QueueBroadcastHub()
         {
@@ -72,15 +72,29 @@ namespace hapiservice.Hubs
                 if (temp.Count() > 1)
                 {
                     TimeSpan waitTime = new TimeSpan();
-                    int quantity = 0;   
+                    int quantity = 0;
+                    string callTypeID = "";
 
                     foreach (var tempitem in temp)
                     {
-                        var tempCallTypeDetailModel = new CallTypeDetailModel();
+                       
+                            
 
+                        var tempCallTypeDetailModel = new CallTypeDetailModel();
+                        
                         tempCallTypeDetailModel.Product = item.Product;
                         tempCallTypeDetailModel.ProductID = item.ProductID;
                         tempCallTypeDetailModel.CallType = item.CallType;
+                        tempCallTypeDetailModel.AverageAnswer = "-";
+                        tempCallTypeDetailModel.Handled = "-";
+                        tempCallTypeDetailModel.HandleTime = "-";
+                        tempCallTypeDetailModel.Offered = "-";
+                        tempCallTypeDetailModel.PercentLive = "-";
+                        tempCallTypeDetailModel.ServiceLevel = "-";
+                        tempCallTypeDetailModel.SLAbandoned = "-";
+                        tempCallTypeDetailModel.TalkTime = "-";
+
+                        callTypeID += tempitem.CallTypeID;
 
                         TimeSpan thisWaitTime;
                         TimeSpan.TryParse(tempitem.WaitTime, out thisWaitTime);
@@ -91,11 +105,26 @@ namespace hapiservice.Hubs
                         int.TryParse(tempitem.Quantity, out thisQuantity);
                         quantity += thisQuantity;
 
-                        tempCallTypeDetailModel.CallTypeID = tempitem.CallTypeID;
+                        tempCallTypeDetailModel.CallTypeID = callTypeID;
                         tempCallTypeDetailModel.Quantity = quantity.ToString();
                         tempCallTypeDetailModel.WaitTime = waitTime.ToString(@"h\:mm\:ss");
 
-                        resultList.Add(tempCallTypeDetailModel);
+                         var index = resultList.FindIndex(x=>x.Product == item.Product);
+                        if (index > 0)
+                        {
+                            if (resultList[index].CallTypeID.IndexOf(tempitem.CallTypeID.ToString()) == -1)
+                            {
+                                resultList[index].CallTypeID += tempitem.CallTypeID;
+                            }
+                            
+                            resultList[index].WaitTime = waitTime.ToString(@"h\:mm\:ss");
+                            resultList[index].Quantity = quantity.ToString();
+                        }
+                        else
+                        {
+                            resultList.Add(tempCallTypeDetailModel);
+                        }
+                        
                     }
                    
                 }
@@ -103,12 +132,21 @@ namespace hapiservice.Hubs
                     resultList.AddRange(temp);
             }
 
-            foreach (var item in resultList)
+            try
             {
-                hub.Clients.Group(item.ProductID).updateProductQueue(item.Product, item.ProductID, item.CallType, item.Quantity, item.WaitTime);
-            }
+                hub.Clients.Group("all").updateAllProductQueue(resultList);
 
-        }
+                foreach (var item in resultList)
+                {
+                    hub.Clients.Group(item.ProductID).updateProductQueue(item.Product, item.ProductID, item.CallType, item.Quantity, item.WaitTime);
+                }
+            }
+            catch (Exception)
+            {               
+            }
+            
+
+        }      
 
         public void JoinRoom(string roomName)
         {
