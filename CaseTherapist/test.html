@@ -7,170 +7,86 @@
     <script type="text/javascript" src="../scripts/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="../scripts/jquery.signalR-2.0.3.js"></script>
     <script src="/signalr/hubs"></script>
-    <script src="../Scripts/jquery.collapse.js"></script>
-    <script src="../Scripts/jquery.collapse_cookie_storage.js"></script>
-    <script src="../Scripts/jquery.collapse_storage.js"></script>
 
     <style>
         body {
             font-family: 'Open Sans', 'Segoe UI', sans-serif;
-            width: 400px;
+            font-size: .7em;
         }
 
-        table {
-            border-spacing: 0px;
+        ol.queueStatusSlats li {
+            margin: 0 0 10px 0;
+            padding: 0 0 10px 0;
+            border-bottom: 1px solid #eee;
         }
 
-        .queueParent {
-            background-color: #152D40;
-            overflow: hidden;
-            border-bottom: solid white 1px !important;
-        }
-
-            .queueParent td {
-                padding-left: 5px;
-                padding-right: 5px;
-                color: white;
-                text-align: center;
+            ol.queueStatusSlats li:last-child {
+                margin: 0;
+                padding: 0;
+                border-bottom: none;
             }
 
-        .productName {
-            text-align: left !important;
-            border-right: solid white 1px;
-        }
+            ol.queueStatusSlats li h3 {
+                font-size: 16px;
+                font-weight: bold;
+                line-height: 1.1;
+            }
 
-        .quantity {
-            border-right: solid white 1px;
-        }
+            ol.queueStatusSlats li p {
+                font-size: 14px;
+                line-height: 1.4;
+            }
 
-        .waitTime {
-            border-right: solid white 1px;
-        }
+                ol.queueStatusSlats li p span.meta {
+                    display: block;
+                    font-size: 12px;
+                    color: #999;
+                }
 
-        .offered {
-            border-right: solid white 1px;
-        }
-
-        .handled {
-            border-right: solid white 1px;
-        }
-
-        .sla {
-            border-right: solid white 1px;
-        }
-
-        .percentLive {
-            border-right: solid white 1px;
-        }
-
-        .serviceLevel {
-            border-right: solid white 1px;
-        }
-
-        .averageAnswer {
-            border-right: solid white 1px;
-        }
-
-        .talk {
-            border-right: solid white 1px;
-        }
-    </style>
-
-    <style>
-        #combinedQueueStatusContainer h2, #singleQueueStatusContainer h2 {
-            background: #B0E5B8;
-            border: 1px solid #628066;
-            border-width: 0 1px 0px 0;
-            overflow: hidden;
-            margin: .2em;
-            line-height: 1.2;
-            font-size:1em;
-
-        }
-
-        h2 a {
-            background: url("../Images/sprite.png") 15px 13px no-repeat;
-            display: block;
-            padding: 9px;
-            padding-left: 32px;
-            margin: 0;
-            color: #628066;
-            text-decoration: none;
-            font-weight: normal;
-            border-bottom: 1px solid #628066;
-        }
-
-        h2.open a {
-            background-position: 14px -24px;
-        }
-
-        h2 + div,
-        h2 + ul,
-        h2 + p {
-            /*padding: 10px;*/
-            background: #fff;
-            margin: 0;
-            display: none;
-            -webkit-margin: 1em;
--webkit-padding-start: 1em;
-        }
-
-        li {
-            margin: 10px 20px;
-            list-style-type: circle;
+        ul li {
             list-style: none;
         }
 
-        .queueParent:not(.columnHeader) {
-            background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #b8e356), color-stop(1, #a5cc52) );
-            background: -moz-linear-gradient( center top, #b8e356 5%, #a5cc52 100% );
-            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#b8e356', endColorstr='#a5cc52');
-            background-color: #b8e356;
-            -webkit-border-top-left-radius: 0px;
-            -moz-border-radius-topleft: 0px;
-            border-top-left-radius: 0px;
-            -webkit-border-top-right-radius: 0px;
-            -moz-border-radius-topright: 0px;
-            border-top-right-radius: 0px;
-            -webkit-border-bottom-right-radius: 0px;
-            -moz-border-radius-bottomright: 0px;
-            border-bottom-right-radius: 0px;
-            -webkit-border-bottom-left-radius: 0px;
-            -moz-border-radius-bottomleft: 0px;
-            border-bottom-left-radius: 0px;
-            text-indent: 0;
-            border: 1px solid #83c41a;
-            color: #ffffff;
-            font-family: Arial;
-            font-size: 15px;
-            font-weight: bold;
-            font-style: normal;
-            height: 26px;
-            line-height: 26px;
-            width: 100px;
+        h3 {
+            color: #2790ae;
             text-decoration: none;
-            text-align: center;
-            text-shadow: 1px 1px 0px #86ae47;
+            outline: none;
         }
 
-        .queueParent:hover:not(.columnHeader) {
-            background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #a5cc52), color-stop(1, #b8e356) );
-            background: -moz-linear-gradient( center top, #a5cc52 5%, #b8e356 100% );
-            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#a5cc52', endColorstr='#b8e356');
-            background-color: #a5cc52;
+        ul.stats-tabs li {
+            float: left;
+            margin: 0 10px 0 0;
+            padding: 0 10px 0 0;
+            border-right: 1px solid #ccc;
         }
 
-        .queueParent:active:not(.columnHeader) {
-            position: relative;
-            top: 1px;
-        }
+            ul.stats-tabs li:last-child {
+                margin: 0;
+                padding: 0;
+                border: none;
+            }
+
+            ul.stats-tabs li a {
+                display: block;
+                float: left;
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+                ul.stats-tabs li a span {
+                    display: block;
+                    margin-top: 2px;
+                    font-size: 13px;
+                    font-weight: normal;
+                }
     </style>
+
 
 </head>
 <body>
 
-    <div id="combinedQueueStatusContainer" data-collapse="accordion persist"></div>
-    <div id="singleQueueStatusContainer" data-collapse="accordion persist"></div>
+    <div id="combinedQueueStatusContainer"><h2>Combined Queues</h2><ol class="queueStatusSlats"></ol></div>
+    <div id="singleQueueStatusContainer"><h2>Individual Queues</h2><ol class="queueStatusSlats"></ol></div>
     <script>
         function distinct(array) {
             var results = [];
@@ -205,32 +121,31 @@
             var distinctQueueData = distinct(callTypeDetailModel);
             distinctQueueData.forEach(function (element, index, array) {
                 if ($.trim(element.Product).match(/_ALL/g) != null) {
-                    if ($('h2[id={0}]'.f(element.CallTypeID)).length === 0) {
-                        // New Row
-                        $('#combinedQueueStatusContainer').append('<h2 id="{0}" class="z0">{1}</h2><ul id="{0}"></ul>'.f(element.CallTypeID, $.trim(element.Product)));
+                    if ($('li[id={0}]'.f(element.CallTypeID)).length === 0) {
+                        // New Combined Queue Header Row
+                        $('#combinedQueueStatusContainer ol').append('<li id="{0}" isCombined="1" parentProduct="{1}" class="queueStatusGroup"><h3>{2}</h3><ul></ul></li>'.f(element.CallTypeID, $.trim(element.Product).match(/^\A-Za-z/g), $.trim(element.Product)));
                     }
                     else {
-                        // Update Row
-                        $('h2[id={0}] a'.f(element.CallTypeID)).text('{0} - {1}'.f(element.Product, element.Quantity));
+                        // Update Combined Queue Header Row
+                        $('li[id={0}][isCombined=1] h3'.f(element.CallTypeID)).text('{0} - {1}'.f(element.Product, element.Quantity));
                     }
                 }
                 else {
-
-                    if ($('li[id={0}]'.f(element.CallTypeID)).length > 0) {
-                        // Update Combined Queue Row
-                        $('li[id={0}]'.f(element.CallTypeID)).text('{0} - {1}'.f(element.Product, element.Quantity));
+                    if ($('li ul li[id={0}]'.f(element.CallTypeID)).length > 0) {
+                        // Update Combined Queue Child Row
+                        $('li ul li[id={0}]'.f(element.CallTypeID)).text('{1} - {2}'.f(element.CallTypeID, $.trim(element.Product), element.Quantity));
                     }
                     else {
-                        // New Row
-                        $('ul[id*={0}]'.f(element.CallTypeID)).append('<li id="{0}">{0}</li>'.f(element.CallTypeID, $.trim(element.Product)));
+                        // New Combined Queue Child Row
+                        $('li[id*={0}] ul'.f(element.CallTypeID)).append('<li id="{0}">{1}</li>'.f(element.CallTypeID, $.trim(element.Product)));
                     }
-                    if ($('h2[id={0}]'.f(element.CallTypeID)).length > 0) {
-                        // Update Row
-                        $('h2[id={0}]'.f(element.CallTypeID)).text('{0} - {1}'.f(element.Product, element.Quantity));
+                    if ($('ol li[id={0}]'.f(element.CallTypeID)).length > 0) {
+                        // Update Single Queue Row
+                        $('li[id={0}][class="single"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime, element.SLAbandoned));
                     }
                     else {
-                        // New Row
-                        $('#singleQueueStatusContainer').append('<h2 id="{0}" class="z1">{1}</h2>'.f(element.CallTypeID, $.trim(element.Product)));
+                        // New Single Queue Row
+                        $('#singleQueueStatusContainer ol').append('<li id="{0}" class="single"><ul class="stats-tabs"></ul></li>'.f(element.CallTypeID));
                     }
                 }
             });
@@ -289,9 +204,7 @@
 
         });
         setTimeout(function () {
-            $('#combinedQueueStatusContainer').collapse({
-                query: "h2"
-            });
+
 
         }, 2000);
     </script>
