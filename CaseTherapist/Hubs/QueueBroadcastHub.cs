@@ -77,9 +77,6 @@ namespace hapiservice.Hubs
 
                     foreach (var tempitem in temp)
                     {
-                       
-                            
-
                         var tempCallTypeDetailModel = new CallTypeDetailModel();
                         
                         tempCallTypeDetailModel.Product = item.Product;
@@ -109,7 +106,7 @@ namespace hapiservice.Hubs
                         tempCallTypeDetailModel.Quantity = quantity.ToString();
                         tempCallTypeDetailModel.WaitTime = waitTime.ToString(@"h\:mm\:ss");
 
-                         var index = resultList.FindIndex(x=>x.Product == item.Product);
+                         var index = resultList.FindIndex(x=>x.Product == item.Product && x.CallType == item.CallType);
                         if (index > 0)
                         {
                             if (resultList[index].CallTypeID.IndexOf(tempitem.CallTypeID.ToString()) == -1)
@@ -130,10 +127,19 @@ namespace hapiservice.Hubs
                 }
                 else
                     resultList.AddRange(temp);
+
             }
 
             try
             {
+                resultList.Sort(delegate(CallTypeDetailModel x, CallTypeDetailModel y)
+                {
+                    if (x.Product == null && y.Product == null) return 0;
+                    else if (x.Product == null) return -1;
+                    else if (y.Product == null) return 1;
+                    else return x.Product.CompareTo(y.Product);
+                });
+
                 hub.Clients.Group("all").updateAllProductQueue(resultList);
 
                 foreach (var item in resultList)

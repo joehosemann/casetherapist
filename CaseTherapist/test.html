@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title></title>
+    <link href='http://fonts.googleapis.com/css?family=Noto+Sans:400,700' rel='stylesheet' type='text/css'>
     <script src="//cdnjs.cloudflare.com/ajax/libs/selectivizr/1.0.2/selectivizr-min.js"></script>
     <script type="text/javascript" src="../scripts/json2.js"></script>
     <script type="text/javascript" src="../scripts/jquery-1.10.2.min.js"></script>
@@ -10,86 +11,148 @@
 
     <style>
         body {
-            font-family: 'Open Sans', 'Segoe UI', sans-serif;
-            font-size: .7em;
+            font-family: 'Noto Sans', sans-serif;
+            font-size: .8em;
         }
 
-        ol.queueStatusSlats li {
-            margin: 0 0 10px 0;
-            padding: 0 0 10px 0;
-            border-bottom: 1px solid #eee;
+        ol.queueStatusSlats {
+            margin: 0;
+            padding: 0;
         }
 
-            ol.queueStatusSlats li:last-child {
+            ol.queueStatusSlats li {
+                margin: 0 0 .1em 0;
+                padding: 0 0 .1em 0;
+               /* border-bottom: 1px solid #eee;*/
+                list-style: none;
+            }
+
+                ol.queueStatusSlats li:last-child {
+                    margin: 0;
+                    padding: 0;
+                    border-bottom: none;
+                }
+
+                ol.queueStatusSlats li ul {
+                    font-weight: bold;
+                    font-size: 1em;
+                    margin: 0;
+                }
+
+                ol.queueStatusSlats li ul {
+                    /*line-height: 1.4;*/
+                    margin-left: .5em;
+                    -webkit-margin-before: 0;
+                    -webkit-margin-after: 0;
+                    -webkit-padding-start: 0;
+                }
+
+        div#combinedQueueStatusContainer ol.queueStatusSlats li ul li:first-child {
+            /*border-top: 1px solid #eee;*/
+        }
+
+        div#combinedQueueStatusContainer ol.queueStatusSlats li ul li:last-child {
+            margin: 0;
+            padding: 0;
+            border-bottom: none;
+        }
+
+        ol.queueStatusSlats li p span.meta {
+            display: block;
+            color: #999;
+        }
+
+        ul.queueStatusGroup li {
+            list-style: none;
+        }
+
+            ul.queueStatusGroup li:last-child {
                 margin: 0;
                 padding: 0;
                 border-bottom: none;
             }
 
-            ol.queueStatusSlats li h3 {
-                font-size: 16px;
-                font-weight: bold;
-                line-height: 1.1;
-            }
-
-            ol.queueStatusSlats li p {
-                font-size: 14px;
-                line-height: 1.4;
-            }
-
-                ol.queueStatusSlats li p span.meta {
-                    display: block;
-                    font-size: 12px;
-                    color: #999;
-                }
-
-        ul li {
-            list-style: none;
-        }
-
-        h3 {
+        ol.queueStatusSlats h3 {
             color: #2790ae;
             text-decoration: none;
             outline: none;
         }
 
-        ul.stats-tabs li {
-            float: left;
-            margin: 0 10px 0 0;
-            padding: 0 10px 0 0;
-            border-right: 1px solid #ccc;
+        ul.stats-tabs {
+            display: table;
         }
 
-            ul.stats-tabs li:last-child {
-                margin: 0;
-                padding: 0;
-                border: none;
-            }
-
-            ul.stats-tabs li a {
-                display: block;
+            ul.stats-tabs li {
                 float: left;
-                font-size: 18px;
-                font-weight: bold;
+                margin: 0 .5em 0 0;
+                padding: 0 .5em 0 0;
+                border-right: 1px solid #ccc;
+                border-top: 0;
+                border-bottom: 0;
+                border-left: 0;
             }
 
-                ul.stats-tabs li a span {
-                    display: block;
-                    margin-top: 2px;
-                    font-size: 13px;
-                    font-weight: normal;
-                }
+        ol.queueStatusSlats li.combined:nth-child(odd) {
+            background: #eee;
+        }
+
+        ol.queueStatusSlats li.single:nth-child(odd) {
+            background: #eee;
+        }
+
+        ul.stats-tabs li:last-child {
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+
+
+
+        .grid0 {
+            width: 10em;
+        }
+
+        .grid1 {
+            width: 1.5em;
+        }
+
+        .grid2 {
+            width: 1em;
+        }
+
+        .grid3 {
+            width: 3.5em;
+        }
+
+        .grid4 {
+            width: 1.5em;
+        }
+
+        #queueSelection {
+            width: 100px;
+            float: left;
+            margin-top: 40px;
+            position: fixed;
+        }
+
+        #masterContainer {
+            margin-left: 120px;
+        }
     </style>
 
 
 </head>
 <body>
-
-    <div id="combinedQueueStatusContainer"><h2>Combined Queues</h2><ol class="queueStatusSlats"></ol></div>
-    <div id="singleQueueStatusContainer"><h2>Individual Queues</h2><ol class="queueStatusSlats"></ol></div>
+    <div id="queueSelection">
+        <input type="checkbox" id="selectAllFilter" checked="checked">Select All<br />
+    </div>
+    <div id="masterContainer">
+        <div id="combinedQueueStatusContainer"><h2>Combined Queues</h2><ol class="queueStatusSlats"></ol></div>
+        <div id="singleQueueStatusContainer"><h2>Individual Queues</h2><ol class="queueStatusSlats"></ol></div>
+    </div>
     <script>
-        function distinct(array) {
-            var results = [];
+        function distinctCallTypeID(array) {
+            var results = [];            
             array.forEach(function (element, index, array) {
                 var isDuplicate = false;
                 results.forEach(function (distinctElement, distinctIndex, distinctArray) {
@@ -112,41 +175,66 @@
             return results;
         }
 
+        function distinctString(array) {            
+            console.log(jQuery.type(array));
+            var results = [];
+          
+                array.forEach(function (element, index, array) {
+                    var isDuplicate = false;
+                    results.forEach(function (distinctElement) {
+                        if (element == distinctElement.toString())
+                            isDuplicate = true;
+                    });
+                    if (isDuplicate == false) {
+                        results.push(element.toString());
+                    }
+                });
+                return results;
+          
+        }
+
         var queueBroadcastProxy = $.connection.queueBroadcastHub;
+        var productList = [];
 
         queueBroadcastProxy.client.updateAllProductQueue = function (callTypeDetailModel) {
             var combinedQueueData = [];
             var queueData = [];
 
-            var distinctQueueData = distinct(callTypeDetailModel);
+            var distinctQueueData = distinctCallTypeID(callTypeDetailModel);
             distinctQueueData.forEach(function (element, index, array) {
                 if ($.trim(element.Product).match(/_ALL/g) != null) {
                     if ($('li[id={0}]'.f(element.CallTypeID)).length === 0) {
                         // New Combined Queue Header Row
-                        $('#combinedQueueStatusContainer ol').append('<li id="{0}" isCombined="1" parentProduct="{1}" class="queueStatusGroup"><h3>{2}</h3><ul></ul></li>'.f(element.CallTypeID, $.trim(element.Product).match(/^\A-Za-z/g), $.trim(element.Product)));
+                        //$('#combinedQueueStatusContainer ol').append('<li id="{0}" isCombined="1" parentProduct="{1}" class="queueStatusGroup"><h3>{2}</h3><ul></ul></li>'.f(element.CallTypeID, $.trim(element.Product).match(/^\A-Za-z/g), $.trim(element.Product)));
+                        $('#combinedQueueStatusContainer ol').append('<li id="{0}" class="combined"><ul class="stats-tabs"></ul></li>'.f(element.CallTypeID));
                     }
                     else {
                         // Update Combined Queue Header Row
-                        $('li[id={0}][isCombined=1] h3'.f(element.CallTypeID)).text('{0} - {1}'.f(element.Product, element.Quantity));
+                        //$('li[id={0}][isCombined=1] h3'.f(element.CallTypeID)).text('{0} - {1}'.f(element.Product, element.Quantity));
+                        $('li[id={0}][class="combined"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime, element.SLAbandoned));
                     }
                 }
                 else {
-                    if ($('li ul li[id={0}]'.f(element.CallTypeID)).length > 0) {
-                        // Update Combined Queue Child Row
-                        $('li ul li[id={0}]'.f(element.CallTypeID)).text('{1} - {2}'.f(element.CallTypeID, $.trim(element.Product), element.Quantity));
-                    }
-                    else {
-                        // New Combined Queue Child Row
-                        $('li[id*={0}] ul'.f(element.CallTypeID)).append('<li id="{0}">{1}</li>'.f(element.CallTypeID, $.trim(element.Product)));
-                    }
+                    //if ($('li ul li[id={0}]'.f(element.CallTypeID)).length > 0) {
+                    //    // Update Combined Queue Child Row
+                    //    //$('li ul li[id={0}]'.f(element.CallTypeID)).text('{1} - {2}'.f(element.CallTypeID, $.trim(element.Product), element.Quantity));
+                    //}
+                    //else {
+                    //    // New Combined Queue Child Row
+                    //    //$('li[id*={0}] ul'.f(element.CallTypeID)).append('<li id="{0}">{1}</li>'.f(element.CallTypeID, $.trim(element.Product)));
+                    //}
                     if ($('ol li[id={0}]'.f(element.CallTypeID)).length > 0) {
                         // Update Single Queue Row
-                        $('li[id={0}][class="single"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime, element.SLAbandoned));
+                        $('li[id={0}][class="single"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li><li class="grid5">{5}</li><li class="grid6">{6}</li><li class="grid7">{7}</li><li class="grid8">{8}</li><li class="grid9">{9}</li><li class="grid10">{10}</li><li class="grid11">{11}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime, element.Offered, element.Handled, element.SLAbandoned, element.PercentLive, element.AverageAnswer, element.HandleTime, element.TalkTime, element.ServiceLevel));
                     }
                     else {
                         // New Single Queue Row
                         $('#singleQueueStatusContainer ol').append('<li id="{0}" class="single"><ul class="stats-tabs"></ul></li>'.f(element.CallTypeID));
                     }
+                }
+
+                if ($('#queueSelection').children().length == 2) {
+                    productList.push(element.Product.match(/^[A-Za-z]+/).toString());
                 }
             });
 
@@ -172,9 +260,54 @@
             //var waitTime = callTypeDetailModel[i].WaitTime;
 
 
+            if ($('#queueSelection').children().length == 2) {
+                if (productList.length > 0) {
+                    var distinctProdList = distinctString(productList);
+                    distinctProdList.forEach(function (element) {
+                        $('#queueSelection').append('<input class="productListFilter" id={0} type="checkbox">{0}<br/>'.f(element))
+                    });
 
+                    $('.productListFilter').change(function (object) {
+                        if ($('#selectAllFilter:checked').length > 0) 
+                            $('#selectAllFilter:checked').prop('checked', false);
+                        UpdateView();
+
+                    });
+                }
+
+            }
 
         };
+
+
+        function UpdateView() {
+            if ($('#selectAllFilter:checked').length > 0) {
+                $('.queueStatusSlats li').show();
+            }
+            else {
+                $('.queueStatusSlats li').hide();
+
+                var thisProductListFilter = [];
+                $('.productListFilter:checked').each(function (index, element) {                  
+                    thisProductListFilter.push(element.id);                    
+                });
+                console.log(thisProductListFilter);
+                if (thisProductListFilter.length > 0) {                     
+                    distinctString(thisProductListFilter).forEach(function (element) {
+                        $('.grid0:contains("{0}")'.f(element)).parent().parent().show();
+                    });
+                }
+                
+            }
+        }
+
+        $('#selectAllFilter').change(function (object) {
+            if (object.target.checked)
+                $('.productListFilter').prop('checked', true);
+            else
+                $('.productListFilter').prop('checked', false);
+            UpdateView();
+        })
 
         $.connection.hub.start().done(function () {
             queueBroadcastProxy.server.joinRoom('all');

@@ -730,6 +730,7 @@
     <Content Include="Scripts\tracker.js" />
     <Content Include="Scripts\useroptions.js" />
     <Content Include="gm-meebee.html" />
+    <Content Include="signalrtest.html" />
     <Content Include="test.html" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
