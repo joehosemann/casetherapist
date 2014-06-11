@@ -23,7 +23,7 @@
             ol.queueStatusSlats li {
                 margin: 0 0 .1em 0;
                 padding: 0 0 .1em 0;
-               /* border-bottom: 1px solid #eee;*/
+                /* border-bottom: 1px solid #eee;*/
                 list-style: none;
             }
 
@@ -128,6 +128,34 @@
             width: 1.5em;
         }
 
+        .grid5 {
+            width: 1.5em;
+        }
+
+        .grid6 {
+            width: 1.5em;
+        }
+
+        .grid7 {
+            width: 1.5em;
+        }
+
+        .grid8 {
+            width: 4em;
+        }
+
+        .grid9 {
+            width: 4em;
+        }
+
+        .grid10 {
+            width: 4em;
+        }
+
+        .grid11 {
+            width: 4em;
+        }
+
         #queueSelection {
             width: 100px;
             float: left;
@@ -138,8 +166,79 @@
         #masterContainer {
             margin-left: 120px;
         }
+
+        .queueHeader ul li {
+            width: 220px;
+            height: 70px;
+            -moz-transform: rotate(315deg) translateX(25px);
+            -o-transform: rotate(315deg) translateX(25px);
+            -webkit-transform: rotate(315deg) translateX(25px);
+            transform: rotate(315deg) translateX(25px);
+        }
     </style>
 
+    <!--[if lt IE 7 ]>
+        <style>
+      /* IE6 and 7 */
+        .queueHeader {
+      filter: progid:DXImageTransform.Microsoft.Matrix(
+               M11=0.7071067811865475,
+               M12=0.7071067811865474,
+               M21=-0.7071067811865474,
+               M22=0.7071067811865475,
+               SizingMethod='auto expand');
+
+    /*
+     * To make the transform-origin be the middle of
+     * the object.    Note: These numbers
+     * are approximations.  For more accurate results,
+     * use Internet Explorer with this tool.
+     */
+    margin-left: 12px;
+    margin-top: -88px;
+        }
+        </style>
+    <![endif]-->
+    <!--[if IE 7 ]>
+        <style>
+      /* IE6 and 7 */
+        .queueHeader {
+      filter: progid:DXImageTransform.Microsoft.Matrix(
+               M11=0.7071067811865475,
+               M12=0.7071067811865474,
+               M21=-0.7071067811865474,
+               M22=0.7071067811865475,
+               SizingMethod='auto expand');
+         /*
+     * To make the transform-origin be the middle of
+     * the object.    Note: These numbers
+     * are approximations.  For more accurate results,
+     * use Internet Explorer with this tool.
+     */
+    margin-left: 12px;
+    margin-top: -88px;
+        }
+
+        </style>
+    <![endif]-->
+    <!--[if IE 8 ]>
+     <style>
+     /* IE8+ - must be on one line, unfortunately */
+        .queueHeader {
+    -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.7071067811865475, M12=0.7071067811865474, M21=-0.7071067811865474, M22=0.7071067811865475, SizingMethod='auto expand')";
+
+    /*
+     * To make the transform-origin be the middle of
+     * the object.    Note: These numbers
+     * are approximations.  For more accurate results,
+     * use Internet Explorer with this tool.
+     */
+    margin-left: 12px;
+    margin-top: -88px;
+        }
+
+        </style>
+          <![endif]-->
 
 </head>
 <body>
@@ -148,11 +247,15 @@
     </div>
     <div id="masterContainer">
         <div id="combinedQueueStatusContainer"><h2>Combined Queues</h2><ol class="queueStatusSlats"></ol></div>
-        <div id="singleQueueStatusContainer"><h2>Individual Queues</h2><ol class="queueStatusSlats"></ol></div>
+        <div id="singleQueueStatusContainer">
+            <h2>Individual Queues</h2><ol class="queueStatusSlats">
+                <li class="queueHeader"><ul ><li class="grid0">Product</li><li class="grid1">CallType</li><li class="grid2">Quantity</li><li class="grid3">WaitTime</li><li class="grid4">Offered</li><li class="grid5">Handled</li><li class="grid6">SLAbandoned</li><li class="grid7">PercentLive</li><li class="grid8">AverageAnswer</li><li class="grid9">HandleTime</li><li class="grid10">TalkTime</li><li class="grid11">ServiceLevel</li></ul></li>
+            </ol>
+        </div>
     </div>
     <script>
         function distinctCallTypeID(array) {
-            var results = [];            
+            var results = [];
             array.forEach(function (element, index, array) {
                 var isDuplicate = false;
                 results.forEach(function (distinctElement, distinctIndex, distinctArray) {
@@ -175,22 +278,21 @@
             return results;
         }
 
-        function distinctString(array) {            
-            console.log(jQuery.type(array));
+        function distinctString(array) {
             var results = [];
-          
-                array.forEach(function (element, index, array) {
-                    var isDuplicate = false;
-                    results.forEach(function (distinctElement) {
-                        if (element == distinctElement.toString())
-                            isDuplicate = true;
-                    });
-                    if (isDuplicate == false) {
-                        results.push(element.toString());
-                    }
+
+            array.forEach(function (element, index, array) {
+                var isDuplicate = false;
+                results.forEach(function (distinctElement) {
+                    if (element == distinctElement.toString())
+                        isDuplicate = true;
                 });
-                return results;
-          
+                if (isDuplicate == false) {
+                    results.push(element.toString());
+                }
+            });
+            return results;
+
         }
 
         var queueBroadcastProxy = $.connection.queueBroadcastHub;
@@ -268,7 +370,7 @@
                     });
 
                     $('.productListFilter').change(function (object) {
-                        if ($('#selectAllFilter:checked').length > 0) 
+                        if ($('#selectAllFilter:checked').length > 0)
                             $('#selectAllFilter:checked').prop('checked', false);
                         UpdateView();
 
@@ -288,16 +390,15 @@
                 $('.queueStatusSlats li').hide();
 
                 var thisProductListFilter = [];
-                $('.productListFilter:checked').each(function (index, element) {                  
-                    thisProductListFilter.push(element.id);                    
+                $('.productListFilter:checked').each(function (index, element) {
+                    thisProductListFilter.push(element.id);
                 });
-                console.log(thisProductListFilter);
-                if (thisProductListFilter.length > 0) {                     
+                if (thisProductListFilter.length > 0) {
                     distinctString(thisProductListFilter).forEach(function (element) {
                         $('.grid0:contains("{0}")'.f(element)).parent().parent().show();
                     });
                 }
-                
+
             }
         }
 
