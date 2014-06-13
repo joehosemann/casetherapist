@@ -43,6 +43,8 @@ hosemann = {
         hosemann.vars.userOptionsProxy = $.connection.userOptionsProxy;
         var queueBroadcastProxy = $.connection.queueBroadcastHub;
         var userOptionsProxy = $.connection.userOptionsHub;
+        var productList = [];
+
         /*   CLIENT FUNCTIONS   */
         // Status Message Response
         queueBroadcastProxy.client.status = function (message) {
@@ -134,56 +136,71 @@ hosemann = {
 
         // Receive broadcast to update all product queues
         queueBroadcastProxy.client.updateAllProductQueue = function (callTypeDetailModel) {
+            var combinedQueueData = [];
+            var queueData = [];
 
-            var i = 0;
-            while (callTypeDetailModel[i]) {
-                var callTypeID = callTypeDetailModel[i].CallTypeID;
-                var productID = callTypeDetailModel[i].ProductID;
-                var product = callTypeDetailModel[i].Product;
-                var callType = callTypeDetailModel[i].CallType;
-                var quantity = callTypeDetailModel[i].Quantity;
-                var waitTime = callTypeDetailModel[i].WaitTime;
-                var offered = callTypeDetailModel[i].Offered;
-                var handled = callTypeDetailModel[i].Handled;
-                var slabandoned = callTypeDetailModel[i].SLAbandoned;
-                var percentlive = callTypeDetailModel[i].PercentLive;
-                var averageAnswer = callTypeDetailModel[i].AverageAnswer;
-                var handleTime = callTypeDetailModel[i].HandleTime;
-                var talkTime = callTypeDetailModel[i].TalkTime;
-                var serviceLevel = callTypeDetailModel[i].ServiceLevel;
+            var distinctQueueData = hosemann.bbq.utilities.distinctCallTypeID(callTypeDetailModel);
 
-                var waitTimeArray = waitTime.split(':');
-                var waitTimeSeconds = parseInt(waitTimeArray[0] * 60 * 60) + parseInt(waitTimeArray[1] * 60) + parseInt(waitTimeArray[2]);
-                var background = hosemann.vars.inactiveCallTypeBG;
-                var color = hosemann.vars.inactiveCallTypeFG;
+            distinctQueueData.forEach(function (element, index, array) {
+                var background = "transparent";
+                var color = "#444";
 
-                if (quantity > 0 && waitTimeSeconds < 120) {
+                if (element.WaitTime != "0:00:00") {
+                    var waitTimeArray = element.WaitTime.split(':');
+                    var waitTimeSeconds = parseInt(waitTimeArray[0] * 60 * 60) + parseInt(waitTimeArray[1] * 60) + parseInt(waitTimeArray[2]);
+                    if (element.Quantity > 0 && waitTimeSeconds < 120) {
 
-                    background = hosemann.vars.activeCallTypeBG;
-                    color = hosemann.vars.activeCallTypeFG;
-                }
-                else if (quantity > 0 && waitTimeSeconds >= 120) {
-                    background = hosemann.vars.extendedCallTypeBG;
-                    color = hosemann.vars.extendedCallTypeFG;
+                        background = hosemann.vars.activeCallTypeBG;
+                        color = hosemann.vars.activeCallTypeFG;
+                    }
+                    else if (element.Quantity > 0 && waitTimeSeconds >= 120) {
+                        background = hosemann.vars.extendedCallTypeBG;
+                        color = hosemann.vars.extendedCallTypeFG;
+                    }
                 }
 
-
-
-                if ($('#bbqList>#{0}'.f(product)).length <= 0) {
-                    $('#bbqList').append('<li class="bbqProductList" id="{0}" style="background:{1};color:{2};"><strong>{0}</strong></div>'.f(product, hosemann.vars.queueBG, hosemann.vars.queueFG));
-                }
-                if ($('#bbqList>#{0}>#{1}'.f(product, callType)).length > 0) {
-                    $('#bbqList>#{0}>#{1}'.f(product, callType)).html('<strong>{0}</strong>{1}|<strong>{2}</strong>'.f(callType, quantity, waitTime));
+                if ($.trim(element.Product).match(/_ALL/g) != null) {
+                    if ($('li[id={0}]'.f(element.CallTypeID)).length === 0) {
+                        // New Combined Queue Header Row
+                        $('#combinedQueueStatusContainer ol').append('<li id="{0}" class="combined"><ul class="stats-tabs"></ul></li>'.f(element.CallTypeID));
+                    }
+                    else {
+                        // Update Combined Queue Header Row
+                        $('li[id={0}][class="combined"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime));
+                        $('li[id={0}][class="combined"] ul li.grid3'.f(element.CallTypeID)).css("background-color", background).css("color", color);
+                    }
                 }
                 else {
-                    $('#bbqList>#{0}'.f(product)).append('<div class="bbqQueue" id="{0}"><strong>{0}</strong>{1}|<strong>{2}</strong></div>'.f(callType, quantity, waitTime));
+                    if ($('ol li[id={0}]'.f(element.CallTypeID)).length > 0) {
+                        // Update Single Queue Row
+                        $('li[id={0}][class="single"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li><li class="grid5">{5}</li><li class="grid6">{6}</li><li class="grid7">{7}</li><li class="grid8">{8}</li><li class="grid9">{9}</li><li class="grid10">{10}</li><li class="grid11">{11}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime, element.Offered, element.Handled, element.SLAbandoned, element.PercentLive, element.AverageAnswer, element.HandleTime, element.TalkTime, element.ServiceLevel));
+                        $('li[id={0}][class="single"] ul li.grid3'.f(element.CallTypeID)).css("background-color", background).css("color", color);
+                    }
+                    else {
+                        // New Single Queue Row
+                        $('#singleQueueStatusContainer ol').append('<li id="{0}" class="single"><ul class="stats-tabs"></ul></li>'.f(element.CallTypeID));
+                    }
                 }
 
-                $('#bbqList>#{0}>#{1}'.f(product, callType)).css('background', background).attr('color', color);
+                if ($('#queueSelection').children().length == 2) {
+                    productList.push(element.Product.match(/^[A-Za-z]+/).toString());
+                }
+            });
 
-                i++;
+            if ($('#queueSelection').children().length == 2) {
+                if (productList.length > 0) {
+                    var distinctProdList = hosemann.bbq.utilities.distinctString(productList);
+                    distinctProdList.forEach(function (element) {
+                        $('#queueSelection').append('<input class="productListFilter" id={0} type="checkbox">{0}<br/>'.f(element))
+                    });
+
+                    $('.productListFilter').change(function (object) {
+                        if ($('#selectAllFilter:checked').length > 0)
+                            $('#selectAllFilter:checked').prop('checked', false);
+                        hosemann.bbq.updateView();
+                    });
+                }
             }
-
         };
 
         /*   SERVER FUNCTIONS   */
@@ -319,6 +336,7 @@ hosemann = {
 
         },
         preloadAssets: function () {
+            $('body').append('<div id="bbqPanel" class="panel"></div>');
             $('body').append('<div id="preload" style="display:none"><img src="{0}images/bluegears20.png"><img src="{0}images/bluefeedicon.png"></div>'.f(hosemann.vars.origin));
         },
         getMissingParameter: function () {
@@ -837,8 +855,12 @@ hosemann = {
 
                     $.fancybox({
                         href: '#bbqPanel',
-                        minWidth: 700,
-                        minHeight: 500
+                        minWidth: 875,
+                        minHeight: 600,
+                        onClosed: function() {
+                            hosemann.vars.queueBroadcastProxy.server.leaveRoom('all');
+                            $('#bbqPanel').html('');
+                        }
                     });
                 });
 
@@ -1336,17 +1358,92 @@ hosemann = {
 
         }
     },
+
     bbq: {
         pageLoad: function () {
             hosemann.bbq.buildHtml();
             hosemann.vars.queueBroadcastProxy.server.joinRoom('all');
+
+            $('#bbqPanel .queueHeader ul li').each(function () {
+                $(this).bind("mouseover", function (e) {
+                    if (!$(this).hasClass('selected')) {
+                        $(this).children().stop(true, true).fadeTo(500, 1);
+                    }
+                    e.preventDefault();
+                });
+                $(this).bind("mouseout", function (e) {
+                    if (!$(this).hasClass('selected')) {
+                        $(this).children().stop(true, true).fadeOut(500, 0);
+                    }
+                    e.preventDefault();
+                });
+            });
         },
         buildHtml: function () {
-            $('body').append('<div id="bbqPanel" class="panel"><div><div><div class="panelTitle">queue<div style="font-weight: normal; display: inline; color: #1F6D9B;">monitor</div></div><div class="bbqAllContainer"><ul id="bbqList"></ul></div></div></div></div>');
+            $('#bbqPanel').append('<div><div><div class="panelTitle">queue<div style="font-weight: normal; display: inline; color: #1F6D9B;">monitor</div></div><div class="bbqAllContainer"><div id="queueSelection"><input type="checkbox" id="selectAllFilter" checked="checked">Select All<br /></div><div id="masterContainer"><div id="combinedQueueStatusContainer"><h2>Combined Queues</h2><ol class="queueStatusSlats"><li class="queueHeader"><ul class="stats-tabs"><li class="grid0">Product</li><li class="grid1">CT<div style="display:none;">Call Type</div></li><li class="grid2">QTY<div style="display:none;">Number of Calls</div></li><li class="grid3">HT<div style="display:none;">Hold Time</div></li></ul></li></ol></div><div id="singleQueueStatusContainer"><h2>Individual Queues</h2><ol class="queueStatusSlats"><li class="queueHeader"><ul class="stats-tabs"><li class="grid0">Product</li><li class="grid1">CT<div style="display:none;">Call Type</div></li><li class="grid2">QTY<div style="display:none;">Number of Calls</div></li><li class="grid3">HT<div style="display:none;">Hold Time</div></li><li class="grid4">OFF<div style="display:none;">Calls Offered</div></li><li class="grid5">HAN<div style="display:none;">Calls Handled</div></li><li class="grid6">SLA<div style="display:none;">Service Level Agreement</div></li><li class="grid7">Live<div style="display:none;">Live</div></li><li class="grid8">ASA<div style="display:none;">Average Speed of Answer</div></li><li class="grid9">HT<div style="display:none;">Handle Time</div></li><li class="grid10">TT<div style="display:none;">Talk Time</div></li><li class="grid11">SL<div style="display:none;">Service Level</div></li></ul></li></ol></div></div></div></div></div>');
+        },
+        updateView: function () {
+            if ($('#bbqPanel div#queueSelection input#selectAllFilter:checked').length > 0) {
+                $('#bbqPanel .queueStatusSlats li').show();
+            }
+            else {
+                $('#bbqPanel .queueStatusSlats li').hide();
+
+                var thisProductListFilter = [];
+                $('#bbqPanel .productListFilter:checked').each(function (index, element) {
+                    thisProductListFilter.push(element.id);
+                });
+                if (thisProductListFilter.length > 0) {
+                    hosemann.bbq.utilities.distinctString(thisProductListFilter).forEach(function (element) {
+                        $('#bbqPanel .grid0:contains("{0}")'.f(element)).parent().parent().show();
+                    });
+                }
+            }
+        },
+        utilities: {
+            distinctString: function (array) {
+                var results = [];
+
+                array.forEach(function (element, index, array) {
+                    var isDuplicate = false;
+                    results.forEach(function (distinctElement) {
+                        if (element == distinctElement.toString())
+                            isDuplicate = true;
+                    });
+                    if (isDuplicate == false) {
+                        results.push(element.toString());
+                    }
+                });
+                return results;
+            },
+            distinctCallTypeID: function (array) {
+                var results = [];
+                array.forEach(function (element, index, array) {
+                    var isDuplicate = false;
+                    results.forEach(function (distinctElement, distinctIndex, distinctArray) {
+                        if (element.CallTypeID == distinctElement.CallTypeID)
+                            isDuplicate = true;
+                    });
+                    if (isDuplicate == false) {
+                        results.push(element);
+                    }
+                    else {
+                        results.forEach(function (resultsElement) {
+                            if (resultsElement.CallTypeID == element.CallTypeID) {
+                                if (resultsElement.CallTypeID.length > element.CallTypeID.length) {
+                                    element = resultsElement;
+                                }
+                            }
+                        });
+                    }
+                });
+                return results;
+            }
         }
     },
     utilities: {
         urlVars: {},
+        isOdd: function (num) { return (num % 2) == 1; },
         analytics: function () {
             var _paq = _paq || [];
             _paq.push(["trackPageView"]);

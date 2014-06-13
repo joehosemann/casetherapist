@@ -16,15 +16,24 @@ namespace hapiservice.Controllers
 
         private static string casesStatusNonWorkableGMBU = Properties.Settings.Default.caseStatusNonWorkableGMBU;
         private static string casesStatusNonWorkableECBU = Properties.Settings.Default.caseStatusNonWorkableECBU;
-
+       
         public IEnumerable<CaseSummaryModel> Get([FromUri] string param, string businessUnit)
         {
             string status = "";
+            string titleproblem = "";
+            string titlecritical = "";
 
             if (businessUnit.ToLower() == "gmbu")
+            {
                 status = casesStatusNonWorkableGMBU;
+            }
             else
+            {
                 status = casesStatusNonWorkableECBU;
+                titleproblem = " OR (TGE2.title ='Awaiting Hosting Services' AND dateadd(day, 3,TSC2.creation_time) > getdate()) ";
+                titlecritical = " OR (TGE3.title ='Awaiting Hosting Services' AND dateadd(day, 3,TSC3.creation_time) > getdate()) ";
+            }
+            
             
             var strQuery = string.Format(@"DECLARE @getdate DATETIME
                             SET @getdate = getdate()
@@ -65,6 +74,7 @@ namespace hapiservice.Controllers
 				                            TGE2.title NOT IN (
                                                     {0}
                                                 )
+                                               {1}
 				                            )
 			                            AND TU2.login_name = TU.login_name
 			                            AND (
@@ -96,6 +106,7 @@ namespace hapiservice.Controllers
 				                            TGE3.title NOT IN (
                                                     {0}
                                                 )
+                                                {2}
 				                            )
 			                            AND TU3.login_name = TU.login_name
 			                            AND (
@@ -167,7 +178,7 @@ namespace hapiservice.Controllers
 		                            INNER JOIN table_user TUSUPER WITH (NOLOCK) ON TUSUPER.objid = SUPER.employee2user
 		                            WHERE TUSUPER.login_name = @param
 		                            )
-                            ORDER BY 1 ", status);
+                            ORDER BY 1 ", status, titleproblem, titlecritical);
 
             using (var connection = Helpers.SqlHelper.GetOpenConnectionClarify())
             {

@@ -234,3 +234,188 @@ ul, li {
 }
 
 /* End Queue Activity */
+
+
+/* Queue Summary Begin */
+
+        .bbqAllContainer {
+            font-size: .8em;
+        }
+
+        ol.queueStatusSlats {
+            margin: 0;
+            padding: 0;
+        }
+
+            ol.queueStatusSlats li {
+                margin: 0 0 .1em 0;
+                padding: 0 0 .1em 0;
+                /* border-bottom: 1px solid #eee;*/
+                list-style: none;
+                display:block;
+            }
+
+                /*ol.queueStatusSlats li:last-child {
+                    margin: 0;
+                    padding: 0;
+                    border-bottom: none;
+                }*/
+
+                ol.queueStatusSlats li ul {
+                    font-weight: bold;
+                    font-size: 1em;
+                    margin: 0;
+                }
+
+                ol.queueStatusSlats li ul {
+                    /*line-height: 1.4;*/
+                    margin-left: .5em;
+                    -webkit-margin-before: 0;
+                    -webkit-margin-after: 0;
+                    -webkit-padding-start: 0;
+                }
+
+        div#combinedQueueStatusContainer ol.queueStatusSlats li ul li:first-child {
+            /*border-top: 1px solid #eee;*/
+        }
+
+        div#combinedQueueStatusContainer ol.queueStatusSlats li ul li:last-child {
+            /*margin: 0;
+            padding: 0;
+            border-bottom: none;*/
+        }
+
+        ol.queueStatusSlats li p span.meta {
+            display: block;
+            color: #999;
+        }
+
+        ul.queueStatusGroup li {
+            list-style: none;
+        }
+
+            ul.queueStatusGroup li:last-child {
+                margin: 0;
+                padding: 0;
+                border-bottom: none;
+            }
+
+        ol.queueStatusSlats h3 {
+            color: #2790ae;
+            text-decoration: none;
+            outline: none;
+        }
+
+        ul.stats-tabs {
+            display: table;
+        }
+
+            ul.stats-tabs li {
+                float: left;
+                margin: 0;
+                padding: 0 .5em 0 .5em;
+                border-left: 1px solid #ccc;
+                border-top: 0;
+                border-bottom: 0;
+                border-right: 0;
+            }
+
+
+            ul.stats-tabs li:first-child {
+                border-left:0px;
+            }
+
+        ol.queueStatusSlats li.combined:nth-child(odd) {
+            background: #eee;
+        }
+
+        ol.queueStatusSlats li.single:nth-child(odd) {
+            background: #eee;
+        }
+        .grid0 {
+            width: 10em;
+        }
+
+        .grid1 {
+            width: 1.5em;
+            text-align: center;
+        }
+
+        .grid2 {
+            width: 2em;
+            text-align: center;
+        }
+
+        .grid3 {
+            width: 3.5em;
+            text-align: center;
+        }
+
+        .grid4 {
+            width: 2em;
+            text-align: center;
+        }
+
+        .grid5 {
+            width: 2em;
+            text-align: center;
+        }
+
+        .grid6 {
+            width: 2em;
+            text-align: center;
+        }
+
+        .grid7 {
+            width: 2em;
+            text-align: center;
+        }
+
+        .grid8 {
+            width: 4em;
+            text-align: center;
+        }
+
+        .grid9 {
+            width: 4em;
+            text-align: center;
+        }
+
+        .grid10 {
+            width: 4em;
+            text-align: center;
+        }
+
+        .grid11 {
+            width: 2em;
+            text-align: center;
+        }
+
+        #queueSelection {
+            width: 100px;
+            float: left;
+            /*margin-top: 40px;*/
+            position: fixed;
+        }
+
+        .queueHeader {
+            background-color: #1F6D9B;
+            color: white;
+        }
+
+        #masterContainer {
+            margin-left: 120px;
+        }
+
+        .queueHeader ul li {
+            display: inline;
+        }
+
+        .queueHeader ul li div {
+            white-space: nowrap;
+            background-color: #1F6D9B;
+            display: inline-block;
+            margin-right: 20px;
+            margin-left: 5px;
+        }
+/* Queue Summary End */

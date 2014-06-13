@@ -21,5 +21,16 @@ namespace hapiservice.Helpers
                 return 0;
             }
         }
+
+        /// <summary>
+        /// Returns true if not null and contains at least 1 object.
+        /// </summary>
+        /// <typeparam name="T">Type for the argument</typeparam>
+        /// <param name="ienumerable">input ienumerable</param>
+        /// <returns>True/false</returns>
+        public static bool IsAny<T>(this IEnumerable<T> ienumerable)
+        {
+            return ienumerable != null && ienumerable.Any();
+        }
     }
 }

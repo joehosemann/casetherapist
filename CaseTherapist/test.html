@@ -27,11 +27,11 @@
                 list-style: none;
             }
 
-                ol.queueStatusSlats li:last-child {
+                /*ol.queueStatusSlats li:last-child {
                     margin: 0;
                     padding: 0;
                     border-bottom: none;
-                }
+                }*/
 
                 ol.queueStatusSlats li ul {
                     font-weight: bold;
@@ -52,9 +52,9 @@
         }
 
         div#combinedQueueStatusContainer ol.queueStatusSlats li ul li:last-child {
-            margin: 0;
+            /*margin: 0;
             padding: 0;
-            border-bottom: none;
+            border-bottom: none;*/
         }
 
         ol.queueStatusSlats li p span.meta {
@@ -84,12 +84,17 @@
 
             ul.stats-tabs li {
                 float: left;
-                margin: 0 .5em 0 0;
-                padding: 0 .5em 0 0;
-                border-right: 1px solid #ccc;
+                margin: 0;
+                padding: 0 .5em 0 .5em;
+                border-left: 1px solid #ccc;
                 border-top: 0;
                 border-bottom: 0;
-                border-left: 0;
+                border-right: 0;
+            }
+
+
+            ul.stats-tabs li:first-child {
+                border-left:0px;
             }
 
         ol.queueStatusSlats li.combined:nth-child(odd) {
@@ -99,61 +104,63 @@
         ol.queueStatusSlats li.single:nth-child(odd) {
             background: #eee;
         }
-
-        ul.stats-tabs li:last-child {
-            margin: 0;
-            padding: 0;
-            border: none;
-        }
-
-
-
         .grid0 {
             width: 10em;
         }
 
         .grid1 {
             width: 1.5em;
+            text-align: center;
         }
 
         .grid2 {
-            width: 1em;
+            width: 2em;
+            text-align: center;
         }
 
         .grid3 {
             width: 3.5em;
+            text-align: center;
         }
 
         .grid4 {
-            width: 1.5em;
+            width: 2em;
+            text-align: center;
         }
 
         .grid5 {
-            width: 1.5em;
+            width: 2em;
+            text-align: center;
         }
 
         .grid6 {
-            width: 1.5em;
+            width: 2em;
+            text-align: center;
         }
 
         .grid7 {
-            width: 1.5em;
+            width: 2em;
+            text-align: center;
         }
 
         .grid8 {
             width: 4em;
+            text-align: center;
         }
 
         .grid9 {
             width: 4em;
+            text-align: center;
         }
 
         .grid10 {
             width: 4em;
+            text-align: center;
         }
 
         .grid11 {
-            width: 4em;
+            width: 2em;
+            text-align: center;
         }
 
         #queueSelection {
@@ -163,82 +170,28 @@
             position: fixed;
         }
 
+        .queueHeader {
+            background-color: #1F6D9B;
+            color: white;
+        }
+
         #masterContainer {
             margin-left: 120px;
         }
 
         .queueHeader ul li {
-            width: 220px;
-            height: 70px;
-            -moz-transform: rotate(315deg) translateX(25px);
-            -o-transform: rotate(315deg) translateX(25px);
-            -webkit-transform: rotate(315deg) translateX(25px);
-            transform: rotate(315deg) translateX(25px);
+            display: inline;
+        }
+
+        .queueHeader ul li div {
+            white-space: nowrap;
+            background-color: #1F6D9B;
+            display: inline-block;
+            margin-right: 20px;
+            margin-left: 5px;
         }
     </style>
 
-    <!--[if lt IE 7 ]>
-        <style>
-      /* IE6 and 7 */
-        .queueHeader {
-      filter: progid:DXImageTransform.Microsoft.Matrix(
-               M11=0.7071067811865475,
-               M12=0.7071067811865474,
-               M21=-0.7071067811865474,
-               M22=0.7071067811865475,
-               SizingMethod='auto expand');
-
-    /*
-     * To make the transform-origin be the middle of
-     * the object.    Note: These numbers
-     * are approximations.  For more accurate results,
-     * use Internet Explorer with this tool.
-     */
-    margin-left: 12px;
-    margin-top: -88px;
-        }
-        </style>
-    <![endif]-->
-    <!--[if IE 7 ]>
-        <style>
-      /* IE6 and 7 */
-        .queueHeader {
-      filter: progid:DXImageTransform.Microsoft.Matrix(
-               M11=0.7071067811865475,
-               M12=0.7071067811865474,
-               M21=-0.7071067811865474,
-               M22=0.7071067811865475,
-               SizingMethod='auto expand');
-         /*
-     * To make the transform-origin be the middle of
-     * the object.    Note: These numbers
-     * are approximations.  For more accurate results,
-     * use Internet Explorer with this tool.
-     */
-    margin-left: 12px;
-    margin-top: -88px;
-        }
-
-        </style>
-    <![endif]-->
-    <!--[if IE 8 ]>
-     <style>
-     /* IE8+ - must be on one line, unfortunately */
-        .queueHeader {
-    -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.7071067811865475, M12=0.7071067811865474, M21=-0.7071067811865474, M22=0.7071067811865475, SizingMethod='auto expand')";
-
-    /*
-     * To make the transform-origin be the middle of
-     * the object.    Note: These numbers
-     * are approximations.  For more accurate results,
-     * use Internet Explorer with this tool.
-     */
-    margin-left: 12px;
-    margin-top: -88px;
-        }
-
-        </style>
-          <![endif]-->
 
 </head>
 <body>
@@ -246,10 +199,14 @@
         <input type="checkbox" id="selectAllFilter" checked="checked">Select All<br />
     </div>
     <div id="masterContainer">
-        <div id="combinedQueueStatusContainer"><h2>Combined Queues</h2><ol class="queueStatusSlats"></ol></div>
+        <div id="combinedQueueStatusContainer">
+            <h2>Combined Queues</h2><ol class="queueStatusSlats">
+                <li class="queueHeader"><ul class="stats-tabs"><li class="grid0">Product</li><li class="grid1">CT<div style="display:none;">Call Type</div></li><li class="grid2">QTY<div style="display:none;">Number of Calls</div></li><li class="grid3">HT<div style="display:none;">Hold Time</div></li></ul></li>
+            </ol>
+        </div>
         <div id="singleQueueStatusContainer">
             <h2>Individual Queues</h2><ol class="queueStatusSlats">
-                <li class="queueHeader"><ul ><li class="grid0">Product</li><li class="grid1">CallType</li><li class="grid2">Quantity</li><li class="grid3">WaitTime</li><li class="grid4">Offered</li><li class="grid5">Handled</li><li class="grid6">SLAbandoned</li><li class="grid7">PercentLive</li><li class="grid8">AverageAnswer</li><li class="grid9">HandleTime</li><li class="grid10">TalkTime</li><li class="grid11">ServiceLevel</li></ul></li>
+                <li class="queueHeader"><ul class="stats-tabs"><li class="grid0">Product</li><li class="grid1">CT<div style="display:none;">Call Type</div></li><li class="grid2">QTY<div style="display:none;">Number of Calls</div></li><li class="grid3">HT<div style="display:none;">Hold Time</div></li><li class="grid4">OFF<div style="display:none;">Calls Offered</div></li><li class="grid5">HAN<div style="display:none;">Calls Handled</div></li><li class="grid6">SLA<div style="display:none;">Service Level Agreement</div></li><li class="grid7">Live<div style="display:none;">Live</div></li><li class="grid8">ASA<div style="display:none;">Average Speed of Answer</div></li><li class="grid9">HT<div style="display:none;">Handle Time</div></li><li class="grid10">TT<div style="display:none;">Talk Time</div></li><li class="grid11">SL<div style="display:none;">Service Level</div></li></ul></li>
             </ol>
         </div>
     </div>
@@ -303,83 +260,53 @@
             var queueData = [];
 
             var distinctQueueData = distinctCallTypeID(callTypeDetailModel);
-            distinctQueueData.forEach(function (element, index, array) {
-                if ($.trim(element.Product).match(/_ALL/g) != null) {
-                    if ($('li[id={0}]'.f(element.CallTypeID)).length === 0) {
-                        // New Combined Queue Header Row
-                        //$('#combinedQueueStatusContainer ol').append('<li id="{0}" isCombined="1" parentProduct="{1}" class="queueStatusGroup"><h3>{2}</h3><ul></ul></li>'.f(element.CallTypeID, $.trim(element.Product).match(/^\A-Za-z/g), $.trim(element.Product)));
-                        $('#combinedQueueStatusContainer ol').append('<li id="{0}" class="combined"><ul class="stats-tabs"></ul></li>'.f(element.CallTypeID));
+            if (isOdd(new Date().getTime())) {
+                distinctQueueData.forEach(function (element, index, array) {
+                    if ($.trim(element.Product).match(/_ALL/g) != null) {
+                        if ($('li[id={0}]'.f(element.CallTypeID)).length === 0) {
+                            // New Combined Queue Header Row
+                            $('#combinedQueueStatusContainer ol').append('<li id="{0}" class="combined"><ul class="stats-tabs"></ul></li>'.f(element.CallTypeID));
+                        }
+                        else {
+                            // Update Combined Queue Header Row
+                            $('li[id={0}][class="combined"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime));
+                        }
                     }
                     else {
-                        // Update Combined Queue Header Row
-                        //$('li[id={0}][isCombined=1] h3'.f(element.CallTypeID)).text('{0} - {1}'.f(element.Product, element.Quantity));
-                        $('li[id={0}][class="combined"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime, element.SLAbandoned));
+                        if ($('ol li[id={0}]'.f(element.CallTypeID)).length > 0) {
+                            // Update Single Queue Row
+                            $('li[id={0}][class="single"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li><li class="grid5">{5}</li><li class="grid6">{6}</li><li class="grid7">{7}</li><li class="grid8">{8}</li><li class="grid9">{9}</li><li class="grid10">{10}</li><li class="grid11">{11}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime, element.Offered, element.Handled, element.SLAbandoned, element.PercentLive, element.AverageAnswer, element.HandleTime, element.TalkTime, element.ServiceLevel));
+                        }
+                        else {
+                            // New Single Queue Row
+                            $('#singleQueueStatusContainer ol').append('<li id="{0}" class="single"><ul class="stats-tabs"></ul></li>'.f(element.CallTypeID));
+                        }
                     }
-                }
-                else {
-                    //if ($('li ul li[id={0}]'.f(element.CallTypeID)).length > 0) {
-                    //    // Update Combined Queue Child Row
-                    //    //$('li ul li[id={0}]'.f(element.CallTypeID)).text('{1} - {2}'.f(element.CallTypeID, $.trim(element.Product), element.Quantity));
-                    //}
-                    //else {
-                    //    // New Combined Queue Child Row
-                    //    //$('li[id*={0}] ul'.f(element.CallTypeID)).append('<li id="{0}">{1}</li>'.f(element.CallTypeID, $.trim(element.Product)));
-                    //}
-                    if ($('ol li[id={0}]'.f(element.CallTypeID)).length > 0) {
-                        // Update Single Queue Row
-                        $('li[id={0}][class="single"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li><li class="grid5">{5}</li><li class="grid6">{6}</li><li class="grid7">{7}</li><li class="grid8">{8}</li><li class="grid9">{9}</li><li class="grid10">{10}</li><li class="grid11">{11}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime, element.Offered, element.Handled, element.SLAbandoned, element.PercentLive, element.AverageAnswer, element.HandleTime, element.TalkTime, element.ServiceLevel));
+
+                    if ($('#queueSelection').children().length == 2) {
+                        productList.push(element.Product.match(/^[A-Za-z]+/).toString());
                     }
-                    else {
-                        // New Single Queue Row
-                        $('#singleQueueStatusContainer ol').append('<li id="{0}" class="single"><ul class="stats-tabs"></ul></li>'.f(element.CallTypeID));
-                    }
-                }
+                });
 
                 if ($('#queueSelection').children().length == 2) {
-                    productList.push(element.Product.match(/^[A-Za-z]+/).toString());
+                    if (productList.length > 0) {
+                        var distinctProdList = distinctString(productList);
+                        distinctProdList.forEach(function (element) {
+                            $('#queueSelection').append('<input class="productListFilter" id={0} type="checkbox">{0}<br/>'.f(element))
+                        });
+
+                        $('.productListFilter').change(function (object) {
+                            if ($('#selectAllFilter:checked').length > 0)
+                                $('#selectAllFilter:checked').prop('checked', false);
+                            UpdateView();
+
+                        });
+                    }
+
                 }
-            });
-
-            //var callTypeID = callTypeDetailModel[i].CallTypeID;
-            //var productID = callTypeDetailModel[i].ProductID;
-            //var product = callTypeDetailModel[i].Product;
-            //var callType = callTypeDetailModel[i].CallType;
-            //var quantity = callTypeDetailModel[i].Quantity;
-            //var waitTime = callTypeDetailModel[i].WaitTime;
-            //var offered = callTypeDetailModel[i].Offered;
-            //var handled = callTypeDetailModel[i].Handled;
-            //var slabandoned = callTypeDetailModel[i].SLAbandoned;
-            //var percentlive = callTypeDetailModel[i].PercentLive;
-            //var averageAnswer = callTypeDetailModel[i].AverageAnswer;
-            //var handleTime = callTypeDetailModel[i].HandleTime;
-            //var talkTime = callTypeDetailModel[i].TalkTime;
-            //var serviceLevel = callTypeDetailModel[i].ServiceLevel;
-            //var callTypeID = callTypeDetailModel[i].CallTypeID;
-            //var productID = callTypeDetailModel[i].ProductID;
-            //var product = $.trim(callTypeDetailModel[i].Product);
-            //var callType = callTypeDetailModel[i].CallType;
-            //var quantity = callTypeDetailModel[i].Quantity;
-            //var waitTime = callTypeDetailModel[i].WaitTime;
-
-
-            if ($('#queueSelection').children().length == 2) {
-                if (productList.length > 0) {
-                    var distinctProdList = distinctString(productList);
-                    distinctProdList.forEach(function (element) {
-                        $('#queueSelection').append('<input class="productListFilter" id={0} type="checkbox">{0}<br/>'.f(element))
-                    });
-
-                    $('.productListFilter').change(function (object) {
-                        if ($('#selectAllFilter:checked').length > 0)
-                            $('#selectAllFilter:checked').prop('checked', false);
-                        UpdateView();
-
-                    });
-                }
-
             }
-
         };
+
 
 
         function UpdateView() {
@@ -412,12 +339,23 @@
 
         $.connection.hub.start().done(function () {
             queueBroadcastProxy.server.joinRoom('all');
-
-
         });
 
-
-
+        $('.queueHeader ul li').each(function () {
+            $(this).bind("mouseover", function (e) {
+                if (!$(this).hasClass('selected')) {
+                    $(this).children().stop(true, true).fadeTo(500, 1);
+                }
+                e.preventDefault();
+            });
+            $(this).bind("mouseout", function (e) {
+                if (!$(this).hasClass('selected')) {
+                    $(this).children().stop(true, true).fadeOut(500, 0);
+                }
+                e.preventDefault();
+            });
+        });
+         
 
         // String.Format (aliaed to .f)
         // usage: 'Added {0} by {1} to your collection'.f(title, artist)
@@ -432,15 +370,8 @@
             return s;
         };
 
-        $(document).ready(function () {
-            //hosemann.signalR();
+        function isOdd(num) { return (num % 2) == 1; }
 
-
-        });
-        setTimeout(function () {
-
-
-        }, 2000);
     </script>
 
 </body>
