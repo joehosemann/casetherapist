@@ -139,9 +139,7 @@ hosemann = {
             var combinedQueueData = [];
             var queueData = [];
 
-            var distinctQueueData = hosemann.bbq.utilities.distinctCallTypeID(callTypeDetailModel);
-
-            distinctQueueData.forEach(function (element, index, array) {
+            callTypeDetailModel.forEach(function (element, index, array) {
                 var background = "transparent";
                 var color = "#444";
 
@@ -159,26 +157,31 @@ hosemann = {
                     }
                 }
 
-                if ($.trim(element.Product).match(/_ALL/g) != null) {
-                    if ($('li[id={0}]'.f(element.CallTypeID)).length === 0) {
+                // Changed from Regex to Length (assumes CallTypeIDs will be 4 digits in length)
+                if (element.CallTypeID.length > 5) {
+                    if ($('#combinedQueueStatusContainer ol li#{0}'.f(element.CallTypeID)).length === 0) {
                         // New Combined Queue Header Row
+                        //$('#combinedQueueStatusContainer ol').append('<li id="{0}" class="combined"><ul class="stats-tabs"><li class="grid0"></li><li class="grid1"></li><li class="grid2"></li><li class="grid3"></li><li class="grid4"></li><li class="grid5"></li><li class="grid6"></li><li class="grid7"></li><li class="grid8"></li><li class="grid9"></li><li class="grid10"></li><li class="grid11"></li></ul></li>'.f(element.CallTypeID));
                         $('#combinedQueueStatusContainer ol').append('<li id="{0}" class="combined"><ul class="stats-tabs"></ul></li>'.f(element.CallTypeID));
                     }
                     else {
-                        // Update Combined Queue Header Row
-                        $('li[id={0}][class="combined"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime));
-                        $('li[id={0}][class="combined"] ul li.grid3'.f(element.CallTypeID)).css("background-color", background).css("color", color);
+                        // Update Combined Queue Rows
+                        //updateGridText(element);
+                        $('li[id={0}][class="combined"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li><li class="grid5">{5}</li><li class="grid6">{6}</li><li class="grid7">{7}</li><li class="grid8">{8}</li><li class="grid9">{9}</li><li class="grid10">{10}</li><li class="grid11">{11}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime, element.Offered, element.Handled, element.SLAbandoned, element.PercentLive, element.AverageAnswer, element.HandleTime, element.TalkTime, element.ServiceLevel));
+                        $('li[id={0}][class="combined"] ul'.f(element.CallTypeID)).css('background-color', background).css('color', color);
                     }
                 }
                 else {
-                    if ($('ol li[id={0}]'.f(element.CallTypeID)).length > 0) {
-                        // Update Single Queue Row
-                        $('li[id={0}][class="single"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li><li class="grid5">{5}</li><li class="grid6">{6}</li><li class="grid7">{7}</li><li class="grid8">{8}</li><li class="grid9">{9}</li><li class="grid10">{10}</li><li class="grid11">{11}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime, element.Offered, element.Handled, element.SLAbandoned, element.PercentLive, element.AverageAnswer, element.HandleTime, element.TalkTime, element.ServiceLevel));
-                        $('li[id={0}][class="single"] ul li.grid3'.f(element.CallTypeID)).css("background-color", background).css("color", color);
+                    if ($('#singleQueueStatusContainer ol li#{0}'.f(element.CallTypeID)).length === 0) {
+                        // New Single Queue Row
+                        //$('#singleQueueStatusContainer ol').append('<li id="{0}" class="single"><ul class="stats-tabs"><li class="grid0"></li><li class="grid1"></li><li class="grid2"></li><li class="grid3"></li><li class="grid4"></li><li class="grid5"></li><li class="grid6"></li><li class="grid7"></li><li class="grid8"></li><li class="grid9"></li><li class="grid10"></li><li class="grid11"></li></ul></li>'.f(element.CallTypeID));
+                        $('#singleQueueStatusContainer ol').append('<li id="{0}" class="single"><ul class="stats-tabs"></ul></li>'.f(element.CallTypeID));
                     }
                     else {
-                        // New Single Queue Row
-                        $('#singleQueueStatusContainer ol').append('<li id="{0}" class="single"><ul class="stats-tabs"></ul></li>'.f(element.CallTypeID));
+                        // Update Single Queue Row
+                        //updateGridText(element)
+                        $('li[id={0}][class="single"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li><li class="grid5">{5}</li><li class="grid6">{6}</li><li class="grid7">{7}</li><li class="grid8">{8}</li><li class="grid9">{9}</li><li class="grid10">{10}</li><li class="grid11">{11}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime, element.Offered, element.Handled, element.SLAbandoned, element.PercentLive, element.AverageAnswer, element.HandleTime, element.TalkTime, element.ServiceLevel));
+                        $('li[id={0}][class="single"] ul'.f(element.CallTypeID)).css('background-color', background).css('color', color);
                     }
                 }
 
@@ -857,7 +860,7 @@ hosemann = {
                         href: '#bbqPanel',
                         minWidth: 875,
                         minHeight: 600,
-                        onClosed: function() {
+                        afterClose: function() {
                             hosemann.vars.queueBroadcastProxy.server.leaveRoom('all');
                             $('#bbqPanel').html('');
                         }
@@ -1380,7 +1383,7 @@ hosemann = {
             });
         },
         buildHtml: function () {
-            $('#bbqPanel').append('<div><div><div class="panelTitle">queue<div style="font-weight: normal; display: inline; color: #1F6D9B;">monitor</div></div><div class="bbqAllContainer"><div id="queueSelection"><input type="checkbox" id="selectAllFilter" checked="checked">Select All<br /></div><div id="masterContainer"><div id="combinedQueueStatusContainer"><h2>Combined Queues</h2><ol class="queueStatusSlats"><li class="queueHeader"><ul class="stats-tabs"><li class="grid0">Product</li><li class="grid1">CT<div style="display:none;">Call Type</div></li><li class="grid2">QTY<div style="display:none;">Number of Calls</div></li><li class="grid3">HT<div style="display:none;">Hold Time</div></li></ul></li></ol></div><div id="singleQueueStatusContainer"><h2>Individual Queues</h2><ol class="queueStatusSlats"><li class="queueHeader"><ul class="stats-tabs"><li class="grid0">Product</li><li class="grid1">CT<div style="display:none;">Call Type</div></li><li class="grid2">QTY<div style="display:none;">Number of Calls</div></li><li class="grid3">HT<div style="display:none;">Hold Time</div></li><li class="grid4">OFF<div style="display:none;">Calls Offered</div></li><li class="grid5">HAN<div style="display:none;">Calls Handled</div></li><li class="grid6">SLA<div style="display:none;">Service Level Agreement</div></li><li class="grid7">Live<div style="display:none;">Live</div></li><li class="grid8">ASA<div style="display:none;">Average Speed of Answer</div></li><li class="grid9">HT<div style="display:none;">Handle Time</div></li><li class="grid10">TT<div style="display:none;">Talk Time</div></li><li class="grid11">SL<div style="display:none;">Service Level</div></li></ul></li></ol></div></div></div></div></div>');
+            $('#bbqPanel').append('<div><div><div class="panelTitle">queue<div style="font-weight: normal; display: inline; color: #1F6D9B;">monitor</div></div><div class="bbqAllContainer"><div id="queueSelection"><input type="checkbox" id="selectAllFilter" checked="checked">Select All<br /></div><div id="masterContainer"><div id="combinedQueueStatusContainer"><h2>Combined Queues</h2><ol class="queueStatusSlats"><li class="queueHeader"><ul class="stats-tabs"><li class="grid0">Product</li><li class="grid1">CT<div style="display:none;">Call Type</div></li><li class="grid2">QTY<div style="display:none;">Number of Calls</div></li><li class="grid3">HT<div style="display:none;">Hold Time</div></li><li class="grid4">OFF<div style="display:none;">Calls Offered</div></li><li class="grid5">HAN<div style="display:none;">Calls Handled</div></li><li class="grid6">SLA<div style="display:none;">Service Level Agreement</div></li><li class="grid7">Live<div style="display:none;">Live</div></li><li class="grid8">ASA<div style="display:none;">Average Speed of Answer</div></li><li class="grid9">HT<div style="display:none;">Handle Time</div></li><li class="grid10">TT<div style="display:none;">Talk Time</div></li><li class="grid11">SL<div style="display:none;">Service Level</div></li></ul></li></ol></div><div id="singleQueueStatusContainer"><h2>Individual Queues</h2><ol class="queueStatusSlats"><li class="queueHeader"><ul class="stats-tabs"><li class="grid0">Product</li><li class="grid1">CT<div style="display:none;">Call Type</div></li><li class="grid2">QTY<div style="display:none;">Number of Calls</div></li><li class="grid3">HT<div style="display:none;">Hold Time</div></li><li class="grid4">OFF<div style="display:none;">Calls Offered</div></li><li class="grid5">HAN<div style="display:none;">Calls Handled</div></li><li class="grid6">SLA<div style="display:none;">Service Level Agreement</div></li><li class="grid7">Live<div style="display:none;">Live</div></li><li class="grid8">ASA<div style="display:none;">Average Speed of Answer</div></li><li class="grid9">HT<div style="display:none;">Handle Time</div></li><li class="grid10">TT<div style="display:none;">Talk Time</div></li><li class="grid11">SL<div style="display:none;">Service Level</div></li></ul></li></ol></div></div></div></div></div>');
         },
         updateView: function () {
             if ($('#bbqPanel div#queueSelection input#selectAllFilter:checked').length > 0) {
@@ -1415,30 +1418,7 @@ hosemann = {
                     }
                 });
                 return results;
-            },
-            distinctCallTypeID: function (array) {
-                var results = [];
-                array.forEach(function (element, index, array) {
-                    var isDuplicate = false;
-                    results.forEach(function (distinctElement, distinctIndex, distinctArray) {
-                        if (element.CallTypeID == distinctElement.CallTypeID)
-                            isDuplicate = true;
-                    });
-                    if (isDuplicate == false) {
-                        results.push(element);
-                    }
-                    else {
-                        results.forEach(function (resultsElement) {
-                            if (resultsElement.CallTypeID == element.CallTypeID) {
-                                if (resultsElement.CallTypeID.length > element.CallTypeID.length) {
-                                    element = resultsElement;
-                                }
-                            }
-                        });
-                    }
-                });
-                return results;
-            }
+            }           
         }
     },
     utilities: {

@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script type="text/javascript" src="../scripts/json2.js"></script>
+    <script type="text/javascript" src="../scripts/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="../scripts/jquery.signalR-2.0.3.js"></script>
+    <script src="/signalr/hubs"></script>
+
+
+</head>
+<body>
+
+    <div><ul id="test"></ul></div>
+    <script>
+        function distinct(array) {
+            var results = [];
+            array.forEach(function (element, index, array) {
+                var isDuplicate = false;
+                results.forEach(function (distinctElement, distinctIndex, distinctArray) {
+                    if (element.CallTypeID == distinctElement.CallTypeID)
+                        isDuplicate = true;
+                });
+                if (isDuplicate == false) {
+                    results.push(element);
+                }
+                else {
+                    results.forEach(function (resultsElement) {
+                        if (resultsElement.CallTypeID == element.CallTypeID) {
+                            if (resultsElement.CallTypeID.length > element.CallTypeID.length) {
+                                element = resultsElement;
+                            }
+                        }
+                    });
+                }
+            });
+            return results;
+        }
+
+        var queueBroadcastProxy = $.connection.queueBroadcastHub;
+
+        queueBroadcastProxy.client.updateAllProductQueue = function (callTypeDetailModel) {
+
+            callTypeDetailModel.forEach(function (element, index, array) {
+                if (index === 0) {
+                    $('#test').html('');
+                }
+
+                $('#test').append('<ul><li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li><li class="grid5">{5}</li><li class="grid6">{6}</li><li class="grid7">{7}</li><li class="grid8">{8}</li><li class="grid9">{9}</li><li class="grid10">{10}</li><li class="grid11">{11}</li></ul>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime, element.Offered, element.Handled, element.SLAbandoned, element.PercentLive, element.AverageAnswer, element.HandleTime, element.TalkTime, element.ServiceLevel))
+            }
+
+
+            //var callTypeID = callTypeDetailModel[i].CallTypeID;
+            //var productID = callTypeDetailModel[i].ProductID;
+            //var product = callTypeDetailModel[i].Product;
+            //var callType = callTypeDetailModel[i].CallType;
+            //var quantity = callTypeDetailModel[i].Quantity;
+            //var waitTime = callTypeDetailModel[i].WaitTime;
+            //var offered = callTypeDetailModel[i].Offered;
+            //var handled = callTypeDetailModel[i].Handled;
+            //var slabandoned = callTypeDetailModel[i].SLAbandoned;
+            //var percentlive = callTypeDetailModel[i].PercentLive;
+            //var averageAnswer = callTypeDetailModel[i].AverageAnswer;
+            //var handleTime = callTypeDetailModel[i].HandleTime;
+            //var talkTime = callTypeDetailModel[i].TalkTime;
+            //var serviceLevel = callTypeDetailModel[i].ServiceLevel;
+            //var callTypeID = callTypeDetailModel[i].CallTypeID;
+            //var productID = callTypeDetailModel[i].ProductID;
+            //var product = $.trim(callTypeDetailModel[i].Product);
+            //var callType = callTypeDetailModel[i].CallType;
+            //var quantity = callTypeDetailModel[i].Quantity;
+            //var waitTime = callTypeDetailModel[i].WaitTime;
+
+
+
+
+        )
+        };
+
+        $.connection.hub.start().done(function () {
+            queueBroadcastProxy.server.joinRoom('all');
+
+
+        });
+
+
+
+
+        // String.Format (aliaed to .f)
+        // usage: 'Added {0} by {1} to your collection'.f(title, artist)
+        // credit: http://stackoverflow.com/questions/1038746/equivalent-of-string-format-in-jquery
+        String.prototype.format = String.prototype.f = function () {
+            var s = this,
+                i = arguments.length;
+
+            while (i--) {
+                s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
+            }
+            return s;
+        };
+
+        $(document).ready(function () {
+            //hosemann.signalR();
+
+
+        });
+        setTimeout(function () {
+
+
+        }, 2000);
+    </script>
+
+</body>
+</html>

@@ -723,7 +723,6 @@
     <Content Include="Scripts\json2.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\piwik.js" />
-    <Content Include="Scripts\queueMonitor.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\spectrum.js" />

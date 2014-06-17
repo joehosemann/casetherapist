@@ -17,7 +17,7 @@ namespace hapiservice.Models
         public string TalkTime { get; set; }
         public string ServiceLevel { get; set; }
 
-        private string _waitTime;
+        private string _waitTime = "0:00:00";
         public string WaitTime
         {
             get

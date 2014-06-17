@@ -14,30 +14,30 @@ namespace hapiservice.Hubs
     {
         private static IEnumerable<CallTypeDetailModel> CallTypeDetails { get; set; }
         private static IEnumerable<DistinctProductsCallTypesModel> DistinctProductsCallTypes { get; set; }
-        private const string query = "SELECT RouterCallsQNow as Quantity, ISNULL(DATEDIFF(second, RouterLongestCallQ, GETDATE()),'') as WaitTime, CallTypeID, CallsOfferedToday as Offered, CallsHandledToday as Handled, TotalCallsAbandToday as SLAbandoned, cast(isnull(cast(CallsHandledToday + CallsAtAgentNow as float)/nullif(cast(CallsOfferedToday as float),0)*100,100)as int) as PercentLive, convert(varchar,DATEADD(s,isnull(cast(AnswerWaitTimeToday/nullif(CallsAnsweredToday,0) as int),0),0),108) as AverageAnswer, convert(varchar,DATEADD(s,ISNULL(HandleTimeToday/nullif(CallsHandledToday,0),0),0),108) as HandleTime, convert(varchar,DATEADD(s,ISNULL(TalkTimeToday/nullif(CallsHandledToday,0),0),0),108) as TalkTime, str(ISNULL(ServiceLevelToday,1)*100,3,0) as ServiceLevel FROM t_Call_Type_Real_Time with (NOLOCK)";
-        public List<CallTypeDetailModel> Data
-        {
-            get
-            {
-                return SortList(ParseQueueResults());
-            }
-        }
+        private const string clarifyQuery = "SELECT RouterCallsQNow as Quantity, ISNULL(DATEDIFF(second, RouterLongestCallQ, GETDATE()),'') as WaitTime, CallTypeID, CallsOfferedToday as Offered, CallsHandledToday as Handled, TotalCallsAbandToday as SLAbandoned, cast(isnull(cast(CallsHandledToday + CallsAtAgentNow as float)/nullif(cast(CallsOfferedToday as float),0)*100,100)as int) as PercentLive, convert(varchar,DATEADD(s,isnull(cast(AnswerWaitTimeToday/nullif(CallsAnsweredToday,0) as int),0),0),108) as AverageAnswer, convert(varchar,DATEADD(s,ISNULL(HandleTimeToday/nullif(CallsHandledToday,0),0),0),108) as HandleTime, convert(varchar,DATEADD(s,ISNULL(TalkTimeToday/nullif(CallsHandledToday,0),0),0),108) as TalkTime, str(ISNULL(ServiceLevelToday,1)*100,3,0) as ServiceLevel FROM t_Call_Type_Real_Time with (NOLOCK)";
+        private const string ctProducts = @"select distinct prods.ID as ProductID, prods.Name as Product, cts.Name as CallType, CallTypeID = STUFF((SELECT ',' + CAST(CallTypeID as VARCHAR(10)) FROM casetherapist_CallTypes as cts2 where (cts2.IsDisabled is null OR cts2.IsDisabled = 0) AND prods.ID = cts2.ProductID AND cts2.Name = cts.Name FOR XML PATH('')), 1, 1, '') from casetherapist_Products prods inner join casetherapist_CallTypes cts on prods.ID = cts.ProductID order by prods.Name";
 
         public QueueBroadcastData()
-        {            
-            if (!Utilities.IsAny(DistinctProductsCallTypes))
+        {
+            // Pull products from CT database
+            if (CallTypeDetails == null)
             {
                 using (var connection = SqlHelper.GetOpenConnectionBBApps())
                 {
-                    var nquery = "select cts.CallTypeID, prods.ID as ProductID, prods.Name as Product, cts.Name as CallType from casetherapist_Products prods inner join casetherapist_CallTypes cts on prods.ID = cts.ProductID";
-                    CallTypeDetails = connection.Query<CallTypeDetailModel>(nquery);
-                    DistinctProductsCallTypes = (from a in CallTypeDetails select new DistinctProductsCallTypesModel { Product = a.Product, ProductID = a.ProductID, CallType = a.CallType }).Distinct();
+                    CallTypeDetails = connection.Query<CallTypeDetailModel>(ctProducts);
+                    //DistinctProductsCallTypes = (from a in CallTypeDetails select new DistinctProductsCallTypesModel { Product = a.Product, ProductID = a.ProductID, CallType = a.CallType }).Distinct();
                 }
             }
         }
 
-        private IEnumerable<CallTypeDetailModel> QueueData()
+
+        public IEnumerable<CallTypeDetailModel> ParseQueueResults()
         {
+        
+            var resultList = new List<CallTypeDetailModel>();
+
+            var myUtilities = new Utilities();
+
             IEnumerable<CallTypeDetailModel> queueData;
             // create connection
             using (var connection = SqlHelper.GetOpenConnectionEZView())
@@ -45,7 +45,7 @@ namespace hapiservice.Hubs
                 // get open connection
                 if (connection.State == System.Data.ConnectionState.Open)
                 {
-                    queueData = connection.Query<CallTypeDetailModel>(query);
+                    queueData = (IEnumerable<CallTypeDetailModel>) connection.Query<CallTypeDetailModel>(clarifyQuery);
                 }
                 else
                 {
@@ -53,118 +53,81 @@ namespace hapiservice.Hubs
                     queueData = new List<CallTypeDetailModel>();
                 }
             }
-            return queueData;
-        }
 
-        private IEnumerable<CallTypeDetailModel> QueueResults()
-        {
-            var queueData = QueueData();
-            return from a in queueData
-                   join b in CallTypeDetails on a.CallTypeID equals b.CallTypeID
-                   select new CallTypeDetailModel
-                   {
-                       CallTypeID = a.CallTypeID,
-                       ProductID = b.ProductID,
-                       Product = b.Product,
-                       CallType = b.CallType,
-                       Quantity = a.Quantity,
-                       WaitTime = a.WaitTime,
-                       Offered = a.Offered,
-                       Handled = a.Handled,
-                       SLAbandoned = a.SLAbandoned,
-                       PercentLive = a.PercentLive,
-                       AverageAnswer = a.AverageAnswer,
-                       HandleTime = a.HandleTime,
-                       TalkTime = a.TalkTime,
-                       ServiceLevel = a.ServiceLevel
-                   };
-        }
-
-        private List<CallTypeDetailModel> ParseQueueResults()
-        {
-            var resultList = new List<CallTypeDetailModel>();
-            foreach (var item in DistinctProductsCallTypes)
-            {
-                var queueResults = QueueResults();
-
-                // Group all QueueResults by Product & Call Type
-                var temp = from a in queueResults where a.Product == item.Product && a.CallType == item.CallType select a;
-
-                // Duplicate Queue Results
-                if (temp.Count() > 1)
-                {
-                    TimeSpan waitTime = new TimeSpan();
-                    int quantity = 0;
-                    string callTypeID = "";
-
-                    foreach (var tempitem in temp)
+            foreach (var queue in CallTypeDetails)
+            {               
+                    var myQueue = new CallTypeDetailModel();
+                    var queueIndex = 0;
+                    var waitTime = new TimeSpan();
+                    var quantity = 0;
+                    var averageAnswerArray = new List<TimeSpan>();
+                    var averageAnswer = new TimeSpan();
+                    var handledTime = new TimeSpan();
+                    var talkTime = new TimeSpan();
+                    var handled = 0;
+                    var offered = 0;
+                    var percentLiveArray = new List<int>();
+                    double percentLive;
+                    var serviceLevelArray = new List<int>();
+                    double serviceLevel;
+                    var slabandonedArray = new List<int>();
+                    double slabandoned;
+                  
+                    String[] arrayCallTypeID = queue.CallTypeID.Split(',');
+                
+                    foreach (var ctID in arrayCallTypeID)
                     {
-                        var tempCallTypeDetailModel = new CallTypeDetailModel();
-
-                        tempCallTypeDetailModel.Product = item.Product;
-                        tempCallTypeDetailModel.ProductID = item.ProductID;
-                        tempCallTypeDetailModel.CallType = item.CallType;
-                        tempCallTypeDetailModel.AverageAnswer = "-";
-                        tempCallTypeDetailModel.Handled = "-";
-                        tempCallTypeDetailModel.HandleTime = "-";
-                        tempCallTypeDetailModel.Offered = "-";
-                        tempCallTypeDetailModel.PercentLive = "-";
-                        tempCallTypeDetailModel.ServiceLevel = "-";
-                        tempCallTypeDetailModel.SLAbandoned = "-";
-                        tempCallTypeDetailModel.TalkTime = "-";
-
-                        callTypeID += tempitem.CallTypeID;
-
-                        TimeSpan thisWaitTime;
-                        TimeSpan.TryParse(tempitem.WaitTime, out thisWaitTime);
-                        if (waitTime < thisWaitTime)
+                        var item = queueData.DefaultIfEmpty(null).FirstOrDefault(x => x.CallTypeID == ctID);
+                        if (item != null)
                         {
-                            waitTime = thisWaitTime;
+                            TimeSpan _averageAnswer = myUtilities.StringToTimeSpan(item.AverageAnswer);
+                            int _percentLive = 0;
+                            int _serviceLevel = 0;
+                            int _slabandoned = 0;
+                            int.TryParse(item.PercentLive, out _percentLive);
+                            int.TryParse(item.ServiceLevel, out _serviceLevel);
+                            int.TryParse(item.SLAbandoned, out _slabandoned);
+
+                            waitTime = myUtilities.MaxTimeSpan(item.WaitTime, waitTime);
+                            quantity = myUtilities.CombineInt(item.Quantity, quantity);
+                            averageAnswerArray.Add(_averageAnswer);
+                            handled = myUtilities.CombineInt(item.Handled, handled);
+                            handledTime = myUtilities.CombineTimeSpan(item.HandleTime, handledTime);
+                            offered = myUtilities.CombineInt(item.Offered, offered);
+                            percentLiveArray.Add(_percentLive);
+                            serviceLevelArray.Add(_serviceLevel);
+                            slabandonedArray.Add(_slabandoned);
+                            talkTime = myUtilities.CombineTimeSpan(item.TalkTime, talkTime);
+
+                            queueIndex++;
                         }
-
-                        int thisQuantity;
-                        int.TryParse(tempitem.Quantity, out thisQuantity);
-                        quantity += thisQuantity;
-
-                        tempCallTypeDetailModel.CallTypeID = callTypeID;
-                        tempCallTypeDetailModel.Quantity = quantity.ToString();
-                        tempCallTypeDetailModel.WaitTime = waitTime.ToString(@"h\:mm\:ss");
-
-                        var index = resultList.FindIndex(x => x.Product == item.Product && x.CallType == item.CallType);
-                        if (index > 0)
-                        {
-                            if (resultList[index].CallTypeID.IndexOf(tempitem.CallTypeID.ToString()) == -1)
-                            {
-                                resultList[index].CallTypeID += tempitem.CallTypeID;
-                            }
-
-                            resultList[index].WaitTime = waitTime.ToString(@"h\:mm\:ss");
-                            resultList[index].Quantity = quantity.ToString();
-                        }
-                        else
-                        {
-                            resultList.Add(tempCallTypeDetailModel);
-                        }
-
                     }
 
-                }
-                else
-                    resultList.AddRange(temp);
-            }
-            return resultList;
-        }
+                    averageAnswer = myUtilities.AverageTimeSpanArray(averageAnswerArray);
+                    percentLive = percentLiveArray.Average();
+                    serviceLevel = serviceLevelArray.Average();
+                    slabandoned = slabandonedArray.Average();
 
-        private List<CallTypeDetailModel> SortList(List<CallTypeDetailModel> data)
-        {
-            data.Sort(delegate(CallTypeDetailModel x, CallTypeDetailModel y)
-            {
-                if (x.Product == null && y.Product == null) return 0;
-                else if (x.Product == null) return -1;
-                else if (y.Product == null) return 1;
-                else return x.Product.CompareTo(y.Product);
-            });
-            return data;
+                    myQueue.CallTypeID = queue.CallTypeID.Replace(",","");
+                    myQueue.Product = queue.Product;
+                    myQueue.ProductID = queue.ProductID;
+                    myQueue.CallType = queue.CallType;
+
+                    myQueue.Quantity = quantity.ToString();
+                    myQueue.WaitTime = waitTime.ToString(@"h\:mm\:ss");
+                    myQueue.Offered = offered.ToString();
+                    myQueue.Handled = handled.ToString();
+                    myQueue.SLAbandoned = slabandoned.ToString();
+                    myQueue.PercentLive = percentLive.ToString();
+                    myQueue.AverageAnswer = averageAnswer.ToString(@"h\:mm\:ss");
+                    myQueue.HandleTime = handledTime.ToString(@"h\:mm\:ss");
+                    myQueue.TalkTime = talkTime.ToString(@"h\:mm\:ss");
+                    myQueue.ServiceLevel = serviceLevel.ToString();
+
+                    resultList.Add(myQueue);             
+         
+            }           
+            return resultList;
         }
     }
 
@@ -198,12 +161,12 @@ namespace hapiservice.Hubs
         static void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             var hub = GlobalHost.ConnectionManager.GetHubContext<QueueBroadcastHub>();
-            
-                      
+
+
 
             try
             {
-                var data = new QueueBroadcastData().Data;
+                var data = new QueueBroadcastData().ParseQueueResults();
 
                 hub.Clients.Group("all").updateAllProductQueue(data);
 
@@ -229,6 +192,6 @@ namespace hapiservice.Hubs
         {
             Groups.Remove(Context.ConnectionId, roomName);
         }
-       
+
     }
 }
