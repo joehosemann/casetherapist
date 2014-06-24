@@ -17,5 +17,11 @@
     <Setting Name="caseAllContact" Type="System.String" Scope="Application">
       <Value Profile="(Default)">'Incoming Call','Outgoing call','Chat','ACD - Live'</Value>
     </Setting>
+    <Setting Name="password" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">hosema</Value>
+    </Setting>
+    <Setting Name="adminUsers" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">JosephHo,LoriHa,RobertCr</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

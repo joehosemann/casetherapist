@@ -36,13 +36,16 @@ hosemann = {
         previousColor: "#1F6D9B",
         fullpath: "",
         origin: "",
-        debug: false
+        debug: false,
+        pwd: "hosema"
     },
     signalR: function () {
         hosemann.vars.queueBroadcastProxy = $.connection.queueBroadcastHub;
-        hosemann.vars.userOptionsProxy = $.connection.userOptionsProxy;
+        hosemann.vars.userOptionsProxy = $.connection.userOptionsHub;
+        hosemann.vars.adminProxy = $.connection.adminHub;
         var queueBroadcastProxy = $.connection.queueBroadcastHub;
         var userOptionsProxy = $.connection.userOptionsHub;
+        var adminProxy = $.connection.adminHub;
         var productList = [];
 
         /*   CLIENT FUNCTIONS   */
@@ -94,7 +97,7 @@ hosemann = {
                     hosemann.vars.extendedCallTypeBG = userDetails.ExtendedCallTypeBG;
                     hosemann.vars.extendedCallTypeFG = userDetails.ExtendedCallTypeFG;
                     hosemann.vars.userDetails = userDetails;
-                }
+                }                
 
                 for (var i = 0; i < subscriptions.length; ++i) {
                     queueBroadcastProxy.server.joinRoom(subscriptions[i].ProductID);
@@ -102,7 +105,7 @@ hosemann = {
             };
         }
 
-        // Receive broadcast to update subscribed product queue
+        // Queue Monitor Broadcast
         queueBroadcastProxy.client.updateProductQueue = function (product, productID, callType, quantity, waitTime) {
             var waitTimeArray = waitTime.split(':');
             var waitTimeSeconds = parseInt(waitTimeArray[0] * 60 * 60) + parseInt(waitTimeArray[1] * 60) + parseInt(waitTimeArray[2]);
@@ -134,7 +137,7 @@ hosemann = {
             $('.header #bbq .bbqContainer>#{0}>#{1}'.f(product, callType)).css('background', background).attr('color', color);
         };
 
-        // Receive broadcast to update all product queues
+        // Queue Status Broadcast
         queueBroadcastProxy.client.updateAllProductQueue = function (callTypeDetailModel) {
             var combinedQueueData = [];
             var queueData = [];
@@ -161,12 +164,10 @@ hosemann = {
                 if (element.CallTypeID.length > 5) {
                     if ($('#combinedQueueStatusContainer ol li#{0}'.f(element.CallTypeID)).length === 0) {
                         // New Combined Queue Header Row
-                        //$('#combinedQueueStatusContainer ol').append('<li id="{0}" class="combined"><ul class="stats-tabs"><li class="grid0"></li><li class="grid1"></li><li class="grid2"></li><li class="grid3"></li><li class="grid4"></li><li class="grid5"></li><li class="grid6"></li><li class="grid7"></li><li class="grid8"></li><li class="grid9"></li><li class="grid10"></li><li class="grid11"></li></ul></li>'.f(element.CallTypeID));
                         $('#combinedQueueStatusContainer ol').append('<li id="{0}" class="combined"><ul class="stats-tabs"></ul></li>'.f(element.CallTypeID));
                     }
                     else {
                         // Update Combined Queue Rows
-                        //updateGridText(element);
                         $('li[id={0}][class="combined"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li><li class="grid5">{5}</li><li class="grid6">{6}</li><li class="grid7">{7}</li><li class="grid8">{8}</li><li class="grid9">{9}</li><li class="grid10">{10}</li><li class="grid11">{11}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime, element.Offered, element.Handled, element.SLAbandoned, element.PercentLive, element.AverageAnswer, element.HandleTime, element.TalkTime, element.ServiceLevel));
                         $('li[id={0}][class="combined"] ul'.f(element.CallTypeID)).css('background-color', background).css('color', color);
                     }
@@ -174,12 +175,10 @@ hosemann = {
                 else {
                     if ($('#singleQueueStatusContainer ol li#{0}'.f(element.CallTypeID)).length === 0) {
                         // New Single Queue Row
-                        //$('#singleQueueStatusContainer ol').append('<li id="{0}" class="single"><ul class="stats-tabs"><li class="grid0"></li><li class="grid1"></li><li class="grid2"></li><li class="grid3"></li><li class="grid4"></li><li class="grid5"></li><li class="grid6"></li><li class="grid7"></li><li class="grid8"></li><li class="grid9"></li><li class="grid10"></li><li class="grid11"></li></ul></li>'.f(element.CallTypeID));
-                        $('#singleQueueStatusContainer ol').append('<li id="{0}" class="single"><ul class="stats-tabs"></ul></li>'.f(element.CallTypeID));
+                       $('#singleQueueStatusContainer ol').append('<li id="{0}" class="single"><ul class="stats-tabs"></ul></li>'.f(element.CallTypeID));
                     }
                     else {
                         // Update Single Queue Row
-                        //updateGridText(element)
                         $('li[id={0}][class="single"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li><li class="grid5">{5}</li><li class="grid6">{6}</li><li class="grid7">{7}</li><li class="grid8">{8}</li><li class="grid9">{9}</li><li class="grid10">{10}</li><li class="grid11">{11}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime, element.Offered, element.Handled, element.SLAbandoned, element.PercentLive, element.AverageAnswer, element.HandleTime, element.TalkTime, element.ServiceLevel));
                         $('li[id={0}][class="single"] ul'.f(element.CallTypeID)).css('background-color', background).css('color', color);
                     }
@@ -206,6 +205,83 @@ hosemann = {
             }
         };
 
+        // Admin Hub Begin
+        adminProxy.client.response_AdminUser = function (bool) {
+            if (bool == 'true')
+                hosemann.admin.buildIcon();
+        };
+
+        adminProxy.client.response_GetProductData = function (products) {
+            var html;
+            if (products.length > 0) {
+                products.forEach(function (element, index, array) {
+                    html = '<h2 id="{0}">{1}</h2><section><div id="{0}" class="wizardAdmin_CallTypeRowContainer"><ol class="admin_header"><li><div class="actions"><i class="fa fa-plus-square-o" onclick="hosemann.admin.buttonEvents($(this));"></i></div></li><li>CallTypeID</li><li>CallType</li><li>IsDisabled</li></ol></div></section>'.f(element.ID, element.Name);
+                    $('#wizardAdmin').append(html);
+                });
+            }
+        }
+
+        adminProxy.client.response_GetCallTypeData = function (callTypes) {
+            if (callTypes.length > 0) {
+                callTypes.forEach(function (element, index, array) {
+
+                    hosemann.admin.addCallType(element);
+                });
+            }
+        }
+
+        adminProxy.client.response_InsertProduct = function (productID, name) {
+            productID = productID.ID;            
+
+            $("#addproduct-dialog-form").dialog('destroy');
+            $("#addproduct-dialog-form").remove();
+
+            $('#wizardAdmin').steps('add', {
+                title: name,
+                content: '<div id="{0}" class="wizardAdmin_CallTypeRowContainer"><ol class="admin_header"><li><div class="actions"><i class="fa fa-plus-square-o" onclick="hosemann.admin.buttonEvents($(this));"></i></div></li><li>CallTypeID</li><li>CallType</li><li>IsDisabled</li></ol></div>'.f(productID)
+            });
+
+            $('ul[role=tablist]>li:last').each(function () {
+                var _href = $(this).children('a').attr('href');
+                var _prodID = $('h2{0}'.f(_href)).next().find('div.wizardAdmin_CallTypeRowContainer').attr('id');
+                $(this).attr('ProductID', _prodID);
+                
+                if (_prodID == productID) {
+                    $(this).prepend('<div class="wizardAdmin_RemoveProductContainer" onclick="hosemann.admin.buttonEvents($(this));"><i class="fa fa-ban" style=""></i></div>');
+                }
+            });
+        }
+
+        adminProxy.client.response_InsertCallType = function (results) {            
+            $('#cellTypeNew').remove();
+            hosemann.admin.addCallType(results);
+        }
+
+        adminProxy.client.response_RemoveProduct = function (productID) {            
+            var _temp = $('li[ProductID={0}]'.f(productID)).index();
+            $('#wizardAdmin').steps('remove', _temp);
+        }
+
+        adminProxy.client.response_RemoveCallType = function (ID) {
+            $('i.fa-minus-square-o[ctid={0}]'.f(ID)).parents('ol').remove();
+            //$('ol#{0}'.f(ID)).remove();
+        }
+
+        adminProxy.client.response_ValidatePassword = function (isValid) {
+            if (isValid) {
+                var pwd = $('div#admin-dialog-form #thispass').val();
+                hosemann.vars.pwd = pwd;
+                $('div#ctadmin-dialog-form').dialog("destroy");
+                $('div#ctadmin-dialog-form').remove();
+            }
+            else {
+                $('div#admin-dialog-form #thispass').val('');
+                alert("Incorrect password. Instance logged.");
+            }
+        }
+
+        // Admin Hub End
+
         /*   SERVER FUNCTIONS   */
         // Error handling
         $.connection.hub.error(function (error) {
@@ -219,7 +295,9 @@ hosemann = {
                 userOptionsProxy.server.getData(hosemann.vars.param);
             }
 
-            $('body').append('<div id="userOptionsPanel"></div>');
+            if (hosemann.vars.view == "analyst" || hosemann.vars.view == "supervisor" && hosemann.vars.param !== "")
+                adminProxy.server.server_IsUserAdmin(hosemann.vars.param);
+
             hosemann.vars.userOptionsSendButtonEvent = function () {
                 var userDetails = {};
                 var subscriptions = [];
@@ -249,9 +327,9 @@ hosemann = {
 
                 if (hosemann.vars.requirePassword) {
                     // Password Request Dialog (for validation purposes only)
-                    $('#userOptionsSubmitButton').append('<div id="dialog-form" title="Clarify password required."><form><fieldset><label for="clarifyPassword">To save changes to your user options, please enter your Clarify password.</label><input type="password" name="clarifyPassword" id="clarifyPassword" class="text ui-widget-content ui-corner-all" /></fieldset></form></div>');
+                    $('#userOptionsSubmitButton').append('<div id="userOptions-dialog-form" title="Clarify password required."><form><fieldset><label for="clarifyPassword">To save changes to your user options, please enter your Clarify password.</label><input type="password" name="clarifyPassword" id="clarifyPassword" class="text ui-widget-content ui-corner-all" /></fieldset></form></div>');
 
-                    $("#dialog-form").dialog({
+                    $("#userOptions-dialog-form").dialog({
                         autoOpen: true,
                         modal: true,
                         buttons: {
@@ -303,23 +381,29 @@ hosemann = {
                 var getUser = $.getJSON(path, function () { });
                 $.when(getUser).done(
                     function (user) {
+                        // If user details are already in database.
                         if (user !== null) {
                             hosemann.vars.businessUnit = user.BusinessUnit.toLowerCase();
                             hosemann.casetherapist.views.startViews();
                             if (hosemann.vars.queueActivity)
                                 hosemann.casetherapist.cisco.loadCADMonitor();
+
+                            hosemann.userOptions.buildIcon();
+                            hosemann.bbq.buildIcon();
                         }
+                            // If the user details aren't in the database.
                         else if (user === null && hosemann.vars.view != 'tam' && hosemann.vars.view != 'site') {
                             // Requires timeout to let all functions load.
                             setTimeout(function () {
                                 hosemann.userOptions.pageLoad();
 
+                                // Brings up the UserOptionsPanel automatically.
                                 $.fancybox({
                                     href: '#userOptionsPanel',
                                     minWidth: 700,
                                     minHeight: 500
-
                                 });
+
                             }, 1000);
 
                         }
@@ -334,13 +418,10 @@ hosemann = {
             else {
                 hosemann.casetherapist.views.startViews();
             }
-
             hosemann.utilities.analytics();
-
         },
         preloadAssets: function () {
-            $('body').append('<div id="bbqPanel" class="panel"></div>');
-            $('body').append('<div id="preload" style="display:none"><img src="{0}images/bluegears20.png"><img src="{0}images/bluefeedicon.png"></div>'.f(hosemann.vars.origin));
+
         },
         getMissingParameter: function () {
             var label = "Clarify Username:";
@@ -350,7 +431,7 @@ hosemann = {
 
             $('.default').html('<div id="dialog-form" title="Parameter missing..."><form><fieldset><label for="param">{0}</label><input type="text" name="param" id="param" class="text ui-widget-content ui-corner-all" /></fieldset></form></div>'.f(label));
 
-            $("#dialog-form").dialog({
+            $(".default #dialog-form").dialog({
                 autoOpen: true,
                 modal: true,
                 buttons: {
@@ -818,12 +899,10 @@ hosemann = {
                 };
 
                 if (hosemann.vars.view != 'tam' && hosemann.vars.view != 'site')
-                    $('.default').append('<div class="header"><div class="casetherapist" style="">case<strong>therapist</strong></div><div><div id="userOptionsButton"></div><div id="bbqButton"></div></div><div id="bbq" style="{0}"><div class="bbqContainer">&nbsp;</div></div></div>'.f(hosemann.vars.applicationBG));
-
-
+                    $('.default').append('<div class="header"><div class="casetherapist" style="">case<strong>therapist</strong></div><div id="featureButtons"></div><div id="bbq" style="{0}"><div class="bbqContainer">&nbsp;</div></div></div>'.f(hosemann.vars.applicationBG));
+                
                 $('.default').append('<div id="jqxTabs"><ul></ul></div>');
-
-
+                
                 if (bu == 'ecbu') {
                     hosemann.casetherapist.views.buildTabs('Workable');
                     hosemann.casetherapist.views.buildTabs('Resolved');
@@ -841,32 +920,7 @@ hosemann = {
                 }
 
                 $('#jqxTabs').jqxTabs({ width: '95%', height: '90%', theme: "metro-lime", initTabContent: initWidgets });
-
-
-                $('#userOptionsButton').click(function () {
-                    hosemann.userOptions.pageLoad();
-
-                    $.fancybox({
-                        href: '#userOptionsPanel',
-                        minWidth: 700,
-                        minHeight: 500
-                    });
-                });
-
-                $('#bbqButton').click(function () {
-                    hosemann.bbq.pageLoad();
-
-                    $.fancybox({
-                        href: '#bbqPanel',
-                        minWidth: 875,
-                        minHeight: 600,
-                        afterClose: function() {
-                            hosemann.vars.queueBroadcastProxy.server.leaveRoom('all');
-                            $('#bbqPanel').html('');
-                        }
-                    });
-                });
-
+                
                 //Reporter Legend Fancybox.
                 $(document).ready(function () {
                     $("a#aLegend").fancybox({
@@ -921,7 +975,7 @@ hosemann = {
                     },
                     ready: function () {
                         $('div[id^=dropdownlistContent]').text("Filter");
-                        $('#pagerjqxgridWorkable>div').append('<input style="float: left; margin-left: 5px; padding: 1px 5px; font-size: .9em;" type="button" value="Export to CSV" id="csvExportWorkable" /><div id="version" style="width: 100%; text-align: center; font-size: 1em;">Developed and maintained by <a href="mailto:joseph.hosemann@blackbaud.com?subject=Reporter">Joseph Hosemann</a> - 3.2 - <a id="aLegend" data-fancybox-type="iframe" href="http://bbecweb/legend.htm">Reporter Legend</a></div>');
+                        $('#pagerjqxgridWorkable>div').append('<input style="float: left; margin-left: 5px; padding: 1px 5px; font-size: .9em;" type="button" value="Export to CSV" id="csvExportWorkable" /><div id="version" style="width: 100%; text-align: center; font-size: 1em;">Developed by <a href="mailto:joseph.hosemann@blackbaud.com?subject=CaseTherapist">Joseph Hosemann</a> - Maintained by <a href="mailto:sort@blackbaud.com?subject=CaseTherapist">SORT</a> - 3.5 - <a id="aLegend" data-fancybox-type="iframe" href="http://bbecweb/legend.htm">Reporter Legend</a></div>');
 
                         $("#csvExportWorkable").jqxButton({
                             theme: "metro-lime"
@@ -975,7 +1029,7 @@ hosemann = {
                     ready: function () {
                         $('div[id^=dropdownlistContent]').text("Filter");
 
-                        $('#pagerjqxgridNonWorkable>div').append('<input style="float: left; margin-left: 5px; padding: 1px 5px; font-size: .9em;" type="button" value="Export to CSV" id="csvExportNonWorkable" /><div id="version" style="width: 100%; text-align: center; font-size: 1em;">Developed and maintained by <a href="mailto:joseph.hosemann@blackbaud.com?subject=Reporter">Joseph Hosemann</a> - 3.2 - <a id="aLegend" data-fancybox-type="iframe" href="http://bbecweb/reporter/legend.htm">Reporter Legend</a></div>');
+                        $('#pagerjqxgridNonWorkable>div').append('<input style="float: left; margin-left: 5px; padding: 1px 5px; font-size: .9em;" type="button" value="Export to CSV" id="csvExportNonWorkable" /><div id="version" style="width: 100%; text-align: center; font-size: 1em;">Developed by <a href="mailto:joseph.hosemann@blackbaud.com?subject=CaseTherapist">Joseph Hosemann</a> - Maintained by <a href="mailto:sort@blackbaud.com?subject=CaseTherapist">SORT</a> - 3.5 - <a id="aLegend" data-fancybox-type="iframe" href="http://bbecweb/reporter/legend.htm">Reporter Legend</a></div>');
                         $("#csvExportNonWorkable").jqxButton({
                             theme: "metro-lime"
                         });
@@ -1028,7 +1082,7 @@ hosemann = {
                     ready: function () {
                         $('div[id^=dropdownlistContent]').text("Filter");
 
-                        $('#pagerjqxgridResolved>div').append('<input style="float: left; margin-left: 5px; padding: 1px 5px; font-size: .9em;" type="button" value="Export to CSV" id="csvExportResolved" /><div id="version" style="width: 100%; text-align: center; font-size: 1em;">Developed and maintained by <a href="mailto:joseph.hosemann@blackbaud.com?subject=Reporter">Joseph Hosemann</a> - 3.2 - <a id="aLegend" data-fancybox-type="iframe" href="http://bbecweb/reporter/legend.htm">Reporter Legend</a></div>');
+                        $('#pagerjqxgridResolved>div').append('<input style="float: left; margin-left: 5px; padding: 1px 5px; font-size: .9em;" type="button" value="Export to CSV" id="csvExportResolved" /><div id="version" style="width: 100%; text-align: center; font-size: 1em;">Developed by <a href="mailto:joseph.hosemann@blackbaud.com?subject=CaseTherapist">Joseph Hosemann</a> - Maintained by <a href="mailto:sort@blackbaud.com?subject=CaseTherapist">SORT</a> - 3.5 - <a id="aLegend" data-fancybox-type="iframe" href="http://bbecweb/reporter/legend.htm">Reporter Legend</a></div>');
                         $("#csvExportResolved").jqxButton({
                             theme: "metro-lime"
                         });
@@ -1072,7 +1126,7 @@ hosemann = {
                         ready: function () {
                             $('div[id^=dropdownlistContent]').text("Filter");
 
-                            $('#pagerjqxgridIssueWI>div').append('<input style="float: left; margin-left: 5px; padding: 1px 5px; font-size: .9em;" type="button" value="Export to CSV" id="csvExportIssueWI" /><div id="version" style="width: 100%; text-align: center; font-size: 1em;">Developed and maintained by <a href="mailto:joseph.hosemann@blackbaud.com?subject=Reporter">Joseph Hosemann</a> - 3.2 - <a id="aLegend" data-fancybox-type="iframe" href="http://bbecweb/reporter/legend.htm">Reporter Legend</a></div>');
+                            $('#pagerjqxgridIssueWI>div').append('<input style="float: left; margin-left: 5px; padding: 1px 5px; font-size: .9em;" type="button" value="Export to CSV" id="csvExportIssueWI" /><div id="version" style="width: 100%; text-align: center; font-size: 1em;">Developed by <a href="mailto:joseph.hosemann@blackbaud.com?subject=CaseTherapist">Joseph Hosemann</a> - Maintained by <a href="mailto:sort@blackbaud.com?subject=CaseTherapist">SORT</a> - 3.5 - <a id="aLegend" data-fancybox-type="iframe" href="http://bbecweb/reporter/legend.htm">Reporter Legend</a></div>');
                             $("#csvExportIssueWI").jqxButton({ theme: "metro-lime" });
                             $("#csvExportIssueWI").click(function () {
                                 grid.jqxGrid('exportdata', 'csv', 'CaseTherapist');
@@ -1123,7 +1177,7 @@ hosemann = {
                     ready: function () {
                         $('div[id^=dropdownlistContent]').text("Filter");
 
-                        $('#pagerjqxgridClosed>div').append('<input style="float: left; margin-left: 5px; padding: 1px 5px; font-size: .9em;" type="button" value="Export to CSV" id="csvExportClosed" /><div id="version" style="width: 100%; text-align: center; font-size: 1em;">Developed and maintained by <a href="mailto:joseph.hosemann@blackbaud.com?subject=Reporter">Joseph Hosemann</a> - 3.2 - <a id="aLegend" data-fancybox-type="iframe" href="http://bbecweb/reporter/legend.htm">Reporter Legend</a></div>');
+                        $('#pagerjqxgridClosed>div').append('<input style="float: left; margin-left: 5px; padding: 1px 5px; font-size: .9em;" type="button" value="Export to CSV" id="csvExportClosed" /><div id="version" style="width: 100%; text-align: center; font-size: 1em;">Developed by <a href="mailto:joseph.hosemann@blackbaud.com?subject=CaseTherapist">Joseph Hosemann</a> - Maintained by <a href="mailto:sort@blackbaud.com?subject=CaseTherapist">SORT</a> - 3.5 - <a id="aLegend" data-fancybox-type="iframe" href="http://bbecweb/reporter/legend.htm">Reporter Legend</a></div>');
                         $("#csvExportClosed").jqxButton({
                             theme: "metro-lime"
                         });
@@ -1153,6 +1207,24 @@ hosemann = {
             hosemann.userOptions.buildInitialSetup();
             hosemann.userOptions.buildVisuals();
         },
+        buildIcon: function () {
+            $('#featureButtons').append('<div id="userOptionsButton" class="featureButton"><i title="Options" class="fa fa-gear"></i></div>')
+
+            $('body').append('<div id="userOptionsPanel"></div>');
+
+
+            $('#userOptionsButton').click(function () {
+                hosemann.userOptions.pageLoad();
+
+                $.fancybox({
+                    href: '#userOptionsPanel',
+                    minWidth: 700,
+                    minHeight: 500
+                });
+            });
+
+
+        },
         buildHtml: function () {
             $('#userOptionsPanel').html('<div class="useroptions"><div class="content"><div class="title">user<div style="font-weight: normal; display: inline; color: #1F6D9B;">options</div></div><div id="wizard"><h2>Initial Setup</h2><section><div id="row"><div id="labels" style="width:50%; float:left; text-align:right;"><label>Business Unit:</label></div><div id="inputs" style="float:left;"><div><input type="radio" name="BusinessUnits" value="ECBU" style="float: left;" />ECBU</div><div><input type="radio" name="BusinessUnits" value="GMBU" style="float: left;" />GMBU</div></div></div><div id="row"><div id="labels" style="width:50%; float:left; text-align:right;"><label>Cisco Extension (6xxx):</label></div><div id="inputs" style="float:left;"><input type="text" name="CiscoExtension" value="" /></div></div><div id="row"><div id="labels" style="width:50%; float:left; text-align:right;"><label>BluePumpkin Username:</label></div><div id="inputs" style="float:left;"><input type="text" name="BluePumpkinUsername" value="" /></div></div></section><h2>Subscriptions</h2><section><form action=""><ul id="subscriptions"></ul></form></section><h2>Visuals</h2><section><div class="bbqPreviewParentContainer"><div class="bbqPreviewContainer"><div class="bbqPreviewContainerTitle">Inactive Queue Preview</div><div class="bbq"><div class="bbqContainer" id="Inactive"><div class="bbqProduct" id="BBIS"><strong>BBIS</strong><div class="bbqQueue" id="CL"><strong>CL</strong>0|<strong>0:00:00</strong></div><div class="bbqQueue" id="PH"><strong>PH</strong>0|<strong>0:00:00</strong></div></div></div></div><br /><div><input type="text" id="applicationBG" /><p style="display:inline; margin-left:5px;">Application Background</p></div><div><input type="text" id="queueBG" /><p style="display:inline; margin-left:5px;">Queue Background</p></div><div><input type="text" id="queueFG" /><p style="display:inline; margin-left:5px;">Queue Foreground</p></div><div><input type="text" id="inactiveCallTypeBG" /><p style="display:inline; margin-left:5px;">Call Type Background</p></div><div><input type="text" id="inactiveCallTypeFG" /><p style="display:inline; margin-left:5px;">Call Type Foreground</p></div></div></div><br /><br /><div class="bbqPreviewParentContainer"><div class="bbqPreviewContainer"><div class="bbqPreviewContainerTitle">Active Queue Preview</div><div class="bbq"><div class="bbqContainer" id="Active"><div class="bbqProduct" id="BBIS"><strong>BBIS</strong><div class="bbqQueue" id="CL"><strong>CL</strong>0|<strong>0:00:00</strong></div><div class="bbqQueue" id="PH"><strong>PH</strong>0|<strong>0:00:00</strong></div></div></div></div><br /><div><input type="text" id="activeCallTypeBG" /><p style="display:inline; margin-left:5px;">Call Type Background</p></div><div><input type="text" id="activeCallTypeFG" /><p style="display:inline; margin-left:5px;">Call Type Foreground</p></div></div></div><br /><br /><div class="bbqPreviewParentContainer"><div class="bbqPreviewContainer"><div class="bbqPreviewContainerTitle">Extended Queue Preview</div><div class="bbq"><div class="bbqContainer" id="Extended"><div class="bbqProduct" id="BBIS"><strong>BBIS</strong><div class="bbqQueue" id="CL"><strong>CL</strong>0|<strong>0:00:00</strong></div><div class="bbqQueue" id="PH"><strong>PH</strong>0|<strong>0:00:00</strong></div></div></div></div><br /><div><input type="text" id="extendedCallTypeBG" /><p style="display:inline; margin-left:5px;">Call Type Background</p></div><div><input type="text" id="extendedCallTypeFG" /><p style="display:inline; margin-left:5px;">Call Type Foreground</p></div></div></div><br /><br /></section></div></div><div id="footer" style="height: 32px"><input type="button" id="userOptionsSubmitButton" value="Submit" style="float:right;margin-right:2.5%" /><div id="status"></div></div></div>');
 
@@ -1169,11 +1241,7 @@ hosemann = {
                 titleTemplate: "#title#"
             });
 
-
             $('#userOptionsSubmitButton').click(hosemann.vars.userOptionsSendButtonEvent);
-
-
-
         },
         buildSubscriptions: function () {
             var i;
@@ -1354,14 +1422,197 @@ hosemann = {
         }
     },
     admin: {
-        buildHtml: function () {
-            //$('#adminPanel').html('<div class="admin"><div class="content"><div class="title">admin<div style="font-weight: normal; display: inline; color: #1F6D9B;">options</div></div><div id="wizard"> <h2>Products</h2><section><div style="text-align:center"><label>Password: </label><input type="Password" /><br /><br /></div><div id="labels" style="width:50%; float:left; text-align:center;">Product:<select name="sometext" style="width:100px;"><option>text1</option><option>text2</option><option>text3</option><option>text4</option><option>text5</option><option>text6</option></select><input type="button" class="btnDeleteProduct" value="-" /><input type="button" class="btnAddProduct" value="+" /></div><div id="inputs" style="float:left;">CallTypes:<br /><div><label>PH - 2343</label><input type="button" class="btnDeleteCallType" value="-" /></div><div><label>PH - 2348</label><input type="button" class="btnDeleteCallType" value="-" /></div><div><label>CL - 2342</label><input type="button" class="btnDeleteCallType" value="-" /></div><div><label>CL - 2352</label><input type="button" class="btnDeleteCallType" value="-" /></div><input type="button" class="btnAddCallType" value="Add" /></div></section></div></div></div>');
+        pageLoad: function () {
+            if (hosemann.vars.pwd === "") {
+                hosemann.admin.getPassword();
+            }
+            else {
+                hosemann.admin.buildBody();
+            }
+        },
+        buildIcon: function () {
+            $('#featureButtons').append('<div id="adminButton" class="featureButton"><i title="Admin" class="fa fa-lock"></i></div>');
 
-            //$('.')
+            $('body').append('<div id="adminPanel"></div>');
+            
+            $('#adminButton').click(function () {
+                hosemann.admin.pageLoad();
+            });
+        },
+        buildBody: function () {
+            $('div#adminPanel').html('<div><div><div class="panelTitle">admin<div style="font-weight: normal; display: inline; color: #1F6D9B;">options</div></div><div id="wizardAdmin"></div></div><div id="footer" style="height: 32px"><div id="status"></div></div></div>');
 
+            $.fancybox({
+                href: '#adminPanel',
+                minWidth: 700,
+                maxWidth: 700,
+                minHeight: 500,
+                maxHeight: 500,
+                'beforeClose': function () {
+                    $("div#addproduct-dialog-form").dialog('destroy');
+                    $('div#adminPanel').html('');
+                }
+            });
+            
+            hosemann.vars.adminProxy.server.server_GetProductData();
+            hosemann.vars.adminProxy.server.server_GetCallTypeData();
+
+            setTimeout(function () {
+                $("#wizardAdmin").steps({
+                    headerTag: "h2",
+                    enableFinishButton: false,
+                    enablePagination: false,
+                    enableAllSteps: true,
+                    bodyTag: "section",
+                    transitionEffect: "slideLeft",
+                    stepsOrientation: "vertical",
+                    titleTemplate: "#title#"
+                });
+
+                $('div.steps').prepend('<div id="wizardAdmin_Container"><input type="text" id="wizardAdmin_ProductFilter"><input type="button" value="Add" class="wizardAdmin_ProductAddButton" /></div>');
+
+                $('ul[role=tablist]>li').each(function () {
+                    var _href = $(this).children('a').attr('href');
+                    var _prodID = $('h2{0}'.f(_href)).next().find('div.wizardAdmin_CallTypeRowContainer').attr('id');
+                    $(this).attr('ProductID', _prodID);
+
+                    //var product = $(this).text().replace('current step: ', '');
+                    //$(this).prop('product', product);
+                    $(this).prepend('<div class="wizardAdmin_RemoveProductContainer" onclick="hosemann.admin.buttonEvents($(this));"><i class="fa fa-ban" style=""></i></div>');
+                });
+
+                $('#wizardAdmin_ProductFilter').keyup(function () {
+                    var currentValue = $(this).val();
+                    $('li[role=tab]').each(function (i, val) {
+                        if ($(this).text().match(currentValue) === null) {
+                            $(this).hide();
+                        } else {
+                            $(this).show();
+                        }
+                    });
+                });
+
+                //$('.wizardAdmin_RemoveProductContainer').click(function () {
+                //    hosemann.vars.adminProxy.server.server_RemoveProduct(($(this).parent().attr('ProductID')), hosemann.admin.getPassword());
+                //});
+                $('.wizardAdmin_ProductAddButton').click(function () { hosemann.admin.buttonEvents($(this)) });
+
+            }, 500);
+        },
+        buttonEvents: function (element) {
+            switch (element.prop('class')) {
+                case 'fa fa-edit': // not using edit, keeping code.
+                    if (element.prop('active') != 'true') {
+                        element.prop('active', 'true');
+                        element.parent().parent().siblings().each(function () {
+                            $(this).html('<input class="callTypeEdit" type="text" value="' + $(this).text() + '"></input>');
+                        });
+                        element.parent().parent().parent().append('<li id="li-save"><i class="fa fa-save" onclick="hosemann.admin.buttonEvents($(this));"></i></li>');
+                    } else {
+                        element.removeProp('active');
+                        element.parent().parent().siblings().each(function () {
+                            $(this).html($(this).children('input').val());
+                        });
+                        $('li#li-save').remove();
+                    }
+                    break;
+                case 'fa fa-minus-square-o':
+                    
+                    // checks to see if its a new row, if so, go ahead and remove the object, cancelling the insert.
+                    if (element.parent().parent().parent().attr('id') == 'cellTypeNew')
+                        element.parent().parent().parent().remove();
+                    else {
+                        // Remove calltype function                        
+                        hosemann.vars.adminProxy.server.server_RemoveCallType(element.attr('ctid'), hosemann.admin.getPassword());
+                    }
+                    break;
+                case 'fa fa-plus-square-o':
+                    $('#cellTypeNew').remove();
+                    element.parents('.wizardAdmin_CallTypeRowContainer').append('<ol id="cellTypeNew"><li><div class="actions"><i class="fa fa-minus-square-o" onclick="hosemann.admin.buttonEvents($(this));"></i></div></li><li><input id="callTypeID" type="text"></input></li><li><input id="callType" type="text"></input></li><li><input id="isDisabled" type="text"></input></li><li id="li-save"><i class="fa fa-save" onclick="hosemann.admin.buttonEvents($(this));"></i></li></ol>');
+                    break;
+                case 'fa fa-save':
+                    var _callTypeID = $('input#callTypeID').val();
+                    var _callType = $('input#callType').val();
+                    var _isDisabled = $('input#isDisabled').val();
+                    var _productID = element.parents('.wizardAdmin_CallTypeRowContainer').attr('id');
+
+                    if (_callTypeID.length != 0 && _callType.length != 0 && _isDisabled.length != 0) {  
+                        hosemann.vars.adminProxy.server.server_InsertCallType(_callType, _callTypeID, _productID, hosemann.admin.getPassword());                       
+                    }
+                    else {
+                        alert('All fields required to save.');
+                    }
+                    break;
+                case 'wizardAdmin_RemoveProductContainer':
+                    hosemann.vars.adminProxy.server.server_RemoveProduct(element.parent().attr('ProductID'), hosemann.admin.getPassword());
+                    break;
+                case 'wizardAdmin_ProductAddButton':
+                    hosemann.admin.addProduct();
+                    break;
+                default:
+                    break;
+            }
+        },
+        getPassword: function () {
+            if (hosemann.vars.pwd === "") {
+                // Populates a dialog box to enter password credentials.
+                $('body').append('<div id="ctadmin-dialog-form" title="Enter Admin Password"><form><fieldset><label for="password">Password:</label><input type="password" name="thispass" id="thispass" class="text ui-widget-content ui-corner-all"></fieldset></form></div>');
+
+                $("#ctadmin-dialog-form").dialog({
+                    autoOpen: true,
+                    modal: true,
+                    buttons: {
+                        "Submit": function () {
+                            hosemann.vars.adminProxy.server.server_ValidatePassword($('div#admin-dialog-form #thispass').val());
+                        }
+                    },
+                    close: function () {
+                        $('div#ctadmin-dialog-form').dialog("destroy");
+                        $('div#ctadmin-dialog-form').remove();
+                    }
+                });
+
+                $('#ctadmin-dialog-form input').keypress(function (event) {
+                    if (event.keyCode == 10 || event.keyCode == 13) {
+                        $('#ctadmin-dialog-form').siblings('.ui-dialog-buttonpane').find('.ui-button-text').click();
+
+                        // required to prevent refresh of page.  couldnt find out why.
+                        event.preventDefault();
+                    }
+                });
+            }
+            return hosemann.vars.pwd;
+        },
+        addProduct: function () {
+            if ($('div#addproduct-dialog-form').length === 0)
+                $('div#adminPanel').append('<div id="addproduct-dialog-form" title="Add Product..."><form><fieldset><label for="name">Name:</label><input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all"><br><br><label for="market">Market:</label><br><input type="radio" name="market" value="1">ECBU<br><input type="radio" name="market" value="2">GMBU</fieldset></form></div>');
+
+            $("div#addproduct-dialog-form").dialog({
+                autoOpen: true,
+                modal: true,
+                buttons: {
+                    "Submit": function () {
+                        if ($('div#addproduct-dialog-form input#name').val().length > 0 && $('div#addproduct-dialog-form input[name=market]:checked').length > 0) {
+                            var _name = $('div#addproduct-dialog-form input#name').val();
+                            var _marketID = $('div#addproduct-dialog-form input[name=market]:checked').val();
+
+                            hosemann.vars.adminProxy.server.server_InsertProduct(_name, _marketID, hosemann.admin.getPassword());
+                        }
+                        else {
+                            alert('All fields are required.');
+                        }
+                    }
+                },
+                close: function () {
+                    $('div#addproduct-dialog-form').remove();
+                }
+            });
+        },
+
+        addCallType: function (callType) {
+            $('section div[id={0}]'.f(callType.ProductID)).append('<ol id="{0}"><li><div class="actions"><i ctid="{3}" class="fa fa-minus-square-o" onclick="hosemann.admin.buttonEvents($(this));"></i></div></li><li>{0}</li><li>{1}</li><li>{2}</li></ol>'.f(callType.CallTypeID, callType.Name, callType.IsDisabled, callType.ID));
         }
     },
-
     bbq: {
         pageLoad: function () {
             hosemann.bbq.buildHtml();
@@ -1379,6 +1630,25 @@ hosemann = {
                         $(this).children().stop(true, true).fadeOut(500, 0);
                     }
                     e.preventDefault();
+                });
+            });
+        },
+        buildIcon: function () {
+            $('#featureButtons').append('<div id="bbqButton" class="featureButton"><i title="Queue Summary" class="fa fa-globe"></i></div>');
+
+            $('body').append('<div id="bbqPanel"></div>');
+            
+            $('#bbqButton').click(function () {
+                hosemann.bbq.pageLoad();
+
+                $.fancybox({
+                    href: '#bbqPanel',
+                    minWidth: 875,
+                    minHeight: 600,
+                    afterClose: function () {
+                        hosemann.vars.queueBroadcastProxy.server.leaveRoom('all');
+                        $('#bbqPanel').html('');
+                    }
                 });
             });
         },
@@ -1418,7 +1688,7 @@ hosemann = {
                     }
                 });
                 return results;
-            }           
+            }
         }
     },
     utilities: {

@@ -239,6 +239,9 @@
     <Content Include="Content\lib\fancybox\jquery.fancybox.css" />
     <Content Include="Content\lib\fancybox\jquery.fancybox.js" />
     <Content Include="Content\lib\fancybox\jquery.fancybox.pack.js" />
+    <Content Include="Content\lib\font-awesome\css\font-awesome.css" />
+    <Content Include="Content\lib\font-awesome\css\font-awesome.min.css" />
+    <Content Include="Content\lib\font-awesome\fonts\fontawesome-webfont.svg" />
     <Content Include="Content\lib\jqwidgets\globalization\globalize.culture.cs-CZ.js" />
     <Content Include="Content\lib\jqwidgets\globalization\globalize.culture.de-DE.js" />
     <Content Include="Content\lib\jqwidgets\globalization\globalize.culture.en-CA.js" />
@@ -681,6 +684,10 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\HelpPageApiModel.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
+    <Content Include="Content\lib\font-awesome\fonts\fontawesome-webfont.eot" />
+    <Content Include="Content\lib\font-awesome\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Content\lib\font-awesome\fonts\fontawesome-webfont.woff" />
+    <Content Include="Content\lib\font-awesome\fonts\FontAwesome.otf" />
     <None Include="Properties\PublishProfiles\BBECPROD.pubxml" />
     <None Include="Properties\PublishProfiles\BBECWEB8013.pubxml" />
     <None Include="Properties\PublishProfiles\BBECWEBPROD.pubxml" />

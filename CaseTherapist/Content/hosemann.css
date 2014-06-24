@@ -5,7 +5,7 @@ html, body {
     overflow: hidden;
 }
 
-.header {
+.default .header {
     width: 95%;
     margin: 0 auto;
     border-left: 1px #e5e5e5 solid;
@@ -15,7 +15,7 @@ html, body {
     background: #EDEDED;
 }
 
-.panel{
+.panel {
     font-family: 'Segoe UI','Open Sans', sans-serif;
 }
 
@@ -31,7 +31,7 @@ html, body {
     font-weight: bold;
 }
 
-#userOptionsButton {
+.featureButton {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
@@ -39,26 +39,13 @@ html, body {
     height: 24px;
     width: 24px;
     margin-left: 5px;
-    background: url(../Images/gears20.png) no-repeat center transparent;
+    color: black;
+    background: transparent;
 }
 
-    #userOptionsButton:hover {
-        background: url('../Images/bluegears20.png') no-repeat center transparent !important;
-    }
-
-#bbqButton {
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    float: left;
-    height: 24px;
-    width: 24px;
-    margin-left: 5px;
-    background: url(../Images/blackfeedicon.png) no-repeat center transparent;
-}
-
-    #bbqButton:hover {
-        background: url('../Images/bluefeedicon.png') no-repeat center transparent !important;
+    .featureButton:hover {
+        color: #1F6D9B;
+        background: transparent;
     }
 
 .casetherapist {
@@ -238,184 +225,305 @@ ul, li {
 
 /* Queue Summary Begin */
 
-        .bbqAllContainer {
-            font-size: .8em;
-        }
+.bbqAllContainer {
+    font-size: .8em;
+}
 
-        ol.queueStatusSlats {
-            margin: 0;
-            padding: 0;
-        }
+ol.queueStatusSlats {
+    margin: 0;
+    padding: 0;
+}
 
-            ol.queueStatusSlats li {
-                margin: 0 0 .1em 0;
-                padding: 0 0 .1em 0;
-                /* border-bottom: 1px solid #eee;*/
-                list-style: none;
-                display:block;
-            }
+    ol.queueStatusSlats li {
+        margin: 0 0 .1em 0;
+        padding: 0 0 .1em 0;
+        /* border-bottom: 1px solid #eee;*/
+        list-style: none;
+        display: block;
+    }
 
-                /*ol.queueStatusSlats li:last-child {
+        /*ol.queueStatusSlats li:last-child {
                     margin: 0;
                     padding: 0;
                     border-bottom: none;
                 }*/
 
-                ol.queueStatusSlats li ul {
-                    font-weight: bold;
-                    font-size: 1em;
-                    margin: 0;
-                }
-
-                ol.queueStatusSlats li ul {
-                    /*line-height: 1.4;*/
-                    margin-left: .5em;
-                    -webkit-margin-before: 0;
-                    -webkit-margin-after: 0;
-                    -webkit-padding-start: 0;
-                }
-
-        div#combinedQueueStatusContainer ol.queueStatusSlats li ul li:first-child {
-            /*border-top: 1px solid #eee;*/
+        ol.queueStatusSlats li ul {
+            font-weight: bold;
+            font-size: 1em;
+            margin: 0;
         }
 
-        div#combinedQueueStatusContainer ol.queueStatusSlats li ul li:last-child {
-            /*margin: 0;
+        ol.queueStatusSlats li ul {
+            /*line-height: 1.4;*/
+            margin-left: .5em;
+            -webkit-margin-before: 0;
+            -webkit-margin-after: 0;
+            -webkit-padding-start: 0;
+        }
+
+div#combinedQueueStatusContainer ol.queueStatusSlats li ul li:first-child {
+    /*border-top: 1px solid #eee;*/
+}
+
+div#combinedQueueStatusContainer ol.queueStatusSlats li ul li:last-child {
+    /*margin: 0;
             padding: 0;
             border-bottom: none;*/
+}
+
+ol.queueStatusSlats li p span.meta {
+    display: block;
+    color: #999;
+}
+
+ul.queueStatusGroup li {
+    list-style: none;
+}
+
+    ul.queueStatusGroup li:last-child {
+        margin: 0;
+        padding: 0;
+        border-bottom: none;
+    }
+
+ol.queueStatusSlats h3 {
+    color: #2790ae;
+    text-decoration: none;
+    outline: none;
+}
+
+ul.stats-tabs {
+    display: table;
+}
+
+    ul.stats-tabs li {
+        float: left;
+        margin: 0;
+        padding: 0 .5em 0 .5em;
+        border-left: 1px solid #ccc;
+        border-top: 0;
+        border-bottom: 0;
+        border-right: 0;
+    }
+
+
+        ul.stats-tabs li:first-child {
+            border-left: 0px;
         }
 
-        ol.queueStatusSlats li p span.meta {
-            display: block;
-            color: #999;
-        }
+ol.queueStatusSlats li.combined:nth-child(odd) {
+    background: #eee;
+}
 
-        ul.queueStatusGroup li {
-            list-style: none;
-        }
+ol.queueStatusSlats li.single:nth-child(odd) {
+    background: #eee;
+}
 
-            ul.queueStatusGroup li:last-child {
-                margin: 0;
-                padding: 0;
-                border-bottom: none;
-            }
+.grid0 {
+    width: 10em;
+}
 
-        ol.queueStatusSlats h3 {
-            color: #2790ae;
-            text-decoration: none;
-            outline: none;
-        }
+.grid1 {
+    width: 1.5em;
+    text-align: center;
+}
 
-        ul.stats-tabs {
-            display: table;
-        }
+.grid2 {
+    width: 2em;
+    text-align: center;
+}
 
-            ul.stats-tabs li {
-                float: left;
-                margin: 0;
-                padding: 0 .5em 0 .5em;
-                border-left: 1px solid #ccc;
-                border-top: 0;
-                border-bottom: 0;
-                border-right: 0;
-            }
+.grid3 {
+    width: 3.5em;
+    text-align: center;
+}
 
+.grid4 {
+    width: 2em;
+    text-align: center;
+}
 
-            ul.stats-tabs li:first-child {
-                border-left:0px;
-            }
+.grid5 {
+    width: 2em;
+    text-align: center;
+}
 
-        ol.queueStatusSlats li.combined:nth-child(odd) {
-            background: #eee;
-        }
+.grid6 {
+    width: 2em;
+    text-align: center;
+}
 
-        ol.queueStatusSlats li.single:nth-child(odd) {
-            background: #eee;
-        }
-        .grid0 {
-            width: 10em;
-        }
+.grid7 {
+    width: 2em;
+    text-align: center;
+}
 
-        .grid1 {
-            width: 1.5em;
-            text-align: center;
-        }
+.grid8 {
+    width: 4em;
+    text-align: center;
+}
 
-        .grid2 {
-            width: 2em;
-            text-align: center;
-        }
+.grid9 {
+    width: 4em;
+    text-align: center;
+}
 
-        .grid3 {
-            width: 3.5em;
-            text-align: center;
-        }
+.grid10 {
+    width: 4em;
+    text-align: center;
+}
 
-        .grid4 {
-            width: 2em;
-            text-align: center;
-        }
+.grid11 {
+    width: 2em;
+    text-align: center;
+}
 
-        .grid5 {
-            width: 2em;
-            text-align: center;
-        }
+#queueSelection {
+    width: 100px;
+    float: left;
+    /*margin-top: 40px;*/
+    position: fixed;
+}
 
-        .grid6 {
-            width: 2em;
-            text-align: center;
-        }
+.queueHeader {
+    background-color: #1F6D9B;
+    color: white;
+}
 
-        .grid7 {
-            width: 2em;
-            text-align: center;
-        }
+#masterContainer {
+    margin-left: 120px;
+}
 
-        .grid8 {
-            width: 4em;
-            text-align: center;
-        }
+.queueHeader ul li {
+    display: inline;
+}
 
-        .grid9 {
-            width: 4em;
-            text-align: center;
-        }
-
-        .grid10 {
-            width: 4em;
-            text-align: center;
-        }
-
-        .grid11 {
-            width: 2em;
-            text-align: center;
-        }
-
-        #queueSelection {
-            width: 100px;
-            float: left;
-            /*margin-top: 40px;*/
-            position: fixed;
-        }
-
-        .queueHeader {
-            background-color: #1F6D9B;
-            color: white;
-        }
-
-        #masterContainer {
-            margin-left: 120px;
-        }
-
-        .queueHeader ul li {
-            display: inline;
-        }
-
-        .queueHeader ul li div {
-            white-space: nowrap;
-            background-color: #1F6D9B;
-            display: inline-block;
-            margin-right: 20px;
-            margin-left: 5px;
-        }
+    .queueHeader ul li div {
+        white-space: nowrap;
+        background-color: #1F6D9B;
+        display: inline-block;
+        margin-right: 20px;
+        margin-left: 5px;
+    }
 /* Queue Summary End */
+
+/* Admin Begin*/
+div#adminPanel {    
+    font-family: 'Open Sans', 'Segoe UI', sans-serif;
+    font-size: 13px;
+}
+div#adminPanel #wizardAdmin_Container {
+    margin: 0.5em;
+    height: 26px;
+    min-width: 187px;
+}
+
+div#adminPanel #wizardAdmin > .steps a, #wizardAdmin > .steps a:hover, #wizardAdmin > .steps a:active {
+    padding: .4em 1em;
+}
+
+div#adminPanel #wizardAdmin_ProductFilter {
+    width: 70%;
+    display: inline;
+}
+
+div#adminPanel .wizardAdmin_ProductAddButton {
+    width: 20%;
+    display: inline;
+    margin-left: 10px;
+}
+
+div#adminPanel .wizardAdmin_RemoveProductContainer {
+    float: right;
+    width: 15%;
+    background-color: dimgrey;
+    margin-top: 0px;
+    padding: .4em 1em;
+    border-radius: 0 5pt 5pt 0;
+    text-align: center;
+    top: 0px;
+}
+
+    div#adminPanel .wizardAdmin_RemoveProductContainer:hover {
+        background-color: crimson;
+    }
+
+div#adminPanel .wizardAdmin_CallTypeRowContainer {
+    border-left: 1px solid gray;
+    border-right: 1px solid gray;
+    border-top: 1px solid gray;
+}
+
+    div#adminPanel .wizardAdmin_CallTypeRowContainer ol li {
+        display: inline-block;
+        padding: 1px 5px;
+        margin: 1px 5px;
+        width: 5em;
+    }
+
+        div#adminPanel .wizardAdmin_CallTypeRowContainer ol li:first-child {
+            width: auto;
+        }
+
+    div#adminPanel .wizardAdmin_CallTypeRowContainer ol {
+        background-color: lightgray;
+        -webkit-margin-before: 1em;
+        -webkit-margin-after: 1em;
+        -webkit-margin-start: 0px;
+        -webkit-margin-end: 0px;
+        -webkit-padding-start: 0px;
+        margin: 0px;
+        border-bottom: 1px solid gray;
+    }
+
+div#adminPanel .actions {
+    margin: 3px 10px;
+    display: inline;
+    padding: 5px 0;
+}
+
+div#adminPanel li input {
+    width: 5em;
+}
+
+div#adminPanel .actions i, #li-save i {
+    position: relative;
+    top: 1px;
+    background: transparent;
+    padding: 0 2px;
+}
+
+    div#adminPanel .actions i:hover, #li-save i:hover {
+        color: red;
+        background-color: dimgrey;
+        border-radius: 3px;
+    }
+
+div#adminPanel .header li:first-child {
+    width: 56px;
+}
+
+div#adminPanel ul {
+    display:block;
+    overflow-y:scroll;
+    height:30em;
+    padding-right: 5px;
+}
+
+.wizard > .steps .done a, .wizard > .steps .done a:hover, .wizard > .steps .done a:active {
+    background: white;
+    color: black;
+
+}
+
+div #addproduct-dialog-form {
+    z-index:20000;
+}
+
+div.ui-dialog {
+    z-index:20000;
+    min-width: 400px;
+}
+
+/* Admin End */

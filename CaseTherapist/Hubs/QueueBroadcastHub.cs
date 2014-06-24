@@ -33,7 +33,7 @@ namespace hapiservice.Hubs
 
         public IEnumerable<CallTypeDetailModel> ParseQueueResults()
         {
-        
+
             var resultList = new List<CallTypeDetailModel>();
 
             var myUtilities = new Utilities();
@@ -45,7 +45,7 @@ namespace hapiservice.Hubs
                 // get open connection
                 if (connection.State == System.Data.ConnectionState.Open)
                 {
-                    queueData = (IEnumerable<CallTypeDetailModel>) connection.Query<CallTypeDetailModel>(clarifyQuery);
+                    queueData = (IEnumerable<CallTypeDetailModel>)connection.Query<CallTypeDetailModel>(clarifyQuery);
                 }
                 else
                 {
@@ -55,78 +55,94 @@ namespace hapiservice.Hubs
             }
 
             foreach (var queue in CallTypeDetails)
-            {               
-                    var myQueue = new CallTypeDetailModel();
-                    var queueIndex = 0;
-                    var waitTime = new TimeSpan();
-                    var quantity = 0;
-                    var averageAnswerArray = new List<TimeSpan>();
-                    var averageAnswer = new TimeSpan();
-                    var handledTime = new TimeSpan();
-                    var talkTime = new TimeSpan();
-                    var handled = 0;
-                    var offered = 0;
-                    var percentLiveArray = new List<int>();
-                    double percentLive;
-                    var serviceLevelArray = new List<int>();
-                    double serviceLevel;
-                    var slabandonedArray = new List<int>();
-                    double slabandoned;
-                  
-                    String[] arrayCallTypeID = queue.CallTypeID.Split(',');
-                
-                    foreach (var ctID in arrayCallTypeID)
+            {
+                var myQueue = new CallTypeDetailModel();
+                var queueIndex = 0;
+                var waitTime = new TimeSpan();
+                var quantity = 0;
+                var averageAnswerArray = new List<TimeSpan>();
+                var averageAnswer = new TimeSpan();
+                var handledTime = new TimeSpan();
+                var talkTime = new TimeSpan();
+                var handled = 0;
+                var offered = 0;
+                var percentLiveArray = new List<int>();
+                double percentLive;
+                var serviceLevelArray = new List<int>();
+                double serviceLevel;
+                var slabandonedArray = new List<int>();
+                double slabandoned;
+
+                String[] arrayCallTypeID = queue.CallTypeID.Split(',');
+
+                foreach (var ctID in arrayCallTypeID)
+                {
+                    var item = queueData.DefaultIfEmpty(null).FirstOrDefault(x => x.CallTypeID == ctID);
+                    if (item != null)
                     {
-                        var item = queueData.DefaultIfEmpty(null).FirstOrDefault(x => x.CallTypeID == ctID);
-                        if (item != null)
-                        {
-                            TimeSpan _averageAnswer = myUtilities.StringToTimeSpan(item.AverageAnswer);
-                            int _percentLive = 0;
-                            int _serviceLevel = 0;
-                            int _slabandoned = 0;
-                            int.TryParse(item.PercentLive, out _percentLive);
-                            int.TryParse(item.ServiceLevel, out _serviceLevel);
-                            int.TryParse(item.SLAbandoned, out _slabandoned);
+                        TimeSpan _averageAnswer = myUtilities.StringToTimeSpan(item.AverageAnswer);
+                        int _percentLive = 0;
+                        int _serviceLevel = 0;
+                        int _slabandoned = 0;
+                        int.TryParse(item.PercentLive, out _percentLive);
+                        int.TryParse(item.ServiceLevel, out _serviceLevel);
+                        int.TryParse(item.SLAbandoned, out _slabandoned);
 
-                            waitTime = myUtilities.MaxTimeSpan(item.WaitTime, waitTime);
-                            quantity = myUtilities.CombineInt(item.Quantity, quantity);
-                            averageAnswerArray.Add(_averageAnswer);
-                            handled = myUtilities.CombineInt(item.Handled, handled);
-                            handledTime = myUtilities.CombineTimeSpan(item.HandleTime, handledTime);
-                            offered = myUtilities.CombineInt(item.Offered, offered);
-                            percentLiveArray.Add(_percentLive);
-                            serviceLevelArray.Add(_serviceLevel);
-                            slabandonedArray.Add(_slabandoned);
-                            talkTime = myUtilities.CombineTimeSpan(item.TalkTime, talkTime);
+                        waitTime = myUtilities.MaxTimeSpan(item.WaitTime, waitTime);
+                        quantity = myUtilities.CombineInt(item.Quantity, quantity);
+                        averageAnswerArray.Add(_averageAnswer);
+                        handled = myUtilities.CombineInt(item.Handled, handled);
+                        handledTime = myUtilities.CombineTimeSpan(item.HandleTime, handledTime);
+                        offered = myUtilities.CombineInt(item.Offered, offered);
+                        percentLiveArray.Add(_percentLive);
+                        serviceLevelArray.Add(_serviceLevel);
+                        slabandonedArray.Add(_slabandoned);
+                        talkTime = myUtilities.CombineTimeSpan(item.TalkTime, talkTime);
 
-                            queueIndex++;
-                        }
+                        queueIndex++;
                     }
+                }
 
+                if (averageAnswerArray.Any())
                     averageAnswer = myUtilities.AverageTimeSpanArray(averageAnswerArray);
+                else
+                    averageAnswer = new TimeSpan(0);
+
+                if (percentLiveArray.Any())
                     percentLive = percentLiveArray.Average();
+                else
+                    percentLive = 0;
+
+                if (serviceLevelArray.Any())
                     serviceLevel = serviceLevelArray.Average();
+                else
+                    serviceLevel = 0;
+
+                if (slabandonedArray.Any())
                     slabandoned = slabandonedArray.Average();
+                else
+                    slabandoned = 0;
 
-                    myQueue.CallTypeID = queue.CallTypeID.Replace(",","");
-                    myQueue.Product = queue.Product;
-                    myQueue.ProductID = queue.ProductID;
-                    myQueue.CallType = queue.CallType;
+                myQueue.CallTypeID = queue.CallTypeID.Replace(",", "");
+                myQueue.Product = queue.Product;
+                myQueue.ProductID = queue.ProductID;
+                myQueue.CallType = queue.CallType;
 
-                    myQueue.Quantity = quantity.ToString();
-                    myQueue.WaitTime = waitTime.ToString(@"h\:mm\:ss");
-                    myQueue.Offered = offered.ToString();
-                    myQueue.Handled = handled.ToString();
-                    myQueue.SLAbandoned = slabandoned.ToString();
-                    myQueue.PercentLive = percentLive.ToString();
-                    myQueue.AverageAnswer = averageAnswer.ToString(@"h\:mm\:ss");
-                    myQueue.HandleTime = handledTime.ToString(@"h\:mm\:ss");
-                    myQueue.TalkTime = talkTime.ToString(@"h\:mm\:ss");
-                    myQueue.ServiceLevel = serviceLevel.ToString();
+                myQueue.Quantity = quantity.ToString();
+                myQueue.WaitTime = waitTime.ToString(@"h\:mm\:ss");
+                myQueue.Offered = offered.ToString();
+                myQueue.Handled = handled.ToString();
+                myQueue.SLAbandoned = slabandoned.ToString();
+                myQueue.PercentLive = percentLive.ToString();
+                myQueue.AverageAnswer = averageAnswer.ToString(@"h\:mm\:ss");
+                myQueue.HandleTime = handledTime.ToString(@"h\:mm\:ss");
+                myQueue.TalkTime = talkTime.ToString(@"h\:mm\:ss");
+                myQueue.ServiceLevel = serviceLevel.ToString();
 
-                    resultList.Add(myQueue);             
-         
-            }           
+                resultList.Add(myQueue);
+
+            }
+            var xsdfsfs = resultList;
             return resultList;
         }
     }
@@ -162,11 +178,15 @@ namespace hapiservice.Hubs
         {
             var hub = GlobalHost.ConnectionManager.GetHubContext<QueueBroadcastHub>();
 
-
+            var whatever = hub;
+            var w2 = hub;
 
             try
             {
                 var data = new QueueBroadcastData().ParseQueueResults();
+
+                var x = data;
+                var y = data;
 
                 hub.Clients.Group("all").updateAllProductQueue(data);
 
