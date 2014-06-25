@@ -1,6 +1,12 @@
 ﻿<!DOCTYPE html>
 <meta http-equiv="x-ua-compatible" content="IE=Edge">
-<html>
+<!--[if lt IE 7 ]> <html class="ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html class="ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html class="ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html class="ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html class="">
+ <!--<![endif]-->
 <head>
     <title>@ViewBag.Title</title>
 
@@ -12,12 +18,12 @@
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/hosemann.css")" />
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/lib/jqwidgets/styles/jqx.base.css")" />
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/lib/jqwidgets/styles/jqx.metro-lime.css")" />
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/lib/fancybox/jquery.fancybox.css")"/>
-    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/lib/font-awesome/css/font-awesome.css")"/>
-    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-1.10.2.min.js")"></script> 
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/lib/fancybox/jquery.fancybox.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/lib/font-awesome/css/font-awesome.css")" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-1.10.2.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-ui-1.10.4.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery.signalR-2.0.3.js")"></script>
-    <script src="@Url.Content("~/signalr/hubs")"></script>    
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery.signalR-2.1.0.js")"></script>
+    <script src="@Url.Content("~/signalr/hubs")"></script>
     <script type="text/javascript" src="@Url.Content("~/Content/lib/fancybox/jquery.fancybox.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Scripts/jquery.steps.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Scripts/spectrum.js")"></script>

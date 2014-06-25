@@ -133,22 +133,23 @@ a {
 
 
 .headernotification {
-    width: 95%;
+    width: 100%;
     margin: 0 auto;
-    background-color: lightslategray;
+    line-height: normal;
+    background-color: #DFE5A7;
     border: 1px solid #e5e5e5;
-    font-family: 'Segoe UI';
-    font-size: 13px;
-    color: whitesmoke;
-    padding-bottom: 3px;
+    padding-bottom: 1px;
+    text-align: center;
+    color:#4C402C;
 }
 
     .headernotification #message {
-        padding-left: 20px;
+        /*padding-left: 20px;*/
     }
 
     .headernotification a {
-        color: whitesmoke;
+        color: #34404C;
+        text-decoration: underline;
     }
 
 /* Begin Queue Activity */

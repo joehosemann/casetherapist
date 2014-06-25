@@ -2,355 +2,227 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title></title>
-    <link href='http://fonts.googleapis.com/css?family=Noto+Sans:400,700' rel='stylesheet' type='text/css'>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/selectivizr/1.0.2/selectivizr-min.js"></script>
-    <script type="text/javascript" src="../scripts/json2.js"></script>
-    <script type="text/javascript" src="../scripts/jquery-1.10.2.min.js"></script>
-    <script type="text/javascript" src="../scripts/jquery.signalR-2.0.3.js"></script>
-    <script src="/signalr/hubs"></script>
+    <script src="Scripts/jquery-1.10.2.js"></script>
+    <script src="Scripts/jquery-ui-1.10.4.js"></script>
+    <script src="Scripts/jquery.steps.js"></script>
+    <link rel="stylesheet" type="text/css" href="Content/jquery.steps.css" />
+    <link href="Content/useroptions.css" rel="stylesheet" />
+    <link href="Content/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
 
     <style>
-        body {
-            font-family: 'Noto Sans', sans-serif;
-            font-size: .8em;
+        #wizardAdmin_Container {
+            margin: 0.5em;
+            height: 26px;
+            min-width: 187px;
         }
 
-        ol.queueStatusSlats {
-            margin: 0;
-            padding: 0;
+        #wizardAdmin > .steps a, #wizardAdmin > .steps a:hover, #wizardAdmin > .steps a:active {
+            padding: .4em 1em;
         }
 
-            ol.queueStatusSlats li {
-                margin: 0 0 .1em 0;
-                padding: 0 0 .1em 0;
-                /* border-bottom: 1px solid #eee;*/
-                list-style: none;
-            }
-
-                /*ol.queueStatusSlats li:last-child {
-                    margin: 0;
-                    padding: 0;
-                    border-bottom: none;
-                }*/
-
-                ol.queueStatusSlats li ul {
-                    font-weight: bold;
-                    font-size: 1em;
-                    margin: 0;
-                }
-
-                ol.queueStatusSlats li ul {
-                    /*line-height: 1.4;*/
-                    margin-left: .5em;
-                    -webkit-margin-before: 0;
-                    -webkit-margin-after: 0;
-                    -webkit-padding-start: 0;
-                }
-
-        div#combinedQueueStatusContainer ol.queueStatusSlats li ul li:first-child {
-            /*border-top: 1px solid #eee;*/
-        }
-
-        div#combinedQueueStatusContainer ol.queueStatusSlats li ul li:last-child {
-            /*margin: 0;
-            padding: 0;
-            border-bottom: none;*/
-        }
-
-        ol.queueStatusSlats li p span.meta {
-            display: block;
-            color: #999;
-        }
-
-        ul.queueStatusGroup li {
-            list-style: none;
-        }
-
-            ul.queueStatusGroup li:last-child {
-                margin: 0;
-                padding: 0;
-                border-bottom: none;
-            }
-
-        ol.queueStatusSlats h3 {
-            color: #2790ae;
-            text-decoration: none;
-            outline: none;
-        }
-
-        ul.stats-tabs {
-            display: table;
-        }
-
-            ul.stats-tabs li {
-                float: left;
-                margin: 0;
-                padding: 0 .5em 0 .5em;
-                border-left: 1px solid #ccc;
-                border-top: 0;
-                border-bottom: 0;
-                border-right: 0;
-            }
-
-
-            ul.stats-tabs li:first-child {
-                border-left:0px;
-            }
-
-        ol.queueStatusSlats li.combined:nth-child(odd) {
-            background: #eee;
-        }
-
-        ol.queueStatusSlats li.single:nth-child(odd) {
-            background: #eee;
-        }
-        .grid0 {
-            width: 10em;
-        }
-
-        .grid1 {
-            width: 1.5em;
-            text-align: center;
-        }
-
-        .grid2 {
-            width: 2em;
-            text-align: center;
-        }
-
-        .grid3 {
-            width: 3.5em;
-            text-align: center;
-        }
-
-        .grid4 {
-            width: 2em;
-            text-align: center;
-        }
-
-        .grid5 {
-            width: 2em;
-            text-align: center;
-        }
-
-        .grid6 {
-            width: 2em;
-            text-align: center;
-        }
-
-        .grid7 {
-            width: 2em;
-            text-align: center;
-        }
-
-        .grid8 {
-            width: 4em;
-            text-align: center;
-        }
-
-        .grid9 {
-            width: 4em;
-            text-align: center;
-        }
-
-        .grid10 {
-            width: 4em;
-            text-align: center;
-        }
-
-        .grid11 {
-            width: 2em;
-            text-align: center;
-        }
-
-        #queueSelection {
-            width: 100px;
-            float: left;
-            margin-top: 40px;
-            position: fixed;
-        }
-
-        .queueHeader {
-            background-color: #1F6D9B;
-            color: white;
-        }
-
-        #masterContainer {
-            margin-left: 120px;
-        }
-
-        .queueHeader ul li {
+        #wizardAdmin_ProductFilter {
+            width: 70%;
             display: inline;
         }
 
-        .queueHeader ul li div {
-            white-space: nowrap;
-            background-color: #1F6D9B;
-            display: inline-block;
-            margin-right: 20px;
-            margin-left: 5px;
+        #wizardAdmin_ProductAddButton {
+            width: 20%;
+            display: inline;
+            margin-left: 10px;
+        }
+
+        #wizardAdmin_ProductCloseButtonContainer {
+            float: right;
+            width: 15%;
+            background-color: dimgrey;
+            margin-top: 0px;
+            padding: .4em 1em;
+            border-radius: 0 5pt 5pt 0;
+            text-align: center;
+            top: 0px;
+        }
+
+            #wizardAdmin_ProductCloseButtonContainer:hover {
+                background-color: crimson;
+            }
+
+        .wizardAdmin_CallTypeRowContainer {
+            border-left: 1px solid gray;
+            border-right: 1px solid gray;
+            border-top: 1px solid gray;
+        }
+
+            .wizardAdmin_CallTypeRowContainer ol li {
+                display: inline-block;
+                padding: 1px 5px;
+                margin: 1px 5px;
+                width: 5em;
+            }
+
+                .wizardAdmin_CallTypeRowContainer ol li:first-child {
+                    width: auto;
+                }
+
+            .wizardAdmin_CallTypeRowContainer ol {
+                background-color: lightgray;
+                -webkit-margin-before: 1em;
+                -webkit-margin-after: 1em;
+                -webkit-margin-start: 0px;
+                -webkit-margin-end: 0px;
+                -webkit-padding-start: 0px;
+                margin: 0px;
+                border-bottom: 1px solid gray;
+            }
+
+        .actions {
+            margin: 3px 10px;
+            display: inline;
+            padding: 5px 0;
+        }
+
+        li input {
+            width: 5em;
+        }
+
+        .actions i, #li-save i {
+            position: relative;
+            top: 1px;
+            background: transparent;
+            padding: 0 2px;
+        }
+
+            .actions i:hover, #li-save i:hover {
+                color: red;
+                background-color: dimgrey;
+                border-radius: 3px;
+            }
+
+        .header li:first-child {
+            width: 56px;
         }
     </style>
-
-
 </head>
 <body>
-    <div id="queueSelection">
-        <input type="checkbox" id="selectAllFilter" checked="checked">Select All<br />
-    </div>
-    <div id="masterContainer">
-        <div id="combinedQueueStatusContainer">
-            <h2>Combined Queues</h2><ol class="queueStatusSlats">
-                <li class="queueHeader"><ul class="stats-tabs"><li class="grid0">Product</li><li class="grid1">CT<div style="display:none;">Call Type</div></li><li class="grid2">QTY<div style="display:none;">Number of Calls</div></li><li class="grid3">HT<div style="display:none;">Hold Time</div></li></ul></li>
-            </ol>
+    <div>
+        <div class="content">
+            <div class="title">
+                admin
+                <div style="font-weight: normal; display: inline; color: #1F6D9B;">options</div>
+            </div>
+            <div id="wizardAdmin">
+                
+            </div>
         </div>
-        <div id="singleQueueStatusContainer">
-            <h2>Individual Queues</h2><ol class="queueStatusSlats">
-                <li class="queueHeader"><ul class="stats-tabs"><li class="grid0">Product</li><li class="grid1">CT<div style="display:none;">Call Type</div></li><li class="grid2">QTY<div style="display:none;">Number of Calls</div></li><li class="grid3">HT<div style="display:none;">Hold Time</div></li><li class="grid4">OFF<div style="display:none;">Calls Offered</div></li><li class="grid5">HAN<div style="display:none;">Calls Handled</div></li><li class="grid6">SLA<div style="display:none;">Service Level Agreement</div></li><li class="grid7">Live<div style="display:none;">Live</div></li><li class="grid8">ASA<div style="display:none;">Average Speed of Answer</div></li><li class="grid9">HT<div style="display:none;">Handle Time</div></li><li class="grid10">TT<div style="display:none;">Talk Time</div></li><li class="grid11">SL<div style="display:none;">Service Level</div></li></ul></li>
-            </ol>
+        <div id="footer" style="height: 32px">
+            <div id="status"></div>
         </div>
     </div>
     <script>
+        $("#wizardAdmin").steps({
+            headerTag: "h2",
+            enableFinishButton: false,
+            enablePagination: false,
+            enableAllSteps: true,
+            bodyTag: "section",
+            transitionEffect: "slideLeft",
+            stepsOrientation: "vertical",
+            titleTemplate: "#title#"
+        });
 
-        var queueBroadcastProxy = $.connection.queueBroadcastHub;
-        var productList = [];
+        $('div.steps').prepend('<div id="wizardAdmin_Container"><input type="text" id="wizardAdmin_ProductFilter"><input type="button" value="Add" id="wizardAdmin_ProductAddButton" /></div>');
 
-        //function updateGridText(element) {
-        //    var callTypeID = element.CallTypeID;
-        //    $('li[id={0}] ul li.grid0'.f(callTypeID)).text(element.Product);
-        //    $('li[id={0}] ul li.grid1'.f(callTypeID)).text(element.CallType);
-        //    $('li[id={0}] ul li.grid2'.f(callTypeID)).text(element.Quantity);
-        //    $('li[id={0}] ul li.grid3'.f(callTypeID)).text(element.WaitTime);
-        //    $('li[id={0}] ul li.grid4'.f(callTypeID)).text(element.Offered);
-        //    $('li[id={0}] ul li.grid5'.f(callTypeID)).text(element.Handled);
-        //    $('li[id={0}] ul li.grid6'.f(callTypeID)).text(element.SLAbandoned);
-        //    $('li[id={0}] ul li.grid7'.f(callTypeID)).text(element.PercentLive);
-        //    $('li[id={0}] ul li.grid8'.f(callTypeID)).text(element.AverageAnswer);
-        //    $('li[id={0}] ul li.grid9'.f(callTypeID)).text(element.HandleTime);
-        //    $('li[id={0}] ul li.grid10'.f(callTypeID)).text(element.TalkTime);
-        //    $('li[id={0}] ul li.grid11'.f(callTypeID)).text(element.ServiceLevel);
-        //}
+        $('ul[role=tablist]>li').each(function () {
+            var product = $(this).text().replace('current step: ', '');
+            $(this).prop('product', product);
+            $(this).prepend('<div id="wizardAdmin_ProductCloseButtonContainer"><i class="fa fa-ban" style=""></i></div>');
+        });
 
-        function distinctString(array) {
-            var results = [];
+        function response_GetProductCallTypes(products) {
+            products.each(function (pindex, product) {
+                var html;
+                html = '<h2>{0}</h2><section><div class="wizardAdmin_CallTypeRowContainer"><ol class="header"><li><div class="actions"><i class="fa fa-plus-square-o"></i></div></li><li>CallTypeID</li><li>CallType</li><li>IsDisabled</li></ol>'.f(product.Name);
 
-            array.forEach(function (element, index, array) {
-                var isDuplicate = false;
-                results.forEach(function (distinctElement) {
-                    if (element == distinctElement.toString())
-                        isDuplicate = true;
+                product.CallTypes.each(function (cindex, callType) {
+                    html = html + '<ol><li><div class="actions"><i class="fa fa-minus-square-o" javascript="buttonEvents($(this));"></i></div></li><li>{0}</li><li>{1}</li><li>{2}</li></ol>'.f(callType.CallTypeID, callType.CallType, callType.IsDisabled);
                 });
-                if (isDuplicate == false) {
-                    results.push(element.toString());
-                }
+                html = html + '</div></section>';
             });
-            return results;
         }
 
-        queueBroadcastProxy.client.updateAllProductQueue = function (callTypeDetailModel) {
-            var queueData = [];
 
-            callTypeDetailModel.forEach(function (element, index, array) {
-                console.log(element.Product);
+        $('div#wizardAdmin_ProductCloseButtonContainer').click(function () {
+            // Add remove product function
+            $(this).parent().remove();
+        });
 
+        function buttonEvents(element) {
+            switch (element.prop('class')) {
+                case 'fa fa-edit':
+                    if (element.prop('active') != 'true') {
+                        element.prop('active', 'true');
+                        element.parent().parent().siblings().each(function () {
+                            $(this).html('<input class="callTypeEdit" type="text" value="' + $(this).text() + '"></input>');
+                        });
+                        element.parent().parent().parent().append('<li id="li-save"><i class="fa fa-save" onclick="buttonEvents($(this));"></i></li>');
+                    } else {
+                        element.removeProp('active');
+                        element.parent().parent().siblings().each(function () {
+                            $(this).html($(this).children('input').val());
+                        });
+                        $('li#li-save').remove();
+                    }
+                    break;
+                case 'fa fa-minus-square-o':
+                    if (element.parent().parent().parent().attr('id') == 'cellTypeNew')
+                        element.parent().parent().parent().remove();
+                    else {
+                        // Add remove calltype function
+                        element.parent().parent().parent().remove();
+                    }
+                    break;
+                case 'fa fa-plus-square-o':
+                    if ($('#cellTypeNew').length === 0)
+                        element.parent().parent().parent().parent().append('<ol id="cellTypeNew"><li><div class="actions"><i class="fa fa-minus-square-o" onclick="buttonEvents($(this));"></i></div></li><li><input id="callTypeID" type="text"></input></li><li><input id="callType" type="text"></input></li><li><input id="isDisabled" type="text"></input></li><li id="li-save"><i class="fa fa-save" onclick="buttonEvents($(this));"></i></li></ol>');
+                    break;
+                case 'fa fa-save':
+                    var _callTypeID = $('input#callTypeID').val();
+                    var _callType = $('input#callType').val();
+                    var _isDisabled = $('input#isDisabled').val();
 
-                // Changed from Regex to Length (assumes CallTypeIDs will be 4 digits in length)
-                if (element.CallTypeID.length > 5) {
-                    if ($('#combinedQueueStatusContainer ol li#{0}'.f(element.CallTypeID)).length === 0) {
-                        // New Combined Queue Header Row
-                        //$('#combinedQueueStatusContainer ol').append('<li id="{0}" class="combined"><ul class="stats-tabs"><li class="grid0"></li><li class="grid1"></li><li class="grid2"></li><li class="grid3"></li><li class="grid4"></li><li class="grid5"></li><li class="grid6"></li><li class="grid7"></li><li class="grid8"></li><li class="grid9"></li><li class="grid10"></li><li class="grid11"></li></ul></li>'.f(element.CallTypeID));
-                        $('#combinedQueueStatusContainer ol').append('<li id="{0}" class="combined"><ul class="stats-tabs"></ul></li>'.f(element.CallTypeID));
+                    console.log('{0} - {1} - {2}'.f(_callTypeID, _callType, _isDisabled));
+
+                    if (_callTypeID.length != 0 && _callType.length != 0 && _isDisabled.length != 0) {
+                        if ($('#cellTypeNew').length === 0) {
+                            // Add insert calltype function
+                        }
+                        else {
+                            // Add update calltype function
+                        }
                     }
                     else {
-                        // Update Combined Queue Rows
-                        //updateGridText(element);
-                        $('li[id={0}][class="combined"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li><li class="grid5">{5}</li><li class="grid6">{6}</li><li class="grid7">{7}</li><li class="grid8">{8}</li><li class="grid9">{9}</li><li class="grid10">{10}</li><li class="grid11">{11}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime, element.Offered, element.Handled, element.SLAbandoned, element.PercentLive, element.AverageAnswer, element.HandleTime, element.TalkTime, element.ServiceLevel));
+                        alert('All fields required to save.');
                     }
-                }
-                else {
-                    if ($('#singleQueueStatusContainer ol li#{0}'.f(element.CallTypeID)).length === 0) {
-                        // New Single Queue Row
-                        //$('#singleQueueStatusContainer ol').append('<li id="{0}" class="single"><ul class="stats-tabs"><li class="grid0"></li><li class="grid1"></li><li class="grid2"></li><li class="grid3"></li><li class="grid4"></li><li class="grid5"></li><li class="grid6"></li><li class="grid7"></li><li class="grid8"></li><li class="grid9"></li><li class="grid10"></li><li class="grid11"></li></ul></li>'.f(element.CallTypeID));
-                        $('#singleQueueStatusContainer ol').append('<li id="{0}" class="single"><ul class="stats-tabs"></ul></li>'.f(element.CallTypeID));
-                    }
-                    else {
-                        // Update Single Queue Row
-                        //updateGridText(element)
-                        $('li[id={0}][class="single"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li><li class="grid5">{5}</li><li class="grid6">{6}</li><li class="grid7">{7}</li><li class="grid8">{8}</li><li class="grid9">{9}</li><li class="grid10">{10}</li><li class="grid11">{11}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime, element.Offered, element.Handled, element.SLAbandoned, element.PercentLive, element.AverageAnswer, element.HandleTime, element.TalkTime, element.ServiceLevel));
-                    }
-                }
-
-                if ($('#queueSelection').children().length == 2) {
-                    productList.push(element.Product.match(/^[A-Za-z]+/).toString());
-                }
-            });
-
-            if ($('#queueSelection').children().length == 2) {
-                if (productList.length > 0) {
-                    var distinctProdList = distinctString(productList);
-                    distinctProdList.forEach(function (element) {
-                        $('#queueSelection').append('<input class="productListFilter" id={0} type="checkbox">{0}<br/>'.f(element))
-                    });
-
-                    $('.productListFilter').change(function (object) {
-                        if ($('#selectAllFilter:checked').length > 0)
-                            $('#selectAllFilter:checked').prop('checked', false);
-                        UpdateView();
-
-                    });
-                }
-
-            }
-
-        };
-
-
-
-        function UpdateView() {
-            if ($('#selectAllFilter:checked').length > 0) {
-                $('.queueStatusSlats li').show();
-            }
-            else {
-                $('.queueStatusSlats li').hide();
-
-                var thisProductListFilter = [];
-                $('.productListFilter:checked').each(function (index, element) {
-                    thisProductListFilter.push(element.id);
-                });
-                if (thisProductListFilter.length > 0) {
-                    distinctString(thisProductListFilter).forEach(function (element) {
-                        $('.grid0:contains("{0}")'.f(element)).parent().parent().show();
-                    });
-                }
+                    break;
+                default:
+                    break;
             }
         }
 
-        $('#selectAllFilter').change(function (object) {
-            if (object.target.checked)
-                $('.productListFilter').prop('checked', true);
-            else
-                $('.productListFilter').prop('checked', false);
-            UpdateView();
-        })
-
-        $.connection.hub.start().done(function () {
-            queueBroadcastProxy.server.joinRoom('all');
+        $('div.actions i').click(function () {
+            buttonEvents($(this));
         });
 
-        $('.queueHeader ul li').each(function () {
-            $(this).bind("mouseover", function (e) {
-                if (!$(this).hasClass('selected')) {
-                    $(this).children().stop(true, true).fadeTo(500, 1);
+        $('#wizardAdmin_ProductFilter').keyup(function () {
+            var currentValue = $(this).val();
+            $('li[role=tab]').each(function (i, val) {
+                if ($(this).text().match(currentValue) === null) {
+                    $(this).hide();
+                } else {
+                    $(this).show();
                 }
-                e.preventDefault();
-            });
-            $(this).bind("mouseout", function (e) {
-                if (!$(this).hasClass('selected')) {
-                    $(this).children().stop(true, true).fadeOut(500, 0);
-                }
-                e.preventDefault();
             });
         });
+
 
 
         // String.Format (aliaed to .f)
@@ -365,10 +237,51 @@
             }
             return s;
         };
-
-        function isOdd(num) { return (num % 2) == 1; }
-
     </script>
-
 </body>
 </html>
+
+<!--
+
+h2>ProductName</h2>
+                <section>
+                    <div class="wizardAdmin_CallTypeRowContainer">
+                        <ol class="header">
+                            <li>
+                                <div class="actions"><i class="fa fa-plus-square-o"></i></div>
+                            </li>
+                            <li>CallTypeID</li>
+                            <li>CallType</li>
+                            <li>IsDisabled</li>
+                        </ol>
+                        <ol>
+                            <li>
+                                <div class="actions"><i class="fa fa-minus-square-o"></i></div>
+                            </li>
+                            <li>23423</li>
+                            <li>CL</li>
+                            <li>1</li>
+                        </ol>
+                    </div>
+                </section>
+                <h2>ProductWhat</h2>
+                <section>
+                    <div class="wizardAdmin_CallTypeRowContainer">
+                        <ol class="header">
+                            <li></li>
+                            <li>CallTypeID</li>
+                            <li>CallType</li>
+                            <li>IsDisabled</li>
+                        </ol>
+                        <ol>
+                            <li>
+                                <div class="actions"><i class="fa fa-plus-square"></i><i class="fa fa-minus-square-o"></i></div>
+                            </li>
+                            <li>23423</li>
+                            <li>CL</li>
+                            <li>1</li>
+                        </ol>
+                    </div>
+                </section>
+
+-->

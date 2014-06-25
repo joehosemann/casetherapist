@@ -24,16 +24,13 @@ namespace hapiservice.Hubs
             {
                 using (var connection = SqlHelper.GetOpenConnectionBBApps())
                 {
-                    CallTypeDetails = connection.Query<CallTypeDetailModel>(ctProducts);
-                    //DistinctProductsCallTypes = (from a in CallTypeDetails select new DistinctProductsCallTypesModel { Product = a.Product, ProductID = a.ProductID, CallType = a.CallType }).Distinct();
+                    CallTypeDetails = connection.Query<CallTypeDetailModel>(ctProducts);                   
                 }
             }
         }
 
-
         public IEnumerable<CallTypeDetailModel> ParseQueueResults()
         {
-
             var resultList = new List<CallTypeDetailModel>();
 
             var myUtilities = new Utilities();
@@ -140,7 +137,6 @@ namespace hapiservice.Hubs
                 myQueue.ServiceLevel = serviceLevel.ToString();
 
                 resultList.Add(myQueue);
-
             }
             var xsdfsfs = resultList;
             return resultList;
@@ -174,21 +170,26 @@ namespace hapiservice.Hubs
             Clients.Client(Context.ConnectionId).mySubscriptions(result);
         }
 
+        // Current delay of updateAllProductQueue
+        private static int count = 0;
+        // How many seconds to delay updateAllProductQueue
+        private static int countDelay = 2;
+
         static void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             var hub = GlobalHost.ConnectionManager.GetHubContext<QueueBroadcastHub>();
-
-            var whatever = hub;
-            var w2 = hub;
-
+            
             try
             {
                 var data = new QueueBroadcastData().ParseQueueResults();
 
-                var x = data;
-                var y = data;
-
-                hub.Clients.Group("all").updateAllProductQueue(data);
+                if (count >= countDelay)
+                {
+                    hub.Clients.Group("all").updateAllProductQueue(data);
+                    count = 0;
+                }
+                else
+                    count++;
 
                 foreach (var item in data)
                 {

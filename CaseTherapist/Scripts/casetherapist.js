@@ -37,7 +37,7 @@ hosemann = {
         fullpath: "",
         origin: "",
         debug: false,
-        pwd: "hosema"
+        pwd: ""
     },
     signalR: function () {
         hosemann.vars.queueBroadcastProxy = $.connection.queueBroadcastHub;
@@ -83,9 +83,16 @@ hosemann = {
             userOptionsProxy.client.getData = function (products, userDetails, subscriptions) {
                 hosemann.vars.products = products;
                 hosemann.vars.subscriptions = subscriptions;
-                hosemann.vars.businessUnit = userDetails.BusinessUnit.toLowerCase();
-                hosemann.vars.ciscoExtension = userDetails.CiscoExtension;
-                hosemann.vars.bluePumpkinUsername = userDetails.BluePumpkinUsername.toLowerCase();
+
+                if (userDetails.BusinessUnit !== null)
+                    hosemann.vars.businessUnit = userDetails.BusinessUnit.toLowerCase();
+
+                if (userDetails.CiscoExtension !== null)
+                    hosemann.vars.ciscoExtension = userDetails.CiscoExtension;
+
+                if (userDetails.BluePumpkinUsername !== null)
+                    hosemann.vars.bluePumpkinUsername = userDetails.BluePumpkinUsername.toLowerCase();
+
                 if (userDetails.ApplicationBG !== null) {
                     hosemann.vars.applicationBG = userDetails.ApplicationBG;
                     hosemann.vars.queueBG = userDetails.QueueBG;
@@ -97,7 +104,7 @@ hosemann = {
                     hosemann.vars.extendedCallTypeBG = userDetails.ExtendedCallTypeBG;
                     hosemann.vars.extendedCallTypeFG = userDetails.ExtendedCallTypeFG;
                     hosemann.vars.userDetails = userDetails;
-                }                
+                }
 
                 for (var i = 0; i < subscriptions.length; ++i) {
                     queueBroadcastProxy.server.joinRoom(subscriptions[i].ProductID);
@@ -142,59 +149,62 @@ hosemann = {
             var combinedQueueData = [];
             var queueData = [];
 
-            callTypeDetailModel.forEach(function (element, index, array) {
+            var ie8sucks = callTypeDetailModel;
+
+            for (i = 0; i < ie8sucks.length; i++) {
                 var background = "transparent";
                 var color = "#444";
 
-                if (element.WaitTime != "0:00:00") {
-                    var waitTimeArray = element.WaitTime.split(':');
+                if (ie8sucks[i].WaitTime != "0:00:00") {
+                    var waitTimeArray = ie8sucks[i].WaitTime.split(':');
                     var waitTimeSeconds = parseInt(waitTimeArray[0] * 60 * 60) + parseInt(waitTimeArray[1] * 60) + parseInt(waitTimeArray[2]);
-                    if (element.Quantity > 0 && waitTimeSeconds < 120) {
+                    if (ie8sucks[i].Quantity > 0 && waitTimeSeconds < 120) {
 
                         background = hosemann.vars.activeCallTypeBG;
                         color = hosemann.vars.activeCallTypeFG;
                     }
-                    else if (element.Quantity > 0 && waitTimeSeconds >= 120) {
+                    else if (ie8sucks[i].Quantity > 0 && waitTimeSeconds >= 120) {
                         background = hosemann.vars.extendedCallTypeBG;
                         color = hosemann.vars.extendedCallTypeFG;
                     }
                 }
 
                 // Changed from Regex to Length (assumes CallTypeIDs will be 4 digits in length)
-                if (element.CallTypeID.length > 5) {
-                    if ($('#combinedQueueStatusContainer ol li#{0}'.f(element.CallTypeID)).length === 0) {
+                if (ie8sucks[i].CallTypeID.length > 5) {
+                    if ($('#combinedQueueStatusContainer ol li#{0}'.f(ie8sucks[i].CallTypeID)).length === 0) {
                         // New Combined Queue Header Row
-                        $('#combinedQueueStatusContainer ol').append('<li id="{0}" class="combined"><ul class="stats-tabs"></ul></li>'.f(element.CallTypeID));
+                        $('#combinedQueueStatusContainer ol').append('<li id="{0}" class="combined"><ul class="stats-tabs"></ul></li>'.f(ie8sucks[i].CallTypeID));
                     }
                     else {
                         // Update Combined Queue Rows
-                        $('li[id={0}][class="combined"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li><li class="grid5">{5}</li><li class="grid6">{6}</li><li class="grid7">{7}</li><li class="grid8">{8}</li><li class="grid9">{9}</li><li class="grid10">{10}</li><li class="grid11">{11}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime, element.Offered, element.Handled, element.SLAbandoned, element.PercentLive, element.AverageAnswer, element.HandleTime, element.TalkTime, element.ServiceLevel));
-                        $('li[id={0}][class="combined"] ul'.f(element.CallTypeID)).css('background-color', background).css('color', color);
+                        $('li[id={0}][class="combined"] ul'.f(ie8sucks[i].CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li><li class="grid5">{5}</li><li class="grid6">{6}</li><li class="grid7">{7}</li><li class="grid8">{8}</li><li class="grid9">{9}</li><li class="grid10">{10}</li><li class="grid11">{11}</li>'.f($.trim(ie8sucks[i].Product), ie8sucks[i].CallType, ie8sucks[i].Quantity, ie8sucks[i].WaitTime, ie8sucks[i].Offered, ie8sucks[i].Handled, ie8sucks[i].SLAbandoned, ie8sucks[i].PercentLive, ie8sucks[i].AverageAnswer, ie8sucks[i].HandleTime, ie8sucks[i].TalkTime, ie8sucks[i].ServiceLevel));
+                        $('li[id={0}][class="combined"] ul'.f(ie8sucks[i].CallTypeID)).css('background-color', background).css('color', color);
                     }
                 }
                 else {
-                    if ($('#singleQueueStatusContainer ol li#{0}'.f(element.CallTypeID)).length === 0) {
+                    if ($('#singleQueueStatusContainer ol li#{0}'.f(ie8sucks[i].CallTypeID)).length === 0) {
                         // New Single Queue Row
-                       $('#singleQueueStatusContainer ol').append('<li id="{0}" class="single"><ul class="stats-tabs"></ul></li>'.f(element.CallTypeID));
+                        $('#singleQueueStatusContainer ol').append('<li id="{0}" class="single"><ul class="stats-tabs"></ul></li>'.f(ie8sucks[i].CallTypeID));
                     }
                     else {
                         // Update Single Queue Row
-                        $('li[id={0}][class="single"] ul'.f(element.CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li><li class="grid5">{5}</li><li class="grid6">{6}</li><li class="grid7">{7}</li><li class="grid8">{8}</li><li class="grid9">{9}</li><li class="grid10">{10}</li><li class="grid11">{11}</li>'.f($.trim(element.Product), element.CallType, element.Quantity, element.WaitTime, element.Offered, element.Handled, element.SLAbandoned, element.PercentLive, element.AverageAnswer, element.HandleTime, element.TalkTime, element.ServiceLevel));
-                        $('li[id={0}][class="single"] ul'.f(element.CallTypeID)).css('background-color', background).css('color', color);
+                        $('li[id={0}][class="single"] ul'.f(ie8sucks[i].CallTypeID)).html('<li class="grid0">{0}</li><li class="grid1">{1}</li><li class="grid2">{2}</li><li class="grid3">{3}</li><li class="grid4">{4}</li><li class="grid5">{5}</li><li class="grid6">{6}</li><li class="grid7">{7}</li><li class="grid8">{8}</li><li class="grid9">{9}</li><li class="grid10">{10}</li><li class="grid11">{11}</li>'.f($.trim(ie8sucks[i].Product), ie8sucks[i].CallType, ie8sucks[i].Quantity, ie8sucks[i].WaitTime, ie8sucks[i].Offered, ie8sucks[i].Handled, ie8sucks[i].SLAbandoned, ie8sucks[i].PercentLive, ie8sucks[i].AverageAnswer, ie8sucks[i].HandleTime, ie8sucks[i].TalkTime, ie8sucks[i].ServiceLevel));
+                        $('li[id={0}][class="single"] ul'.f(ie8sucks[i].CallTypeID)).css('background-color', background).css('color', color);
                     }
                 }
 
                 if ($('#queueSelection').children().length == 2) {
-                    productList.push(element.Product.match(/^[A-Za-z]+/).toString());
+                    productList.push(ie8sucks[i].Product.match(/^[A-Za-z]+/).toString());
                 }
-            });
+            }
 
             if ($('#queueSelection').children().length == 2) {
                 if (productList.length > 0) {
                     var distinctProdList = hosemann.bbq.utilities.distinctString(productList);
-                    distinctProdList.forEach(function (element) {
-                        $('#queueSelection').append('<input class="productListFilter" id={0} type="checkbox">{0}<br/>'.f(element))
-                    });
+
+                    for (i = 0; i < distinctProdList.length; i++) {
+                        $('#queueSelection').append('<input class="productListFilter" id={0} type="checkbox">{0}<br/>'.f(distinctProdList[i]));
+                    }
 
                     $('.productListFilter').change(function (object) {
                         if ($('#selectAllFilter:checked').length > 0)
@@ -214,24 +224,23 @@ hosemann = {
         adminProxy.client.response_GetProductData = function (products) {
             var html;
             if (products.length > 0) {
-                products.forEach(function (element, index, array) {
-                    html = '<h2 id="{0}">{1}</h2><section><div id="{0}" class="wizardAdmin_CallTypeRowContainer"><ol class="admin_header"><li><div class="actions"><i class="fa fa-plus-square-o" onclick="hosemann.admin.buttonEvents($(this));"></i></div></li><li>CallTypeID</li><li>CallType</li><li>IsDisabled</li></ol></div></section>'.f(element.ID, element.Name);
+                for (var i = 0; i < products.length; i++) {
+                    html = '<h2 id="{0}">{1}</h2><section><div id="{0}" class="wizardAdmin_CallTypeRowContainer"><ol class="admin_header"><li><div class="actions"><i class="fa fa-plus-square-o" onclick="hosemann.admin.buttonEvents($(this));"></i></div></li><li>CallTypeID</li><li>CallType</li><li>IsDisabled</li></ol></div></section>'.f(products[i].ID, products[i].Name);
                     $('#wizardAdmin').append(html);
-                });
+                }
             }
-        }
+        };
 
         adminProxy.client.response_GetCallTypeData = function (callTypes) {
             if (callTypes.length > 0) {
-                callTypes.forEach(function (element, index, array) {
-
-                    hosemann.admin.addCallType(element);
-                });
+                for (var i = 0; i < callTypes.length; i++) {
+                    hosemann.admin.addCallType(callTypes[i]);
+                }
             }
-        }
+        };
 
         adminProxy.client.response_InsertProduct = function (productID, name) {
-            productID = productID.ID;            
+            productID = productID.ID;
 
             $("#addproduct-dialog-form").dialog('destroy');
             $("#addproduct-dialog-form").remove();
@@ -245,27 +254,27 @@ hosemann = {
                 var _href = $(this).children('a').attr('href');
                 var _prodID = $('h2{0}'.f(_href)).next().find('div.wizardAdmin_CallTypeRowContainer').attr('id');
                 $(this).attr('ProductID', _prodID);
-                
+
                 if (_prodID == productID) {
                     $(this).prepend('<div class="wizardAdmin_RemoveProductContainer" onclick="hosemann.admin.buttonEvents($(this));"><i class="fa fa-ban" style=""></i></div>');
                 }
             });
-        }
+        };
 
-        adminProxy.client.response_InsertCallType = function (results) {            
+        adminProxy.client.response_InsertCallType = function (results) {
             $('#cellTypeNew').remove();
             hosemann.admin.addCallType(results);
-        }
+        };
 
-        adminProxy.client.response_RemoveProduct = function (productID) {            
+        adminProxy.client.response_RemoveProduct = function (productID) {
             var _temp = $('li[ProductID={0}]'.f(productID)).index();
             $('#wizardAdmin').steps('remove', _temp);
-        }
+        };
 
         adminProxy.client.response_RemoveCallType = function (ID) {
             $('i.fa-minus-square-o[ctid={0}]'.f(ID)).parents('ol').remove();
             //$('ol#{0}'.f(ID)).remove();
-        }
+        };
 
         adminProxy.client.response_ValidatePassword = function (isValid) {
             if (isValid) {
@@ -278,7 +287,7 @@ hosemann = {
                 $('div#admin-dialog-form #thispass').val('');
                 alert("Incorrect password. Instance logged.");
             }
-        }
+        };
 
         // Admin Hub End
 
@@ -373,6 +382,7 @@ hosemann = {
 
             hosemann.signalR();
 
+
             if (hosemann.vars.param === "") {
                 this.getMissingParameter();
             }
@@ -385,17 +395,31 @@ hosemann = {
                         if (user !== null) {
                             hosemann.vars.businessUnit = user.BusinessUnit.toLowerCase();
                             hosemann.casetherapist.views.startViews();
-                            if (hosemann.vars.queueActivity)
-                                hosemann.casetherapist.cisco.loadCADMonitor();
 
                             hosemann.userOptions.buildIcon();
-                            hosemann.bbq.buildIcon();
+
+                            // hosemann.signalR();
+
+
+                            if (hosemann.vars.queueActivity) {
+                                hosemann.casetherapist.cisco.loadCADMonitor();
+                            }
+
+                            if (!hosemann.utilities.isOldIE() || hosemann.vars.param.toLowerCase() == 'josephho') {
+                                // Queue Summary is effectively broken in IE8.
+                                hosemann.casetherapist.isOldIE();
+                                hosemann.bbq.buildIcon();
+                            }
+                            else {
+                                hosemann.casetherapist.isOldIE();
+                            }
                         }
                             // If the user details aren't in the database.
                         else if (user === null && hosemann.vars.view != 'tam' && hosemann.vars.view != 'site') {
                             // Requires timeout to let all functions load.
                             setTimeout(function () {
-                                hosemann.userOptions.pageLoad();
+                                hosemann.userOptions.buildIcon();
+                                hosemann.userOptions.buildHtml();
 
                                 // Brings up the UserOptionsPanel automatically.
                                 $.fancybox({
@@ -404,6 +428,7 @@ hosemann = {
                                     minHeight: 500
                                 });
 
+                                // hosemann.signalR();
                             }, 1000);
 
                         }
@@ -422,6 +447,12 @@ hosemann = {
         },
         preloadAssets: function () {
 
+        },
+        isOldIE: function () {
+            var _isOldIE = hosemann.utilities.isOldIE();
+            if (_isOldIE) {
+                $('.header').prepend('<div class="headernotification">!! Some features will not work with IE 8 or 9.  Please use <a href="http://chrome.google.com">Chrome</a> with <a href="http://www.ietab.net/">IETab.net</a> instead !!</div>');
+            }
         },
         getMissingParameter: function () {
             var label = "Clarify Username:";
@@ -447,9 +478,11 @@ hosemann = {
                 if (hosemann.vars.view != 'analyst' || hosemann.vars.param === '') {
                     hosemann.vars.queueActivity = false;
                 }
-                else {
+                else if (hosemann.vars.queueActivity) {
                     hosemann.casetherapist.cisco.agentDesktopMonitor();
-                    setInterval('hosemann.casetherapist.cisco.checkCADMonitor()', 5000);
+                    setInterval(function () {
+                        hosemann.casetherapist.cisco.checkCADMonitor();
+                    }, 5000);
                 }
             },
             checkCADMonitor: function () {
@@ -460,6 +493,7 @@ hosemann = {
             agentDesktopMonitor: function () {
                 $.getJSON('{0}hapi/QueueActivity?username={1}'.f(hosemann.vars.origin, hosemann.vars.param), function () { })
                     .fail(function () {
+                        hosemann.vars.queueActivity = false;
                     })
                     .done(function (data) {
                         if (data.length > 0) {
@@ -525,6 +559,9 @@ hosemann = {
                                         }
                                 }
                             });
+                        }
+                        else {
+                            hosemann.vars.queueActivity = false;
                         }
                     });
             }
@@ -900,9 +937,9 @@ hosemann = {
 
                 if (hosemann.vars.view != 'tam' && hosemann.vars.view != 'site')
                     $('.default').append('<div class="header"><div class="casetherapist" style="">case<strong>therapist</strong></div><div id="featureButtons"></div><div id="bbq" style="{0}"><div class="bbqContainer">&nbsp;</div></div></div>'.f(hosemann.vars.applicationBG));
-                
+
                 $('.default').append('<div id="jqxTabs"><ul></ul></div>');
-                
+
                 if (bu == 'ecbu') {
                     hosemann.casetherapist.views.buildTabs('Workable');
                     hosemann.casetherapist.views.buildTabs('Resolved');
@@ -920,7 +957,7 @@ hosemann = {
                 }
 
                 $('#jqxTabs').jqxTabs({ width: '95%', height: '90%', theme: "metro-lime", initTabContent: initWidgets });
-                
+
                 //Reporter Legend Fancybox.
                 $(document).ready(function () {
                     $("a#aLegend").fancybox({
@@ -1208,10 +1245,9 @@ hosemann = {
             hosemann.userOptions.buildVisuals();
         },
         buildIcon: function () {
-            $('#featureButtons').append('<div id="userOptionsButton" class="featureButton"><i title="Options" class="fa fa-gear"></i></div>')
+            $('#featureButtons').append('<div id="userOptionsButton" class="featureButton"><i title="Options" class="fa fa-gear"></i></div>');
 
             $('body').append('<div id="userOptionsPanel"></div>');
-
 
             $('#userOptionsButton').click(function () {
                 hosemann.userOptions.pageLoad();
@@ -1222,10 +1258,9 @@ hosemann = {
                     minHeight: 500
                 });
             });
-
-
         },
         buildHtml: function () {
+
             $('#userOptionsPanel').html('<div class="useroptions"><div class="content"><div class="title">user<div style="font-weight: normal; display: inline; color: #1F6D9B;">options</div></div><div id="wizard"><h2>Initial Setup</h2><section><div id="row"><div id="labels" style="width:50%; float:left; text-align:right;"><label>Business Unit:</label></div><div id="inputs" style="float:left;"><div><input type="radio" name="BusinessUnits" value="ECBU" style="float: left;" />ECBU</div><div><input type="radio" name="BusinessUnits" value="GMBU" style="float: left;" />GMBU</div></div></div><div id="row"><div id="labels" style="width:50%; float:left; text-align:right;"><label>Cisco Extension (6xxx):</label></div><div id="inputs" style="float:left;"><input type="text" name="CiscoExtension" value="" /></div></div><div id="row"><div id="labels" style="width:50%; float:left; text-align:right;"><label>BluePumpkin Username:</label></div><div id="inputs" style="float:left;"><input type="text" name="BluePumpkinUsername" value="" /></div></div></section><h2>Subscriptions</h2><section><form action=""><ul id="subscriptions"></ul></form></section><h2>Visuals</h2><section><div class="bbqPreviewParentContainer"><div class="bbqPreviewContainer"><div class="bbqPreviewContainerTitle">Inactive Queue Preview</div><div class="bbq"><div class="bbqContainer" id="Inactive"><div class="bbqProduct" id="BBIS"><strong>BBIS</strong><div class="bbqQueue" id="CL"><strong>CL</strong>0|<strong>0:00:00</strong></div><div class="bbqQueue" id="PH"><strong>PH</strong>0|<strong>0:00:00</strong></div></div></div></div><br /><div><input type="text" id="applicationBG" /><p style="display:inline; margin-left:5px;">Application Background</p></div><div><input type="text" id="queueBG" /><p style="display:inline; margin-left:5px;">Queue Background</p></div><div><input type="text" id="queueFG" /><p style="display:inline; margin-left:5px;">Queue Foreground</p></div><div><input type="text" id="inactiveCallTypeBG" /><p style="display:inline; margin-left:5px;">Call Type Background</p></div><div><input type="text" id="inactiveCallTypeFG" /><p style="display:inline; margin-left:5px;">Call Type Foreground</p></div></div></div><br /><br /><div class="bbqPreviewParentContainer"><div class="bbqPreviewContainer"><div class="bbqPreviewContainerTitle">Active Queue Preview</div><div class="bbq"><div class="bbqContainer" id="Active"><div class="bbqProduct" id="BBIS"><strong>BBIS</strong><div class="bbqQueue" id="CL"><strong>CL</strong>0|<strong>0:00:00</strong></div><div class="bbqQueue" id="PH"><strong>PH</strong>0|<strong>0:00:00</strong></div></div></div></div><br /><div><input type="text" id="activeCallTypeBG" /><p style="display:inline; margin-left:5px;">Call Type Background</p></div><div><input type="text" id="activeCallTypeFG" /><p style="display:inline; margin-left:5px;">Call Type Foreground</p></div></div></div><br /><br /><div class="bbqPreviewParentContainer"><div class="bbqPreviewContainer"><div class="bbqPreviewContainerTitle">Extended Queue Preview</div><div class="bbq"><div class="bbqContainer" id="Extended"><div class="bbqProduct" id="BBIS"><strong>BBIS</strong><div class="bbqQueue" id="CL"><strong>CL</strong>0|<strong>0:00:00</strong></div><div class="bbqQueue" id="PH"><strong>PH</strong>0|<strong>0:00:00</strong></div></div></div></div><br /><div><input type="text" id="extendedCallTypeBG" /><p style="display:inline; margin-left:5px;">Call Type Background</p></div><div><input type="text" id="extendedCallTypeFG" /><p style="display:inline; margin-left:5px;">Call Type Foreground</p></div></div></div><br /><br /></section></div></div><div id="footer" style="height: 32px"><input type="button" id="userOptionsSubmitButton" value="Submit" style="float:right;margin-right:2.5%" /><div id="status"></div></div></div>');
 
             $('input[name=CiscoExtension]').mask('6999');
@@ -1434,7 +1469,7 @@ hosemann = {
             $('#featureButtons').append('<div id="adminButton" class="featureButton"><i title="Admin" class="fa fa-lock"></i></div>');
 
             $('body').append('<div id="adminPanel"></div>');
-            
+
             $('#adminButton').click(function () {
                 hosemann.admin.pageLoad();
             });
@@ -1453,7 +1488,7 @@ hosemann = {
                     $('div#adminPanel').html('');
                 }
             });
-            
+
             hosemann.vars.adminProxy.server.server_GetProductData();
             hosemann.vars.adminProxy.server.server_GetCallTypeData();
 
@@ -1495,7 +1530,7 @@ hosemann = {
                 //$('.wizardAdmin_RemoveProductContainer').click(function () {
                 //    hosemann.vars.adminProxy.server.server_RemoveProduct(($(this).parent().attr('ProductID')), hosemann.admin.getPassword());
                 //});
-                $('.wizardAdmin_ProductAddButton').click(function () { hosemann.admin.buttonEvents($(this)) });
+                $('.wizardAdmin_ProductAddButton').click(function () { hosemann.admin.buttonEvents($(this)); });
 
             }, 500);
         },
@@ -1517,7 +1552,7 @@ hosemann = {
                     }
                     break;
                 case 'fa fa-minus-square-o':
-                    
+
                     // checks to see if its a new row, if so, go ahead and remove the object, cancelling the insert.
                     if (element.parent().parent().parent().attr('id') == 'cellTypeNew')
                         element.parent().parent().parent().remove();
@@ -1536,8 +1571,8 @@ hosemann = {
                     var _isDisabled = $('input#isDisabled').val();
                     var _productID = element.parents('.wizardAdmin_CallTypeRowContainer').attr('id');
 
-                    if (_callTypeID.length != 0 && _callType.length != 0 && _isDisabled.length != 0) {  
-                        hosemann.vars.adminProxy.server.server_InsertCallType(_callType, _callTypeID, _productID, hosemann.admin.getPassword());                       
+                    if (_callTypeID.length !== 0 && _callType.length !== 0 && _isDisabled.length !== 0) {
+                        hosemann.vars.adminProxy.server.server_InsertCallType(_callType, _callTypeID, _productID, hosemann.admin.getPassword());
                     }
                     else {
                         alert('All fields required to save.');
@@ -1637,7 +1672,7 @@ hosemann = {
             $('#featureButtons').append('<div id="bbqButton" class="featureButton"><i title="Queue Summary" class="fa fa-globe"></i></div>');
 
             $('body').append('<div id="bbqPanel"></div>');
-            
+
             $('#bbqButton').click(function () {
                 hosemann.bbq.pageLoad();
 
@@ -1667,9 +1702,10 @@ hosemann = {
                     thisProductListFilter.push(element.id);
                 });
                 if (thisProductListFilter.length > 0) {
-                    hosemann.bbq.utilities.distinctString(thisProductListFilter).forEach(function (element) {
-                        $('#bbqPanel .grid0:contains("{0}")'.f(element)).parent().parent().show();
-                    });
+                    var distinctProductListfilter = hosemann.bbq.utilities.distinctString(thisProductListFilter);
+                    for (var i = 0; i < distinctProductListfilter.length; i++) {
+                        $('#bbqPanel .grid0:contains("{0}")'.f(distinctProductListfilter[i])).parent().parent().show();
+                    }
                 }
             }
         },
@@ -1677,22 +1713,29 @@ hosemann = {
             distinctString: function (array) {
                 var results = [];
 
-                array.forEach(function (element, index, array) {
+                for (i = 0; i < array.length; i++) {
                     var isDuplicate = false;
-                    results.forEach(function (distinctElement) {
-                        if (element == distinctElement.toString())
+                    for (j = 0; j < results.length; j++) {
+                        if (array[i].toString() == results[j].toString())
                             isDuplicate = true;
-                    });
-                    if (isDuplicate == false) {
-                        results.push(element.toString());
                     }
-                });
+                    if (isDuplicate === false) {
+                        results.push(array[i].toString());
+                    }
+                }
                 return results;
             }
         }
     },
     utilities: {
-        urlVars: {},
+        isOldIE: function () {
+            if ($('html').is('.ie6, .ie7, .ie8'))
+                return true;
+            else
+                return false;
+        },
+        urlVars: {
+        },
         isOdd: function (num) { return (num % 2) == 1; },
         analytics: function () {
             var _paq = _paq || [];
@@ -1755,7 +1798,8 @@ hosemann = {
         },
         getUrlVars: function () {
             // Gets variables and values from URL
-            var vars = {};
+            var vars = {
+            };
             var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
                 vars[key] = unescape(value.replace(/\+/g, " "));
             });
@@ -1795,15 +1839,23 @@ hosemann = {
             var G = hexToG(value);
             var B = hexToB(value);
 
-            function hexToR(h) { return parseInt((cutHex(h)).substring(0, 2), 16); }
+            function hexToR(h) {
+                return parseInt((cutHex(h)).substring(0, 2), 16);
+            }
             function hexToG(h) { return parseInt((cutHex(h)).substring(2, 4), 16); }
             function hexToB(h) { return parseInt((cutHex(h)).substring(4, 6), 16); }
-            function cutHex(h) { return (h.charAt(0) == "#") ? h.substring(1, 7) : h; }
+            function cutHex(h) {
+                return (h.charAt(0) == "#") ? h.substring(1, 7) : h;
+            }
 
             return 'rgb({0}, {1}, {2})'.f(R, G, B);
         },
         trace: function (s) {
-            try { console.log(s); } catch (e) { alert(s); }
+            try {
+                console.log(s);
+            } catch (e) {
+                alert(s);
+            }
         },
         buildPath: function () {
 
@@ -1837,3 +1889,13 @@ String.prototype.format = String.prototype.f = function () {
     }
     return s;
 };
+
+//// Having to support IE8 sucks
+//// Required for IE8 Support.
+//if (typeof Array.prototype.forEach != 'function') {
+//    Array.prototype.forEach = function (callback) {
+//        for (var i = 0; i < this.length; i++) {
+//            callback.apply(this, [this[i], i, this]);
+//        }
+//    };
+//}
