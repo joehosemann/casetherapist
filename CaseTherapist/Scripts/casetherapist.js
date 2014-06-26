@@ -267,8 +267,11 @@ hosemann = {
         };
 
         adminProxy.client.response_RemoveProduct = function (productID) {
+            hosemann.utilities.trace('response_RemoveProduct');
             var _temp = $('li[ProductID={0}]'.f(productID)).index();
             $('#wizardAdmin').steps('remove', _temp);
+
+
         };
 
         adminProxy.client.response_RemoveCallType = function (ID) {
@@ -278,13 +281,13 @@ hosemann = {
 
         adminProxy.client.response_ValidatePassword = function (isValid) {
             if (isValid) {
-                var pwd = $('div#admin-dialog-form #thispass').val();
+                var pwd = $('div#ctadmin-dialog-form #thispass').val();
                 hosemann.vars.pwd = pwd;
                 $('div#ctadmin-dialog-form').dialog("destroy");
                 $('div#ctadmin-dialog-form').remove();
             }
             else {
-                $('div#admin-dialog-form #thispass').val('');
+                $('div#ctadmin-dialog-form #thispass').val('');
                 alert("Incorrect password. Instance logged.");
             }
         };
@@ -405,13 +408,12 @@ hosemann = {
                                 hosemann.casetherapist.cisco.loadCADMonitor();
                             }
 
-                            if (!hosemann.utilities.isOldIE() || hosemann.vars.param.toLowerCase() == 'josephho') {
-                                // Queue Summary is effectively broken in IE8.
-                                hosemann.casetherapist.isOldIE();
+                            if (!hosemann.utilities.isIE() || hosemann.vars.param.toLowerCase() == 'josephho') {
+                                // Queue Summary is effectively broken in IE8.                                
                                 hosemann.bbq.buildIcon();
                             }
                             else {
-                                hosemann.casetherapist.isOldIE();
+                                hosemann.casetherapist.isIE();
                             }
                         }
                             // If the user details aren't in the database.
@@ -448,10 +450,10 @@ hosemann = {
         preloadAssets: function () {
 
         },
-        isOldIE: function () {
-            var _isOldIE = hosemann.utilities.isOldIE();
-            if (_isOldIE) {
-                $('.header').prepend('<div class="headernotification">!! Some features will not work with IE 8 or 9.  Please use <a href="http://chrome.google.com">Chrome</a> with <a href="http://www.ietab.net/">IETab.net</a> instead !!</div>');
+        isIE: function () {
+            var _isIE = hosemann.utilities.isIE();
+            if (_isIE && $('.headernotification').length === 0) {
+                $('.header').prepend('<div class="headernotification">!! Some features will not work with Internet Explorer.  Please use <a href="http://chrome.google.com">Chrome</a> with <a href="http://www.ietab.net/">IETab.net</a> instead !!</div>');
             }
         },
         getMissingParameter: function () {
@@ -973,7 +975,11 @@ hosemann = {
             },
             workable: function () {
                 var type = "Workable";
+
                 var url = "{0}hapi/Cases/?type={1}&workable={2}&resolved={3}&param={4}&businessUnit={5}".f(hosemann.vars.origin, hosemann.vars.view, '1', '0', hosemann.vars.param, hosemann.vars.businessUnit);
+                if (hosemann.vars.businessUnit.toLowerCase() == 'gmbu')
+                    url = "{0}hapi/Cases/?type={1}&workable={2}&resolved={3}&param={4}&businessUnit={5}".f(hosemann.vars.origin, hosemann.vars.view, '1', '-1', hosemann.vars.param, hosemann.vars.businessUnit);
+
                 var grid = $("#jqxgridWorkable");
 
                 var source = this.getSource(type, url);
@@ -1025,7 +1031,11 @@ hosemann = {
             },
             nonWorkable: function () {
                 var type = "NonWorkable";
+
                 var url = "{0}hapi/Cases/?type={1}&workable={2}&resolved={3}&param={4}&businessUnit={5}".f(hosemann.vars.origin, hosemann.vars.view, '0', '0', hosemann.vars.param, hosemann.vars.businessUnit);
+                if (hosemann.vars.businessUnit.toLowerCase() == 'gmbu')
+                    url = "{0}hapi/Cases/?type={1}&workable={2}&resolved={3}&param={4}&businessUnit={5}".f(hosemann.vars.origin, hosemann.vars.view, '0', '-1', hosemann.vars.param, hosemann.vars.businessUnit);
+
                 var grid = $("#jqxgridNonWorkable");
 
                 var source = this.getSource(type, url);
@@ -1079,6 +1089,10 @@ hosemann = {
             resolved: function () {
                 var type = "Resolved";
                 var url = "{0}hapi/Cases/?type={1}&workable={2}&resolved={3}&param={4}&businessUnit={5}".f(hosemann.vars.origin, hosemann.vars.view, '-1', '1', hosemann.vars.param, hosemann.vars.businessUnit);
+
+                if (hosemann.vars.businessUnit.toLowerCase() == 'gmbu')
+                    url = "{0}hapi/Cases/?type={1}&workable={2}&resolved={3}&param={4}&businessUnit={5}".f(hosemann.vars.origin, hosemann.vars.view, '-1', '-1', hosemann.vars.param, hosemann.vars.businessUnit);
+
                 var grid = $("#jqxgridResolved");
 
                 var source = this.getSource(type, url);
@@ -1174,6 +1188,7 @@ hosemann = {
             closed: function () {
                 var type = "Closed";
                 var url = "{0}hapi/Cases/?type={1}&workable={2}&resolved={3}&param={4}&businessUnit={5}".f(hosemann.vars.origin, hosemann.vars.view, '-1', '-1', hosemann.vars.param, hosemann.vars.businessUnit);
+
                 var grid = $("#jqxgridClosed");
 
                 var source = this.getSource(type, url);
@@ -1552,12 +1567,10 @@ hosemann = {
                     }
                     break;
                 case 'fa fa-minus-square-o':
-
                     // checks to see if its a new row, if so, go ahead and remove the object, cancelling the insert.
                     if (element.parent().parent().parent().attr('id') == 'cellTypeNew')
                         element.parent().parent().parent().remove();
                     else {
-                        // Remove calltype function                        
                         hosemann.vars.adminProxy.server.server_RemoveCallType(element.attr('ctid'), hosemann.admin.getPassword());
                     }
                     break;
@@ -1579,7 +1592,8 @@ hosemann = {
                     }
                     break;
                 case 'wizardAdmin_RemoveProductContainer':
-                    hosemann.vars.adminProxy.server.server_RemoveProduct(element.parent().attr('ProductID'), hosemann.admin.getPassword());
+                    hosemann.vars.adminProxy.server.server_RemoveProduct(element.parent().attr('productid'), hosemann.admin.getPassword());
+                    hosemann.utilities.trace(element.parent().attr('productid') + hosemann.admin.getPassword());
                     break;
                 case 'wizardAdmin_ProductAddButton':
                     hosemann.admin.addProduct();
@@ -1589,7 +1603,7 @@ hosemann = {
             }
         },
         getPassword: function () {
-            if (hosemann.vars.pwd === "") {
+            if (hosemann.vars.pwd === "" || typeof hosemann.vars.pwd == 'undefined') {
                 // Populates a dialog box to enter password credentials.
                 $('body').append('<div id="ctadmin-dialog-form" title="Enter Admin Password"><form><fieldset><label for="password">Password:</label><input type="password" name="thispass" id="thispass" class="text ui-widget-content ui-corner-all"></fieldset></form></div>');
 
@@ -1598,7 +1612,7 @@ hosemann = {
                     modal: true,
                     buttons: {
                         "Submit": function () {
-                            hosemann.vars.adminProxy.server.server_ValidatePassword($('div#admin-dialog-form #thispass').val());
+                            hosemann.vars.adminProxy.server.server_ValidatePassword($('div#ctadmin-dialog-form #thispass').val());
                         }
                     },
                     close: function () {
@@ -1643,7 +1657,6 @@ hosemann = {
                 }
             });
         },
-
         addCallType: function (callType) {
             $('section div[id={0}]'.f(callType.ProductID)).append('<ol id="{0}"><li><div class="actions"><i ctid="{3}" class="fa fa-minus-square-o" onclick="hosemann.admin.buttonEvents($(this));"></i></div></li><li>{0}</li><li>{1}</li><li>{2}</li></ol>'.f(callType.CallTypeID, callType.Name, callType.IsDisabled, callType.ID));
         }
@@ -1728,11 +1741,13 @@ hosemann = {
         }
     },
     utilities: {
-        isOldIE: function () {
-            if ($('html').is('.ie6, .ie7, .ie8'))
-                return true;
-            else
-                return false;
+        isIE: function () {
+            return ((navigator.appName == 'Microsoft Internet Explorer') || ((navigator.appName == 'Netscape') && (new RegExp("Trident/.*rv:([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent) != null)));
+
+            //if ($('html').is('.ie6, .ie7, .ie8'))
+            //    return true;
+            //else
+            //    return false;
         },
         urlVars: {
         },

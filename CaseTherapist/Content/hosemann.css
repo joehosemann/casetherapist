@@ -384,7 +384,7 @@ ol.queueStatusSlats li.single:nth-child(odd) {
     width: 100px;
     float: left;
     /*margin-top: 40px;*/
-    position: fixed;
+    /*position: fixed;*/
 }
 
 .queueHeader {

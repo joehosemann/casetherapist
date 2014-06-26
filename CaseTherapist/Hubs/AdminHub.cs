@@ -146,11 +146,26 @@ namespace hapiservice.Hubs
         {
             if (password == pwd)
             {
-                using (var connection = SqlHelper.GetOpenConnectionBBApps())
+                try
                 {
-                    connection.Execute(@"delete casetherapist_CallTypes where ProductID = @ProductID", new { ProductID = productID });
-                    connection.Execute(@"delete casetherapist_Products where ID = @ProductID", new { ProductID = productID });
+                    using (var connection = SqlHelper.GetOpenConnectionBBApps())
+                    {
+                        connection.Execute(@"delete casetherapist_CallTypes where ProductID = @ProductID", new { ProductID = productID });
+                    }
+                    using (var connection = SqlHelper.GetOpenConnectionBBApps())
+                    {
+                        connection.Execute(@"delete casetherapist_Subscriptions where ProductID = @ProductID", new { ProductID = productID });
+                    }
+                    using (var connection = SqlHelper.GetOpenConnectionBBApps())
+                    {
+                        connection.Execute(@"delete casetherapist_Products where ID = @ProductID", new { ProductID = productID });
+                    }
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+               
                 Clients.Client(Context.ConnectionId).response_RemoveProduct(productID);
             }
             Clients.Client(Context.ConnectionId).failure_Password("Wrong Password. Instance Logged.");

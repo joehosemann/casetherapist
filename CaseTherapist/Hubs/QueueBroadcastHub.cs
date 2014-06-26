@@ -171,9 +171,9 @@ namespace hapiservice.Hubs
         }
 
         // Current delay of updateAllProductQueue
-        private static int count = 0;
+        //private static int count = 0;
         // How many seconds to delay updateAllProductQueue
-        private static int countDelay = 2;
+        //private static int countDelay = 2;
 
         static void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
@@ -183,13 +183,13 @@ namespace hapiservice.Hubs
             {
                 var data = new QueueBroadcastData().ParseQueueResults();
 
-                if (count >= countDelay)
-                {
+                //if (count >= countDelay)
+                //{
                     hub.Clients.Group("all").updateAllProductQueue(data);
-                    count = 0;
-                }
-                else
-                    count++;
+                //    count = 0;
+                //}
+                //else
+                //    count++;
 
                 foreach (var item in data)
                 {
